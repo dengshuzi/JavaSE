@@ -1297,3 +1297,3048 @@ public class TestVar12{
   }
 }
 ```
+
+# 第三章
+
+## Java中的运算符
+
+### 1. Java 语言支持如下运算符：
+算术运算符   
+                                                        +，-，*，/，%，++（自增），--（自减）
+赋值运算符 
+                                                        =  
+扩展赋值运算符
+                                                        +=，-=，*=，/=
+关系运算符
+                                                         >，<，>=，<=，==，!=
+逻辑运算符
+                                                    &，|，    &&，||，!，^
+位运算符
+                                                         &，|，^，~ ， >>，<<，>>> (了解！！！)
+条件运算符
+                                                         ？：
+### 2. 相关概念辨析
++        运算符  操作符         Operator
+5+6    表达式                     expression
+5  6     操作数                     Operand
+int m =5+6;    语句         Sentence
+
+## 算术运算符
+
+### /和%
+
+#### 1. /   除法运算符 ： 表示两个数相除运算  
+     %   取余运算符： 用来求余数的
+
+```java
+public class TestOpe01{
+  public static void main(String[] args){
+    //打印结果：
+    System.out.println(12/3);
+    System.out.println(12%5);
+    System.out.println(12/3.0);
+    System.out.println(12%5.0);
+  }
+}
+```
+
+#### 2. 练习：
+
+```java
+import java.util.Scanner;
+public class TestOpe02{
+  public static void main(String[] args){
+    //实现功能：任意给出一个四位数，求出每位上的数字并输出
+    
+    //1.任意给出一个四位数：
+    Scanner input = new Scanner(System.in);
+    System.out.println("请录入一个四位数：");
+    int num = input.nextInt();
+    
+    
+    //2.求出每位上的数字：
+    //个位数：
+    int num1 = num%10;
+    //十位数：
+    int num2 = num/10%10;//1234--->123--->3
+    //百位数：
+    int num3 = num/100%10;//1234--->12--->2
+    //千位数：
+    int num4 = num/1000;//1234--->1
+    
+    
+    //3.输出每位上的数字：
+    System.out.println("个位上的数为："+num1);
+    System.out.println("十位上的数为："+num2);
+    System.out.println("百位上的数为："+num3);
+    System.out.println("千位上的数为："+num4);
+  }
+}
+```
+
+### +
+
+#### 1. +的作用：
+1. 表示正数
+2. 表示相加操作
+3. 进行字符串的拼接
+
+#### 2. 代码练习：
+
+```java
+public class TestOpe03{
+  public static void main(String[] args){
+    //表示正数：
+    System.out.println(+5);//5
+    //相加操作：
+    System.out.println(5+6);//11
+    System.out.println(5+'6');//59
+    //字符串的拼接：
+    //规则：+左右两侧的任意一侧有字符串，那么这个加号就是字符串拼接的作用，结果一定是字符串
+    int num = 56;
+    System.out.println("num="+num);//"num=56" ---> num=56
+    System.out.println(5+6+"7");//11+"7"--->"117"  --->117
+    System.out.println(5+'6'+"7");//59 +"7"--->"597" --->597
+    System.out.println("5"+6+"7");//"56"+"7"  --->"567"--->567
+    System.out.println("5"+'6'+"7");//"56"+"7"--->"567"--->567
+    System.out.println("5"+'6'+'7');//"56"+'7'--->"567"---567
+  }
+}
+```
+
+### ++
+
+#### 1. ++：
+
+```java
+public class TestOpe04{
+  public static void main(String[] args){
+    int a = 5;
+    a++;//理解为：相当于  a=a+1 操作  
+    System.out.println(a);//6
+    
+    a = 5;
+    ++a;//理解为：相当于  a=a+1 操作  
+    System.out.println(a); //6
+    
+    //总结：++单独使用的时候，无论放在前还是后，都是加1操作
+    
+    //将++参与到运算中：
+    //规则：看++在前还是在后，如果++在后：先运算，后加1   如果++在前，先加1，后运算
+    a = 5;
+    int m = a++ + 7;//先运算  m=a+7  再加1：  a = a+1 
+    System.out.println(m);//12
+    System.out.println(a);//6
+    
+    a = 5;
+    int n = ++a + 7;//先加1  a=a+1  再运算：  n = a+7 
+    System.out.println(n);//13
+    System.out.println(a);//6
+  }
+}
+```
+
+无论这个变量是否参与到运算中去，只要用++运算符，这个变量本身就加1操作
+只是说如果变量参与到运算中去的话，对运算结果是产生影响：
+看++在前还是在后，如果++在后：先运算，后加1   如果++在前，先加1，后运算
+
+
+#### 2. 练习：
+
+```java
+public class TestOpe05{
+  public static void main(String[] args){
+    int a = 5;
+    System.out.println(a++ + a++);
+    System.out.println(a++ + ++a);
+    System.out.println(++a + a++);
+    System.out.println(++a + ++a);
+  }
+}
+```
+
+运算过程：
+
+<img src="images/3/1-1-1.png">
+
+## 赋值运算符
+
+### 1. =的作用： 将等号右侧的值赋给等号左侧：
+
+``` java
+int age = 19;
+int age = 10+3+8;
+```
+
+### 2. 练习：
+
+``` java
+public class TestOpe06{
+  public static void main(String[] args){
+    //任意给出两个数，交换两个数并输出：
+    //1.给出两个数：
+    int num1 = 10;
+    int num2 = 20;
+    
+    //2.输出交换前的两个数：
+    System.out.println("交换前："+num1+"\t"+num2);
+    
+    //3.交换
+    /*
+    错误代码：
+    num1 = num2;
+    num2 = num1;	
+    */		
+    //解决办法：
+    //引入一个中间变量:
+    int t;
+    t = num1;
+    num1 = num2;
+    num2 = t;
+    /*
+    int t;
+    t = num2;
+    num2 = num1;
+    num1 = t;
+    
+    */
+    
+    //4.输出交换后的两个数：
+    System.out.println("交换后："+num1+"\t"+num2);
+  }
+}
+```
+
+<img src="images/3/1-2-1.png">
+
+## 扩展赋值运算符
+
+### 1. 代码：
+
+```java
+public class TestOpe07{
+        public static void main(String[] args){
+                //实现功能：给出三个数，求和：
+                //1.给出三个数：
+                int num1 = 10;
+                int num2 = 20;
+                int num3 = 30;
+                //2.求和
+                //int sum = num1+num2+num3;
+                //定义一个变量，用来接收和：
+                int sum = 0;
+                sum = sum + num1;//等效：  sum += num1;
+                sum = sum + num2;// sum += num2;
+                sum = sum + num3;//sum += num3;
+                //3.将和输出：
+                System.out.println("和："+sum);
+        }
+}
+```
+
+内存：
+
+<img src="images/3/1-3-1.png">
+
+### 2. a+=b  和  a=a+b  区别：
+
+1. a+=b    可读性稍差 编译效率高   底层自动进行类型转换
+2. a=a+b     可读性好  编译效率低   手动进行类型转换
+
+### 3. 面试题
+
+1. 请问a+=b相当于a=a+b,那么也相当于  a=b+a吗？
+
+<img src="images/3/1-3-2.png">
+
+2. 下面的代码哪一句出错：  4
+byte a = 10;  --->1
+int b = 20;  --->2
+a+=b;  ---->3
+a = a+b ;---->4
+
+更正：  a = (byte)(a+b);
+
+## 关系运算符
+
+```java
+public class TestOpe08{
+        public static void main(String[] args){
+                //>，<，>=，<=，==，!=
+                //关系运算符最终结果：要么是true要么是false
+                System.out.println(4>9);//false
+                System.out.println(4<9);//true
+                System.out.println(4>=9);//false
+                System.out.println(4<=9);//true
+                System.out.println(4==9);//false
+                System.out.println(4!=9);//true
+                System.out.println((5<9)!=(6==8));//true
+        }
+}
+```
+
+## 逻辑运算符
+
+        &，|，    &&，||，!，^
+逻辑运算符：进行逻辑运算的，运算符左右连接的都是 布尔类型的操作数，最终表达式的结果是布尔值：要么是true，要么false
+
+代码：
+
+```java
+public class TestOpe09{
+  public static void main(String[] args){
+    // 逻辑与 ：& 规律：只要有一个操作数是false，那么结果一定是false
+    System.out.println(true&true);
+    System.out.println(true&false);
+    System.out.println(false&false);
+    System.out.println(false&true);
+    
+    // 短路与：&& 规律：效率高一些，只要第一个表达式是false，那么第二个表达式就不用计算了，结果一定是false
+    System.out.println(true&&true);
+    System.out.println(true&&false);
+    System.out.println(false&&false);
+    System.out.println(false&&true);
+    
+    // 逻辑或：| 规律：只要有一个操作数是true，那么结果一定是true
+    System.out.println(true|true);
+    System.out.println(true|false);
+    System.out.println(false|false);
+    System.out.println(false|true);
+    
+    // 短路或：|| 规律：效率高一些，只要第一个表达式是true，那么第二个表达式就不用计算了，结果一定是true
+    System.out.println(true||true);
+    System.out.println(true||false);
+    System.out.println(false||false);
+    System.out.println(false||true);
+    
+    //逻辑非：   !  规律：相反结果
+    System.out.println(!true);//false
+    System.out.println(!false);//true
+    
+    //逻辑异或： ^  规律：两个操作数相同，结果为false，不相同，结果为true
+    System.out.println(true^true);
+    System.out.println(true^false);
+    System.out.println(false^false);
+    System.out.println(false^true);
+  }
+}
+```
+
+再做一个加深的练习：看代码 说结果：
+
+```java
+public class TestOpe10{
+  public static void main(String[] args){
+    int i=8;
+    System.out.println((5>7)&&(i++==2)); //false
+    System.out.println(i);  //8 
+    
+    
+    int a=8;
+    System.out.println((5>7)&(a++==2)); //false
+    System.out.println(a); //9
+    
+    
+    int m=8;
+    System.out.println((5<7)&&(m++==2)); //false
+    System.out.println(m); //9
+    
+    int b=2;
+    System.out.println((5<7)&(b++==2)); //true
+    System.out.println(b);  //3
+    
+    int c=2;
+    System.out.println((5<7)&(++c==2)); //false
+    System.out.println(c);  //3
+  }
+}
+```
+
+## 条件运算符
+
+### 1. 条件运算符：又称：  三元运算符/三目运算符
+
+### 2. 格式：
+
+  ```a?b:c```
+其中a是一个布尔类型的表达式，返回结果要么是true要么false，通过a的结果决定最终表达式的结果:
+如果a的结果是true，那么表达式最终结果为b
+如果a的结果是false，那么表达式最终结果为c
+
+代码：
+
+```java
+public class TestOpe11{
+  public static void main(String[] args){
+    int num = (5>7)?6:9 ;
+    System.out.println(num);
+    
+    String str = (4==4)?"你好":"你不好" ;
+    System.out.println(str);
+    
+    System.out.println((4==4)?"你好":"你不好");
+  }
+}
+```
+
+练习：
+
+```java
+import java.util.*;//*代表所有
+public class TestOpe12{
+        public static void main(String[] args){
+                //实现功能：男孩女孩选择晚饭吃什么，如果意见一致，听男生的，如果意见不一致，听女生的
+                
+                //1.要让男孩女孩选择晚饭吃什么：
+                Scanner sc = new Scanner(System.in);
+                System.out.println("请选择今晚吃什么：1.火锅 2.烧烤 3.麻辣烫 4.西餐");
+                System.out.println("请男孩选择：");
+                int boyChoice = sc.nextInt();
+                System.out.println("请女孩选择：");
+                int girlChoice = sc.nextInt();
+                //2.判断：
+                System.out.println(boyChoice==girlChoice?"听男孩的":"听女孩的");
+        }
+}
+```
+
+> PS:三目运算符可以代替后续我们要学习的if-else
+
+## 位运算符(了解)
+
+位运算符：&，|，^，~ ， >>，<<，>>>
+
+如何区分逻辑运算符和位运算符：
+逻辑运算符：左右连接的是布尔类型的操作数
+位运算符：左右连接的是具体的数值
+
+### 1. <<   左移 
+
+3<<2 = 12
+
+<img src="images/3/1-4-1.png">
+
+面试题： 4乘以8最快的方式：  4<<3 
+
+### 2. >> 有符号右移
+
+6>>2 = 1
+
+<img src="images/3/1-4-2.png">
+
+-6>>2 = -2
+
+<img src="images/3/1-4-3.png">
+
+
+### 3. >>> 无符号右移：
+
+6>>>2  = 1
+
+<img src="images/3/1-4-4.png">
+
+### 4. & 与
+
+6&3 = 2
+
+<img src="images/3/1-4-5.png">
+
+### 5. | 或
+
+6|3=7
+
+<img src="images/3/1-4-6.png">
+
+### 6. ^异或：
+
+6^3 = 5
+
+<img src="images/3/1-4-7.png">
+
+### 7. ~反：
+
+~6  = -7
+
+<img src="images/3/1-4-8.png">
+
+> PS：
+> byte类型的表数范围的 -128是怎么算出来的 
+> 127： 01111111
+> -128：  10000000
+> 一看就是个负数
+> 减1：    01111111
+> 取反：   10000000  ---》2^7  = 128
+> 加负号：  -128
+
+## 运算符总结
+
+<img src="images/3/1-5-1.png">
+
+## 运算符的优先级别
+
+<img src="images/3/1-6-1.png">
+
+不需要去刻意的记优先级关系
+赋值<三目<逻辑<关系<算术<单目
+理解运算符的结合性
+
+> PS:实际开发中我们不会写特别复杂的表达式，你要想先算谁就用()
+
+案例：
+```java
+   5<6 | 'A'>'a' && 12*6<=45+23&&!true
+=5<6 | 'A'>'a' && 12*6<=45+23&&false
+= 5<6 | 'A'>'a' &&72<=68&&false
+= true|false&&false&&false
+= true&&false&&false
+=false&&false
+=false
+```
+
+# 第四章_流程控制
+
+## 引入
+
+### 1. 流程控制的作用：
+
+流程控制语句是用来控制程序中各语句执行顺序的语句，可以把语句组合成能完成一定功能的小逻辑模块。
+
+### 2. 控制语句的分类：
+
+控制语句分为三类：顺序、选择和循环。
+“顺序结构”代表“先执行a，再执行b”的逻辑。
+“条件判断结构”代表“如果…，则…”的逻辑。
+“循环结构”代表“如果…，则再继续…”的逻辑。
+  三种流程控制语句就能表示所有的事情！不信，你可以试试拆分你遇到的各种事情。这三种基本逻辑结构是相互支撑的，它们共同构成了算法的基本结构，无论怎样复杂的逻辑结构，都可以通过它们来表达。所以任何一种高级语言都具备上述两种结构。
+本章是大家真正进入编程界的“门票”。 
+
+### 3. 流程控制的流程：
+
+<img src="images/4/1-1-1.png">
+
+## 分支结构(选择结构)
+
+### if
+
+#### 单分支
+
+#### 1. 语法结构:
+
+```java
+if(布尔表达式){
+    语句块
+}
+```
+
+if语句对布尔表达式进行一次判定，若判定为真，则执行{}中的语句块，否则跳过该语句块。流程图如图所示：
+
+#### 2. 代码：
+
+```java
+public class TestIf01{
+  public static void main(String[] args){
+    //实现一个功能：给出三个数（1-6），对三个数求和计算，根据和的大小来分配不同的奖品
+    //1.给出三个数：
+    int num1 = 6;
+    int num2 = 2;
+    int num3 = 3;
+    //2.求和
+    int sum = 0;
+    sum += num1;
+    sum += num2;
+    sum += num3;
+    System.out.println("和为："+sum);
+    
+    //3.根据和判断奖品：
+    //如果和大于等于14，那么就是一等奖
+    if(sum>=14){
+            System.out.println("一等奖");
+            System.out.println("恭喜你很幸运，中了一等奖");
+    }
+    
+    if(sum>=10&&sum<14){
+            System.out.println("二等奖");
+    }
+    
+    if(sum>=6&&sum<10){
+            System.out.println("三等奖");
+    }
+    
+    if(sum<6){
+            System.out.println("四等奖");
+    }
+    
+    /*
+    if-单分支：
+    （1）结构：
+            if(条件表达式，这个表达式的结果是布尔值：要么是false，要么是true){
+                    //如果上面()中的表达式返回结果是true，那么执行{}中代码
+                    //如果上面()中的表达式返回结果是false ，那么不执行{}中代码
+                    //PS:{}中的代码是否执行，取决于()中表达式的返回结果
+            }
+    （2）上面的代码中，我用四个单分支拼凑出四个选择，每个选择是独立的，依次判断执行的
+    （3）if后面的()中的条件，要按照自己需求尽量完善
+    （4）{}可以省略不写,但是一旦省略，这个if就只负责后面的一句话，所以我们不建议初学者省略
+    */
+  }
+}
+```
+
+### 多分支
+
+#### 1. 语法结构：
+
+```java
+if(布尔表达式1) {
+        语句块1;
+} else if(布尔表达式2) {
+        语句块2;
+}……
+else if(布尔表达式n){
+        语句块n;
+} else {
+        语句块n+1;
+}
+```
+
+当布尔表达式1为真时，执行语句块1；否则，判断布尔表达式2，当布尔表达式2为真时，执行语句块2；否则，继续判断布尔表达式3······；如果1~n个布尔表达式均判定为假时，则执行语句块n+1，也就是else部分。流程图如图所示：
+
+<img src="images/4/1-3-1.png">
+
+#### 2. 数轴分析：
+
+<img src="images/4/1-3-2.png">
+
+#### 3. 代码：
+
+```java
+public class TestIf02{
+  public static void main(String[] args){
+    //实现一个功能：给出三个数（1-6），对三个数求和计算，根据和的大小来分配不同的奖品
+    //1.给出三个数：
+    int num1 = 6;
+    int num2 = 4;
+    int num3 = 2;
+    //2.求和
+    int sum = 0;
+    sum += num1;
+    sum += num2;
+    sum += num3;
+    System.out.println("和为："+sum);
+    
+    //3.根据和判断奖品：
+    /*
+    利用一个多分支
+    【1】结构：
+    if(){
+            
+    }else if(){
+            
+    }else if(){
+            
+    }...
+    else{
+            
+    }
+    【2】else:隐藏了一个条件，跟上面分支条件表达式相反的功能 (详见数轴分析)
+    【3】多分支：好处：只要满足一个 分支以后，后面的分支就不需要判断了 --》效率高
+    【4】我们写代码的时候，尽量保证else的存在--》else分支相当于“兜底”“备胎”的作用，别的分支都不走，就会走这个分支了
+    */
+    if(sum>=14){
+            System.out.println("一等奖");
+    }else if(sum>=10){//隐藏了sum<14
+            System.out.println("二等奖");
+    }else if(sum>=6){//隐藏了sum<10
+            System.out.println("三等奖");
+    }else{//隐藏了sum<6
+            System.out.println("四等奖");
+    }
+  }
+}
+```
+
+### 双分支
+
+#### 1. 语法结构:
+
+```java
+if(布尔表达式){
+语句块1
+}else{
+      语句块2
+}
+```
+
+当布尔表达式为真时，执行语句块1，否则，执行语句块2。也就是else部分。流程图如图所示：
+
+<img src="images/4/1-4-1.png">
+
+### 随机数
+
+随机数：这个数在生成之前我们不确定这个数是多少，不可知
+
+在java中依靠一个类：Math类帮助我们生成，这个类中有一个方法专门用来生成随机数：
+
+Math.random() -------> [0.0,1.0)
+Math.random()*6 ----->[0.0,6.0)
+(int)(Math.random()*6)  ----->[0,5]
+(int)(Math.random()*6) +1 ----->[1,6]
+
+应用到程序中：
+
+int num1 = (int)(Math.random()*6) +1;
+int num2 = (int)(Math.random()*6) +1;
+int num3 = (int)(Math.random()*6) +1;
+
+练习：
+```[32,98] - [0,66]+32 - (int)(Math.random()*67) + 32 ```
+
+### 分支的嵌套使用
+
+#### 分支结构练习1
+
+练习：
+会员购物时，不同积分享受的折扣不同，规则如下：
+
+<img src="images/4/1-5-1.png">
+
+计算会员购物时获得的折扣，效果如下：
+
+<img src="images/4/1-5-2.png">
+
+本题主要考的是 程序的优化：
+
+```java
+import java.util.Scanner;
+public class TestIf04{
+  public static void main(String[] args){
+    //1.给出积分：
+    Scanner sc = new Scanner(System.in);
+    System.out.print("请输入会员积分：");
+    
+    //先判断键盘录入的数据是不是int类型的
+    if(sc.hasNextInt()==true){//是int类型数据：
+      //将这个int类型的数据接收：
+      int score = sc.nextInt();
+      //判断这个积分是否是正数：
+      if(score>=0){
+        String discount = "";
+        //2.根据积分判断折扣：
+        if(score>=8000){
+          discount = "0.6";
+        }else if(score>=4000){
+          discount = "0.7";
+        }else if(score>=2000){
+          discount = "0.8"; 
+        }else{
+          discount = "0.9"; 
+        }
+        System.out.println("该会员享受的折扣为："+discount);
+      }else{//score<0
+        System.out.println("对不起，你录入的积分是负数！不符合需求！");
+      }	
+    }else{//不是int类型的数据
+      System.out.println("你录入的积分不是整数！");
+    }
+  }
+}
+```
+
+#### 分支结构练习2
+
+练习：
+小朋友搬桌子：
+年龄大于7岁，可以搬桌子；
+如果年龄大于5岁，性别是男，可以搬桌子；
+否则不可以搬动桌子，提示：你还太小了
+
+本题主要考的是：逻辑
+
+方式1：性别用0或者1接收：
+
+```java
+import java.util.Scanner;
+public class TestIf05{
+  public static void main(String[] args){
+    //1.录入小朋友的年龄：
+    Scanner sc = new Scanner(System.in);
+    System.out.println("请录入小朋友的年龄：");
+    int age = sc.nextInt();
+    
+    //2.根据年龄判断：
+    if(age>=7){
+      System.out.println("yes");
+    }else if(age>=5){
+      //录入小朋友的性别；
+      System.out.println("请录入小朋友的性别：男：1  女 ：0");
+      int sex = sc.nextInt();
+      if(sex==1){//男生
+        System.out.println("yes");
+      }else{//女孩
+        System.out.println("no");
+      }
+    }else{//age<5
+      System.out.println("no");
+    }
+  }
+}
+```
+
+方式2：性别用男或者女接收：
+
+```java
+import java.util.Scanner;
+public class TestIf06{
+  public static void main(String[] args){
+    //1.录入小朋友的年龄：
+    Scanner sc = new Scanner(System.in);
+    System.out.println("请录入小朋友的年龄：");
+    int age = sc.nextInt();
+    
+    //2.根据年龄判断：
+    if(age>=7){
+            System.out.println("yes");
+    }else if(age>=5){
+      //录入小朋友的性别；
+      System.out.println("请录入小朋友的性别：");
+      String str = sc.next();
+      char sex = str.charAt(0);
+      if(sex=='男'){
+        System.out.println("yes");
+      }else{
+        System.out.println("no");
+      }
+    }else{//age<5
+      System.out.println("no");
+    }
+  }
+}
+```
+
+### switch
+
+#### 1. switch多分支结构(多值情况)
+
+语法结构：
+```java
+switch (表达式) {
+    case 值1:
+         语句序列1;
+         [break];
+    case 值2:
+         语句序列2;
+         [break];
+        … … …      … …
+    [default:默认语句;]
+}
+```
+
+switch语句会根据表达式的值从相匹配的case标签处开始执行，一直执行到break语句处或者是switch语句的末尾。如果表达式的值与任一case值不匹配，则进入default语句（如果存在default语句的情况）。根据表达式值的不同可以执行许多不同的操作。switch语句中case标签在JDK1.5之前必须是整数（long类型除外）或者枚举，不能是字符串，在JDK1.7之后允许使用字符串(String)。大家要注意，当布尔表达式是等值判断的情况，可以使用if-else if-else多分支结构或者switch结构，如果布尔表达式区间判断的情况，则只能使用if-else if-else多分支结构。switch多分支结构的流程图如图所示：
+
+<img src="images/4/1-6-1.png">
+
+```java
+public class TestSwitch{
+  public static void main(String[] args){
+    /*
+    实现一个功能：
+    根据给出的学生分数，判断学生的等级：
+    >=90  -----A
+    >=80  -----B
+    >=70  -----C
+    >=60  -----D
+    <60   -----E
+    
+    用if分支：
+    if(score>=90){
+            
+    }else if(score>=80){
+            
+    }
+    */
+    //1.给出学生的成绩：
+    int score = 167;
+    //2.根据成绩判断学生的等级：
+    switch(score/10){
+      case 10 : 
+      case 9 : System.out.println("A级");break;
+      case 8 : System.out.println("B级");break;
+      case 7 : System.out.println("C级");break;
+      case 6 : System.out.println("D级");break;
+      default:System.out.println("成绩错误");break;
+      case 5 :  
+      case 4 :  
+      case 3 :  
+      case 2 :  
+      case 1 :  
+      case 0 : System.out.println("E级");break;
+    }
+    /*
+    【1】语法结构：
+    switch(){
+      case * :
+      case * :
+      .......
+    }
+    【2】switch后面是一个()，()中表达式返回的结果是一个等值，这个等值的类型可以为：
+    int,byte,short,char,String,枚举类型
+    【3】这个()中的等值会依次跟case后面的值进行比较，如果匹配成功，就执行:后面的代码
+    【4】为了防止代码的“穿透”效果：在每个分支后面加上一个关键词break，遇到break这个分支就结束了
+    【5】类似else的“兜底”“备胎”的分支：default分支
+    【6】default分支可以写在任意的位置上，但是如果没有在最后一行，后面必须加上break关键字，
+    如果在最后一行的话，break可以省略
+    【7】相邻分支逻辑是一样的，那么就可以只保留最后一个分支，上面的都可以省去不写了
+    【8】switch分支和if分支区别：
+    表达式是等值判断的话--》if ，switch都可以
+    如果表达式是区间判断的情况---》if最好
+    【9】switch应用场合：就是等值判断，等值的情况比较少的情况下
+    */
+  }
+}
+```
+
+## 循环结构
+
+### while
+
+#### 1. 语法结构：
+
+```java
+while (布尔表达式) {
+            循环体;
+}
+```
+
+在循环刚开始时，会计算一次“布尔表达式”的值，若条件为真，执行循环体。而对于后来每一次额外的循环，都会在开始前重新计算一次。
+语句中应有使循环趋向于结束的语句，否则会出现无限循环–––"死"循环。
+while循环结构流程图如图所示:
+
+<img src="images/4/1-7-1.png">
+
+#### 2. 练习：1+2+3+4+5
+
+```java
+public class TestWhile{
+  public static void main(String[] args){
+    //功能：1+2+3+4+5
+    //1.定义变量：
+    int num1 = 1;
+    int num2 = 2;
+    int num3 = 3;
+    int num4 = 4;
+    int num5 = 5;
+    //2.定义一个求和变量，用来接收和：
+    int sum = 0;
+    sum += num1;
+    sum += num2;
+    sum += num3;
+    sum += num4;
+    sum += num5;
+    
+    //3.输出和
+    System.out.println(sum);
+  }
+}
+```
+
+上述代码缺点：变量的定义个数太多了
+解决：
+
+```java
+public class TestWhile{
+  public static void main(String[] args){
+    //功能：1+2+3+4+5
+    //1.定义变量：
+    int num = 1;
+    //2.定义一个求和变量，用来接收和：
+    int sum = 0;
+    sum += num;
+    num++;
+    sum += num;
+    num++;
+    sum += num;
+    num++;
+    sum += num;
+    num++;
+    sum += num;
+    num++;
+    
+    //3.输出和
+    System.out.println(sum);
+  }
+}
+```
+
+上述代码缺点：重复写的代码太多了
+解决：---》引入java中循环结构：
+
+```java
+public class TestWhile{
+  public static void main(String[] args){
+    //功能：1+2+3+4+5
+    //1.定义变量：
+    int num = 1;[1]条件初始化
+    //2.定义一个求和变量，用来接收和：
+    int sum = 0;              
+    while(num<=5){[2]条件判断
+            sum += num;[3]循环体
+            num++;[4]迭代
+    }      
+    //3.输出和
+    System.out.println(sum);
+  }
+}
+```
+
+#####  总结：
+1. 循环作用：将部分代码重复执行。
+                                循环只是提高了程序员编写代码的效率，但是底层执行的时候依然是重复执行。
+2. 循环四要素：
+
+<img src="images/4/1-7-2.png">
+
+初始化谁，就判断谁，判断谁，就迭代谁
+执行过程：[1][2][3][4] [2][3][4] [2][3][4]。。。。
+
+3. 循环的执行过程：
+
+<img src="images/4/1-7-3.png">
+
+4. 验证循环的执行过程：
+
+<img src="images/4/1-7-4.png">
+
+#### 练习
+
+1. 1+2+3+4+5+。。。。+100
+2. 2+4+6+8+。。。。+998+1000
+3. 5+10+15+20+。。。+100
+4. 99+97+95+。。5+3+1
+5. 1*3*5*7*9*11*13
+
+```java
+public class TestWhile02{
+  public static void main(String[] args){
+    /*
+    【1】1+2+3+4+5+。。。。+100
+    int i = 1;
+    int sum = 0;
+    while(i<=100){
+      sum += i;
+      i++;
+    }
+    System.out.println(sum);
+    【2】2+4+6+8+。。。。+998+1000
+    int i = 2;
+    int sum = 0;
+    while(i<=1000){
+      sum += i;
+      i = i+2;
+    }
+    System.out.println(sum);
+    【3】5+10+15+20+。。。+100
+    int i = 5;
+    int sum = 0;
+    while(i<=100){
+      sum += i;
+      i = i+5;
+    }
+    System.out.println(sum);
+    
+    【4】99+97+95+。。5+3+1
+    int i = 99;
+    int sum = 0;
+    while(i>=1){
+      sum += i;
+      i = i-2;
+    }
+    System.out.println(sum);
+    【5】1*3*5*7*9*11*13
+    
+    */
+    int i = 1;
+    int result = 1;
+    while(i<=13){
+      result *= i;
+      i = i+2;
+    }
+    System.out.println(result);
+  } 
+}
+```
+
+### do-while
+
+1. 语法结构：
+
+```java
+do {
+            循环体;
+    } while(布尔表达式) ;
+```
+
+do-while循环结构会先执行循环体，然后再判断布尔表达式的值，若条件为真，执行循环体，当条件为假时结束循环。do-while循环的循环体至少执行一次。do-while循环结构流程图如图
+所示：
+
+```java
+public class TestDoWhile{
+  public static void main(String[] args){
+    //1+2+3+4+...100
+    //while方式:
+    /*
+    int i = 101;
+    int sum = 0;
+    while(i<=100){
+      sum += i;
+      i++;
+    }
+    System.out.println(i);//101
+    System.out.println(sum);//0
+    */
+    //do-while方式：
+    
+    int i = 101;
+    int sum = 0;
+    do{
+            sum += i;
+            i++;
+    }while(i<=100);//一定要注意写这个分号，否则编译出错
+    System.out.println(i);//102
+    System.out.println(sum);//101
+    /*
+    【1】while和do-while的区别:
+            while:先判断，再执行
+            do-while:先执行，再判断---》至少被执行一次，从第二次开始才进行判断
+    【2】什么场合使用do-while:
+    
+    while(考试是否通过){
+            考试；
+    }
+    ---》不合适
+    do{
+            考试；
+    }while(考试是否通过);
+    ---》合适
+    */
+  }
+}
+```
+
+### for
+
+#### 1. 语法结构：
+
+```java
+for (初始表达式; 布尔表达式; 迭代因子) {
+          循环体;
+}
+```
+
+for循环语句是支持迭代的一种通用结构，是最有效、最灵活的循环结构。for循环在第一次反复之前要进行初始化，即执行初始表达式；随后，对布尔表达式进行判定，若判定结果为true，则执行循环体，否则，终止循环；最后在每一次反复的时候，进行某种形式的“步进”，即执行迭代因子。
+1. 初始化部分设置循环变量的初值
+2. 条件判断部分为任意布尔表达式
+3. 迭代因子控制循环变量的增减
+for循环在执行条件判定后，先执行的循环体部分，再执行步进。
+for循环结构的流程图如图所示：
+
+<img src="images/4/1-8-1.png">
+
+#### 2. 代码：
+
+```java
+public class TestFor01{
+  public static void main(String[] args){
+    //1+2+3+..+100
+    //while:
+    /*int i = 1;
+    int sum = 0;
+    while(i<=100){
+            sum += i;
+            i++;
+    }
+    System.out.println(sum);
+    */
+    
+    //for:
+    int sum = 0;
+    int i;
+    for(i = 1;i<=100;i++){
+      sum += i;
+    }
+    System.out.println(sum);
+    System.out.println(i);
+    
+    /*
+    【1】for的结构：
+    for(条件初始化;条件判断;迭代){
+      循环体；
+    }
+    
+    【2】i的作用域：作用范围：离变量最近{}  --->可以自己去控制
+    【3】for循环格式特别灵活：格式虽然很灵活，但是我们自己写代码的时候不建议灵活着写。
+    for(;;){}  -->死循环
+    
+    int i = 1;
+    for(;i<=100;){
+      sum += i;
+      i++;
+    }
+    
+    【4】死循环：
+    for(;;){}
+    
+    while(true){}
+    
+    do{
+            
+    }while(true);
+    
+    【5】循环分为两大类：
+    第一类：当型   while(){}   for(;;){}
+    第二类：直到型  do{}while();
+    
+    【6】以后常用：for循环 
+    【7】do-while,while,for循环谁的效率高？  一样高 
+    */
+  }
+}
+```
+
+### 关键字
+
+在任何循环语句的主体部分，均可用break控制循环的流程。<strong style="color:#DD5145">break</strong>用于强行退出循环，不执行循环中剩余的语句。
+<strong style="color:#DD5145">continue</strong> 语句用在循环语句体中，用于终止某次循环过程，即跳过循环体中尚未执行的语句，接着进行下一次是否执行循环的判定。
+<strong style="color:#DD5145">return</strong>的作用,结束当前所在方法的执行.
+
+### 循环练习
+
+1. 练习1：
+
+```java
+public class TestFor09{
+  public static void main(String[] args){
+    /* 输出1-100中被5整除的数,每行输出6个*/
+    //引入一个计数器：
+    int count = 0;//初始值为0
+    for(int i=1;i<=100;i++){
+      if(i%5==0){//被5整除的数
+        System.out.print(i+"\t");
+        count++;//每在控制台输出一个数，count就加1操作
+        if(count%6==0){
+          System.out.println();//换行
+        }
+      }
+    }
+  }
+}
+```
+
+2. 练习2：
+
+```java
+import java.util.Scanner;
+public class TestFor10{
+  public static void main(String[] args){
+    /*
+        实现一个功能： 
+    【1】请录入10个整数，当输入的数是666的时候，退出程序。
+    【2】判断其中录入正数的个数并输出。
+    【3】判断系统的退出状态：是正常退出还是被迫退出。
+    */
+    //引入一个计数器：
+    int count = 0;
+    //引入一个布尔类型的变量：
+    boolean flag = true; //---》理解为一个“开关”，默认情况下开关是开着的
+    Scanner sc = new Scanner(System.in);
+    for(int i=1;i<=10;i++){//i:循环次数
+      System.out.println("请录入第"+i+"个数：");
+      int num = sc.nextInt();
+      if(num>0){//录入的正数
+        count++;
+      }
+      if(num==666){
+        flag = false;//当遇到666的时候，“开关”被关上了
+        //退出循环：
+        break;
+      }
+    }
+    
+    System.out.println("你录入的正数的个数为："+count);
+    
+    if(flag){//flag==true
+      System.out.println("正常退出！");
+    }else{//flag==false
+      System.out.println("被迫退出！");
+    }
+  }
+}
+```
+
+### 循环的嵌套使用
+
+#### 双重循环
+
+##### 乘法口诀
+
+乘法口诀：
+```
+1*1=1
+1*2=2   2*2=4
+1*3=3   2*3=6   3*3=9
+1*4=4   2*4=8   3*4=12  4*4=16
+1*5=5   2*5=10  3*5=15  4*5=20  5*5=25
+1*6=6   2*6=12  3*6=18  4*6=24  5*6=30  6*6=36
+1*7=7   2*7=14  3*7=21  4*7=28  5*7=35  6*7=42  7*7=49
+1*8=8   2*8=16  3*8=24  4*8=32  5*8=40  6*8=48  7*8=56  8*8=64
+1*9=9   2*9=18  3*9=27  4*9=36  5*9=45  6*9=54  7*9=63  8*9=72  9*9=81
+```
+
+代码：
+
+```java
+public class TestFor11{
+  public static void main(String[] args){
+    //1*6=6   2*6=12  3*6=18  4*6=24  5*6=30  6*6=36
+    /*
+    System.out.print("1*6=6"+"\t");
+    System.out.print("2*6=12"+"\t");
+    System.out.print("3*6=18"+"\t");
+    System.out.print("4*6=24"+"\t");
+    System.out.print("5*6=30"+"\t");
+    System.out.print("6*6=36"+"\t");
+    
+    for(int i=1;i<=6;i++){
+      System.out.print(i+"*6="+i*6+"\t");
+    }
+    //换行
+    System.out.println();
+    
+    //1*7=7   2*7=14  3*7=21  4*7=28  5*7=35  6*7=42  7*7=49
+    for(int i=1;i<=7;i++){
+      System.out.print(i+"*7="+i*7+"\t");
+    }
+    //换行
+    System.out.println();
+    
+    //1*8=8   2*8=16  3*8=24  4*8=32  5*8=40  6*8=48  7*8=56  8*8=64
+    for(int i=1;i<=8;i++){
+      System.out.print(i+"*8="+i*8+"\t");
+    }
+    //换行
+    System.out.println();
+    */
+    
+    for(int j=1;j<=9;j++){
+      for(int i=1;i<=j;i++){
+        System.out.print(i+"*"+j+"="+i*j+"\t");
+      }
+      //换行
+      System.out.println();
+    }
+  }
+}
+```
+
+```
+1*9=9   2*9=18  3*9=27  4*9=36  5*9=45  6*9=54  7*9=63  8*9=72  9*9=81
+1*8=8   2*8=16  3*8=24  4*8=32  5*8=40  6*8=48  7*8=56  8*8=64
+1*7=7   2*7=14  3*7=21  4*7=28  5*7=35  6*7=42  7*7=49
+1*6=6   2*6=12  3*6=18  4*6=24  5*6=30  6*6=36
+1*5=5   2*5=10  3*5=15  4*5=20  5*5=25
+1*4=4   2*4=8   3*4=12  4*4=16
+1*3=3   2*3=6   3*3=9
+1*2=2   2*2=4
+1*1=1
+```
+
+代码：
+
+```java
+public class TestFor12{
+  public static void main(String[] args){
+    /*
+    //1*8=8   2*8=16  3*8=24  4*8=32  5*8=40  6*8=48  7*8=56  8*8=64
+    for(int i=1;i<=8;i++){
+      System.out.print(i+"*8="+i*8+"\t");
+    }
+    //换行
+    System.out.println();
+    
+    //1*7=7   2*7=14  3*7=21  4*7=28  5*7=35  6*7=42  7*7=49
+    for(int i=1;i<=7;i++){
+      System.out.print(i+"*7="+i*7+"\t");
+    }
+    //换行
+    System.out.println();
+      
+    //1*6=6   2*6=12  3*6=18  4*6=24  5*6=30  6*6=36
+    for(int i=1;i<=6;i++){
+      System.out.print(i+"*6="+i*6+"\t");
+    }
+    //换行
+    System.out.println();
+    */
+    
+    for(int j=9;j>=1;j--){
+      for(int i=1;i<=j;i++){
+        System.out.print(i+"*"+j+"="+i*j+"\t");
+      }
+      //换行
+      System.out.println();
+    }
+  } 
+}
+```
+
+##### 打印各种形状
+
+1. 长方形：
+
+<img src="images/4/1-9-1.png">
+
+```java
+for(int j=1;j<=4;j++){//j:控制行数
+  //*********
+  for(int i=1;i<=9;i++){//i:控制*的个数
+    System.out.print("*");
+  }
+  //换行：
+  System.out.println();
+}
+```
+
+2. 距离前面有一定空隙的长方形：
+
+<img src="images/4/1-9-2.png">
+
+```java
+for(int j=1;j<=4;j++){//j:控制行数
+  //加入空格：
+  for(int i=1;i<=5;i++){//i:控制空格的个数
+    System.out.print(" ");
+  }
+  //*********
+  for(int i=1;i<=9;i++){//i:控制*的个数
+    System.out.print("*");
+  }
+  //换行：
+  System.out.println();
+}
+```
+
+3. 平行四边形：
+
+<img src="images/4/1-9-3.png">
+
+```java
+for(int j=1;j<=4;j++){//j:控制行数
+  //加入空格：
+  for(int i=1;i<=(9-j);i++){//i:控制空格的个数
+    System.out.print(" ");
+  }
+  //*********
+  for(int i=1;i<=9;i++){//i:控制*的个数
+    System.out.print("*");
+  }
+  //换行：
+  System.out.println();
+}
+```
+
+4. 三角形：
+
+<img src="images/4/1-9-4.png">
+
+```java
+for(int j=1;j<=4;j++){//j:控制行数
+  //加入空格：
+  for(int i=1;i<=(9-j);i++){//i:控制空格的个数
+    System.out.print(" ");
+  }
+  //*********
+  for(int i=1;i<=(2*j-1);i++){//i:控制*的个数
+    System.out.print("*");
+  }
+  //换行：
+  System.out.println();
+}
+```
+
+5. 菱形：
+
+<img src="images/4/1-9-5.png">
+
+```java
+//上面三角形：
+  for(int j=1;j<=4;j++){//j:控制行数
+    //加入空格：
+    for(int i=1;i<=(9-j);i++){//i:控制空格的个数
+      System.out.print(" ");
+    }
+    //*********
+    for(int i=1;i<=(2*j-1);i++){//i:控制*的个数
+      System.out.print("*");
+    }
+    //换行：
+    System.out.println();
+  }
+  
+  //下面三角形：
+  for(int j=1;j<=3;j++){//j:控制行数
+    //加入空格：
+    for(int i=1;i<=(j+5);i++){//i:控制空格的个数
+      System.out.print(" ");
+    }
+    //*********
+    for(int i=1;i<=(7-2*j);i++){//i:控制*的个数
+      System.out.print("*");
+    }
+    //换行：
+    System.out.println();
+  }
+```
+
+6. 空心菱形：
+
+<img src="images/4/1-9-6.png">
+
+```java
+//上面三角形：
+  for(int j=1;j<=4;j++){//j:控制行数
+    //加入空格：
+    for(int i=1;i<=(9-j);i++){//i:控制空格的个数
+            System.out.print(" ");
+    }
+    //*********
+    for(int i=1;i<=(2*j-1);i++){//i:控制*的个数
+      if(i==1||i==(2*j-1)){
+        System.out.print("*");
+      }else{
+        System.out.print(" ");
+      }
+    }
+    //换行：
+    System.out.println();
+  }
+  
+  //下面三角形：
+  for(int j=1;j<=3;j++){//j:控制行数
+    //加入空格：
+    for(int i=1;i<=(j+5);i++){//i:控制空格的个数
+      System.out.print(" ");
+    }
+    //*********
+    for(int i=1;i<=(7-2*j);i++){//i:控制*的个数
+      if(i==1||i==(7-2*j)){
+        System.out.print("*");
+      }else{
+        System.out.print(" ");
+      }
+}
+    //换行：
+    System.out.println();
+  }
+```
+
+#### 三重循环
+
+1. 二重循环可以帮我们解决：二元一次方程组的问题：
+
+```java
+public class TestFor15{
+  public static void main(String[] args){
+    for(int a=1;a<=5;a++){
+      for(int b=3;b<=6;b++){
+        if(a+b==7){
+          System.out.println(a+"----"+b);
+        }
+      }
+    }
+  }
+}
+```
+
+2. 三重循环可以帮我们解决：三元一次方程组的问题：
+
+```java
+public class TestFor16{
+  public static void main(String[] args){
+    /*
+      百钱买百鸡：
+      公鸡5文钱一只，母鸡3文钱一只，小鸡3只一文钱，
+      用100文钱买一百只鸡,其中公鸡，母鸡，小鸡都必须要有，问公鸡，母鸡，小鸡要买多少只刚好凑足100文钱。
+      数学：
+      设未知数：
+      公鸡：x只
+      母鸡：y只
+      小鸡：z只
+      x+y+z=100只
+      5x+3y+z/3=100钱
+      麻烦方式：
+      for(int x=1;x<=100;x++){
+        for(int y=1;y<=100;y++){
+          for(int z=1;z<=100;z++){
+            if((x+y+z==100)&&(5*x+3*y+z/3==100)&&(z%3==0)){
+              System.out.println(x+"\t"+y+"\t"+z);
+            }
+          }
+        }
+      }
+    */
+    //优化：
+    for(int x=1;x<=19;x++){
+      for(int y=1;y<=31;y++){
+        int z = 100-x-y;
+        if((5*x+3*y+z/3==100)&&(z%3==0)){
+          System.out.println(x+"\t"+y+"\t"+z);
+        } 
+      }
+    }
+  }
+}
+```
+
+# 第五章_方法的定义/调用/重载
+
+## 方法的定义和调用
+
+1. 什么是方法？
+
+方法(method)就是一段用来完成特定功能的代码片段，类似于其它语言的函数(function)。
+方法用于定义该类或该类的实例的行为特征和功能实现。 方法是类和对象行为特征的抽象。方法很类似于面向过程中的函数。面向过程中，函数是最基本单位，整个程序由一个个函数调用组成。面向对象中，整个程序的基本单位是类，方法是从属于类和对象的。
+
+2. 方法声明格式：
+
+```
+[修饰符1  修饰符2  …]  返回值类型    方法名(形式参数列表){
+        Java语句；… … …
+}
+```
+
+3. 方法的调用方式：
+
+对象名.方法名(实参列表)
+
+4. 方法的详细说明
+
+形式参数：在方法声明时用于接收外界传入的数据。
+实参：调用方法时实际传给方法的数据。
+返回值：方法在执行完毕后返还给调用它的环境的数据。
+返回值类型：事先约定的返回值的数据类型，如无返回值，必须显示指定为为void。
+
+5. 代码：
+
+```java
+public class TestMethod01{
+  //方法的定义：（写方法）
+  public static int add(int num1,int num2){
+    int sum = 0;
+    sum += num1;
+    sum += num2;
+    return sum;//将返回值返回到方法的调用处
+  }
+  
+  public static void main(String[] args){
+    //10+20:
+    //方法的调用：（用方法）
+    int num = add(10,20);
+    System.out.println(num);
+    /*
+    int num1 = 10;
+    int num2 = 20;
+    int sum = 0;
+    sum += num1;
+    sum += num2;
+    System.out.println(sum);
+    */
+    //30+90:
+    int sum = add(30,90);
+    System.out.println(sum);
+    /*
+    int num3 = 30;
+    int num4 = 90;	
+    int sum1 = 0 ;
+    sum1 += num3;
+    sum1 += num4;
+    System.out.println(sum1);
+    */
+    //50+48:
+    System.out.println(add(50,48));
+  }
+}
+```
+
+6. 总结：
+
+1. 方法是：对特定的功能进行提取，形成一个代码片段，这个代码片段就是我们所说的方法
+2. 方法和方法是并列的关系，所以我们定义的方法不能写到main方法中
+3. 方法的定义--》格式：
+        ```
+        修饰符 方法返回值类型 方法名(形参列表){
+                方法体;
+                return 方法返回值;
+        }
+        ```
+
+4. 方法的作用：提高代码的复用性
+5. 总结方法定义的格式：
+    1. 修饰符: 暂时使用public static --->面向对象一章讲解
+    2. 方法返回值类型  : 方法的返回值对应的数据类型
+      数据类型： 可以是基本数据类型（byte,short,int,long,float,double,char,boolean） 也可以是引用数据类型 
+    3. 方法名 :见名知意，首字母小写，其余遵循驼峰命名，  eg: addNum ,一般尽量使用英文来命名  
+    4. 形参列表 :方法定义的时候需要的形式参数 ：  int  num1, int num2 -->相当于告诉方法的调用者：需要传入几个参数，需要传入的参数的类型
+        实际参数：方法调用的时候传入的具体的参数：  10,20  -->根据形式参数的需要传入的
+
+    5. 方法体：具体的业务逻辑代码
+    6. return 方法返回值;
+
+方法如果有返回值的话： return+方法返回值，将返回值返回到方法的调用处
+方法没有返回值的话：return可以省略不写了，并且方法的返回值类型为：void
+
+```java
+public class TestMethod02{
+  public static void add(int num1,int num2){
+    int sum = 0;
+    sum += num1;
+    sum += num2;	
+    System.out.println(sum);
+    //return; 
+  }
+  
+public static void main(String[] args){
+    //10+20:
+    //方法的调用：（用方法）
+    add(10,20); 
+    //30+90:
+    add(30,90);
+    //50+48:
+    //System.out.println(add(50,48));//报错：TestMethod02.java:22: 错误: 此处不允许使用 '空' 类型
+  }
+}
+```
+
+什么时候有返回值，什么时候没有返回值？ 看心情--》看需求
+
+6. 方法的定义需要注意什么？
+    1. 形参列表要怎么写：定义几个参数，分别是什么类型的  ---》不确定因素我们会当做方法的形参
+    2. 方法到底是否需要返回值 ，如果需要的话，返回值的类型是什么
+
+
+7. 方法的调用需要注意什么？
+    1. 实际参数要怎么传入：传入几个参数，传入什么类型的
+    2. 方法是否有返回值需要接受
+
+### 练习
+
+1. 基本功能：
+
+```java
+import java.util.Scanner;
+public class TestMethod03{
+    public static void main(String[] args){
+      //功能：我心里有一个数，你来猜，看是否猜对
+      //1.你猜一个数
+      Scanner sc = new Scanner(System.in);
+      System.out.println("请你猜一个数：");
+      int yourGuessNum = sc.nextInt();
+      //2.我心里有一个数
+      int myHeartNum = 5;
+      //3.将两个数比对：
+      System.out.println(yourGuessNum==myHeartNum?"猜对了":"猜错了");
+      }
+}
+```
+
+对猜数功能提取为一个方法：
+
+```java
+import java.util.Scanner;
+public class TestMethod03{
+  public static void main(String[] args){
+    //功能：我心里有一个数，你来猜，看是否猜对
+    //1.你猜一个数
+    Scanner sc = new Scanner(System.in);
+    System.out.println("请你猜一个数：");
+    int yourGuessNum = sc.nextInt();
+    
+    //调用猜数的方法：
+    guessNum(yourGuessNum);
+  }
+
+  //方法的定义：功能：实现猜数功能：
+  public static void guessNum(int yourNum){
+    //我心里有一个数(1-6)
+    int myHeartNum = (int)(Math.random()*6)+1;
+    //将两个数比对：
+    System.out.println(yourNum==myHeartNum?"猜对了":"猜错了");	
+  }
+}
+```
+
+### 面试题：两个数交换是否成功
+
+1. 面试题：请问下面代码中两个数是否交换成功：
+
+```java
+public class TestM{
+  public static void main(String[] args){
+    int a=10;
+    int b=20;
+    System.out.println("输出交换前的两个数："+a+"---"+b);
+    changeNum(a,b);
+    System.out.println("输出交换后的两个数："+a+"---"+b);
+  }
+  public static void changeNum(int num1,int num2){
+    int t;
+    t=num1;
+    num1=num2;
+    num2=t;
+  }
+}
+```
+
+结果：没有交换成功：
+
+<img src="images/5/1-1-1.png">
+
+原因：
+
+<img src="images/5/1-1-2.png">
+
+## 方法的重载
+
+1. 什么是方法的重载：
+方法的重载是指一个类中可以定义多个方法名相同，但参数不同的方法。 调用时，会根据不同的参数自动匹配对应的方法。
+
+注意本质：重载的方法，实际是完全不同的方法，只是名称相同而已！
+
+2. 构成方法重载的条件：
+❀不同的含义：形参类型、形参个数、形参顺序不同
+❀    只有返回值不同不构成方法的重载
+如：int a(String str){}与 void a(String str){}不构成方法重载
+❀    只有形参的名称不同，不构成方法的重载
+如：int a(String str){}与int a(String s){}不构成方法重载
+
+3. 代码：
+```java
+public class TestMethod05{
+    public static void main(String[] args){
+      //10+20:
+      int sum = add(10,20);
+      System.out.println(sum);
+      
+      //20+40+80:
+      //System.out.println(add(add(20,40),80));
+      System.out.println(add(20,40,80));
+      //30+60+90+120:
+      //System.out.println(add(add(30,60),add(90,120)));
+      System.out.println(add(30,60,90,120));
+      //9.8+4.7:
+      //System.out.println(add(9.8,4.7));
+      System.out.println(add(9.8,4.7));
+    }
+        
+    //定义一个方法：两个数相加：两个int类型数据相加
+    public static int add(int num1,int num2){
+      return num1+num2;
+    }
+    
+    //定义一个方法：三个数相加：
+    public static int add(int num1,int num2,int num3){
+      return num1+num2+num3;
+    }
+    
+    //定义一个方法：四个数相加：
+    public static int add(int num1,int num2,int num3,int num4){
+      return num1+num2+num3+num4;
+    }
+    //定义一个方法：两个数相加：两个double类型的数据相加
+    public static double add(double num1,double num2){
+      return num1+num2;
+    }
+}
+```
+总结：
+1. 方法的重载：在同一个类中，方法名相同，形参列表不同的多个方法，构成了方法的重载。
+2. 方法的重载只跟：方法名和形参列表有关，与修饰符，返回值类型无关。
+3. 注意：形参列表不同指的是什么？
+    1. 个数不同
+add()   add(int num1)   add(int num1,int num2)
+    2. 顺序不同
+add(int num1,double num2)   add(double num1,int num2)
+    3. 类型不同
+add(int num1)   add(double num1)
+
+4. 请问下面的方法是否构成了方法的重载？
+    1. add(int a)  和  add(int b)   --->不构成,相当于方法的重复定义
+    2. public static int add(int a) 和  public static void add(int b)  --->不构成
+
+
+
+4. 扩充：
+```java
+public class TestMethod06{
+  public static void main(String[] args){
+    add(5);
+    //级别：byte,short,char-->int-->long-->float--->double
+  }
+  
+  public static void add(double num1){
+    System.out.println("------2");
+  }
+  public static void add(float num1){
+    System.out.println("------3");
+  }
+  public static void add(long num1){
+    System.out.println("------4");
+  }
+  /*
+  public static void add(int num1){
+    System.out.println("------1");
+  }
+  */
+}
+```
+
+# 第六章_数组
+
+## 数组的引入
+
+1. 习题引入：
+```java
+import java.util.Scanner;
+public class TestArray01{
+  public static void main(String[] args){
+    //功能：键盘录入十个学生的成绩，求和，求平均数：
+    //定义一个求和的变量：
+    int sum = 0;
+    Scanner sc = new Scanner(System.in);
+    for(int i=1;i<=10;i++){//i:控制循环次数
+      System.out.print("请录入第"+i+"个学生的成绩：");
+      int score = sc.nextInt();
+      sum += score;
+    }
+    
+    System.out.println("十个学生的成绩之和为："+sum);
+    System.out.println("十个学生的成绩平均数为："+sum/10);
+    
+    //本题的缺点：
+    //求第6个学生的成绩：？？？？？---》不能
+  }
+}
+```
+缺点：就是不能求每个学生的成绩具体是多少
+
+解决：将成绩进行存储  ----》 引入 ： 数组 
+
+感受到数组的作用：数组用来存储数据的，在程序设计中，为了处理方便，数组用来将相同类型的若干数据组织起来。
+这个若干数据的集合我们称之为数组。
+
+## 数组的学习
+
+1. 数组的定义
+数组是相同类型数据的有序集合。数组描述的是相同类型的若干个数据，按照一定的先后次序排列组合而成。其中，每一个数据称作一个元素，每个元素可以通过一个索引（下标）来访问它们。
+数组的四个基本特点：
+1.长度是确定的。数组一旦被创建，它的大小就是不可以改变的。
+2.其元素的类型必须是相同类型，不允许出现混合类型。
+3.数组类型可以是任何数据类型，包括基本类型和引用类型。
+4.数组有索引的：索引从0开始，到 数组.length-1 结束 
+5.数组变量属于引用类型，数组也是对象。
+PS:数组变量属于引用类型，数组也是对象，数组中的每个元素相当于该对象的成员变量。数组本身就是对象，Java中对象是在堆中的，因此数组无论保存原始类型还是其他对象类型，数组对象本身是在堆中存储的。
+
+2. 数组的学习：
+```java
+public class TestArray02{
+  public static void main(String[] args){
+    //数组的作用：用来存储相同类型的数据
+    //以int类型数据为案例：数组用来存储int类型数据
+    //1.声明(定义数组)
+    int[] arr; //定义一个int类型的数组，名字叫arr
+    //int arr2[];
+    //如果数组只声明，没有后续操作，那么这个数组相当于没定义
+    //int[] arr3 = null;//空 辨别：数组赋值为null和什么都没有赋值  不一样的效果 
+    
+    //2.创建
+    arr = new int[4];//给数组开辟了一个长度为4的空间
+    //编译期声明和创建会被合为一句话: int[] arr = new int[4];
+    
+    //3.赋值
+    arr[0] = 12;
+    arr[3] = 47;
+    arr[2] = 98;
+    arr[1] = 56;
+    arr[2] = 66;
+    /*
+    arr[4] = 93;
+    出现异常：Exception in thread "main" java.lang.ArrayIndexOutOfBoundsException: 4
+    Array 数组
+    Index 索引
+    OutOf 超出
+    Bounds 界限
+    Exception 异常
+    ---》数组索引越界异常  
+    */
+
+    //4.使用
+    System.out.println(arr[2]);
+    System.out.println(arr[0]+100);
+    //通过数组一个属性来获取  length 长度
+    System.out.println("数组的长度是："+arr.length);
+  }
+}
+```
+
+### 内存分析
+
+<img src="images/6/1-1-1.png">
+
+## 完善引入的习题_数组的遍历
+
+1. 代码：
+```java
+import java.util.Scanner;
+public class TestArray03{
+  public static void main(String[] args){
+      //功能：键盘录入十个学生的成绩，求和，求平均数：
+      //定义一个int类型的数组，长度为10 ：
+      int[] scores = new int[10];
+      //定义一个求和的变量：
+      int sum = 0;
+      Scanner sc = new Scanner(System.in);
+      for(int i=1;i<=10;i++){//i:控制循环次数
+        System.out.print("请录入第"+i+"个学生的成绩：");
+        int score = sc.nextInt();
+        scores[i-1] = score;
+        sum += score;
+      }
+      
+      System.out.println("十个学生的成绩之和为："+sum);
+      System.out.println("十个学生的成绩平均数为："+sum/10);
+      
+        
+      //求第6个学生的成绩： 
+      //System.out.println(scores[5]);
+      /*
+      System.out.println(scores[0]);
+      System.out.println(scores[1]);
+      System.out.println(scores[2]);
+      System.out.println(scores[3]);
+      //....
+      System.out.println(scores[9]);
+      */
+      //将数组中的每个元素进行查看--》数组的遍历：
+      //方式1：普通for循环---》正向遍历：
+      for(int i=0;i<=9;i++){
+        System.out.println("第"+(i+1)+"个学生的成绩为："+scores[i]);
+      }
+      
+      //方式2：增强for循环:
+      //对scores数组进行遍历，遍历出来每个元素都用int类型的num接收：
+      int count = 0;
+      for(int num:scores){
+        count++;
+        //每次都将num在控制台输出
+        System.out.println("第"+count+"个学生的成绩为："+num);
+      }
+      
+      /*
+      增强for循环：
+      优点：代码简单
+      缺点：单纯的增强for循环不能涉及跟索引相关的操作
+      */
+      
+      //方式3：利用普通for循环： 逆向遍历：
+      for(int i=9;i>=0;i--){
+        System.out.println("第"+(i+1)+"个学生的成绩为："+scores[i]);
+      }
+    }
+}
+```
+
+2. 用IDEA验证数组的确将数据进行存储了：
+
+<img src="images/6/1-2-1.png">
+
+## 数组的三种初始化方式
+
+数组的初始化方式总共有三种：静态初始化、动态初始化、默认初始化。
+
+- 静态初始化
+除了用new关键字来产生数组以外，还可以直接在定义数组的同时就为数组元素分配空间并赋值。
+
+eg:
+int[] arr = {12,23,45};
+int[] arr = new int[]{12,23,45};
+注意：
+1. new int[3]{12,23,45};-->错误
+2. int[] arr ;
+   arr = {12,23,45};  --->错误
+
+- 动态初始化
+数组定义与为数组元素分配空间并赋值的操作分开进行。
+
+eg:
+int[] arr ;
+arr = new int[3]
+arr[0] = 12;
+arr[1] = 23;
+arr[2] = 45;
+默认初始化
+数组是引用类型，它的元素相当于类的实例变量，因此数组一经分配空间，其中的每个元素也被按照实例变量同样的方式被隐式初始化。
+
+int[] arr = new int[3];   ---> 数组有默认的初始化值
+
+<img src="images/6/1-3-1.png">
+
+## 数组的应用题
+
+### 最值问题
+
+1. 实现一个功能：给定一个数组int[] arr = {12,3,7,4,8,125,9,45}; ，求出数组中最大的数。
+思路图：
+
+<img src="images/6/1-4-1.png">
+
+```java
+public class TestArray04{
+  public static void main(String[] args){
+    //实现一个功能：给定一个数组int[] arr = {12,3,7,4,8,125,9,45}; ，求出数组中最大的数。
+    //1.给定一个数组
+    int[] arr = {12,3,7,4,8,125,9,45,666,36};
+    
+    //2.求出数组中的最大值：
+    //先找一个数上擂台，假定认为这个数最大：
+    int maxNum = arr[0];
+    for(int i=0;i<arr.length;i++){
+      if(arr[i]>maxNum){
+        maxNum = arr[i];
+      }
+    }
+    System.out.println("当前数组中最大的数为："+maxNum);
+  }
+}
+```
+2. 将求最大值的方法提取出来：
+```java
+public class TestArray04{
+  public static void main(String[] args){
+    //实现一个功能：给定一个数组int[] arr = {12,3,7,4,8,125,9,45}; ，求出数组中最大的数。
+    //1.给定一个数组
+    int[] arr = {12,3,7,4,8,725,9,45,666,36};
+    
+    //2.求出数组中的最大值：
+    //调用方法：
+    int num = getMaxNum(arr);
+    System.out.println("当前数组中最大的数为："+num);
+  }
+      
+  /*
+  想提取一个方法：求数组中的最大值
+  求哪个数组中的最大值 ---》不确定因素：哪个数组 (形参)---》返回值：最大值
+  */
+  public static int getMaxNum(int[] arr){
+    //先找一个数上擂台，假定认为这个数最大：
+    int maxNum = arr[0];
+    for(int i=0;i<arr.length;i++){
+      if(arr[i]>maxNum){
+        maxNum = arr[i];
+      }
+    }
+    return maxNum;
+  }
+}
+```
+3. 画内存：
+方法的实参传递给形参的时候一定要注意：一切都是值传递：
+如果是基本数据类型，那么传递的就是字面值
+如果是引用数据类型，那么传递的就是地址值
+
+<img src="images/6/1-4-2.png">
+
+### 查询问题
+
+1. 查询指定位置的元素
+```java
+public class TestArray05{
+  public static void main(String[] args){
+    //查询指定位置的元素
+    //给定一个数组：
+    int[] arr = {12,34,56,7,3,10};
+    //查找索引为2的位置上对应的元素是什么？
+    System.out.println(arr[2]);
+  }
+}
+```
+上面代码体现了数组的一个优点：
+在按照位置查询的时候，直接一步到位，效率非常高
+
+2. 查询指定元素的位置--》找出元素对应的索引 
+```java
+public class TestArray06{
+  public static void main(String[] args){
+    //查询指定元素的位置--》找出元素对应的索引 
+    //给定一个数组：
+    int[] arr = {12,34,56,7,3,56};
+    //           0  1  2  3 4  5
+    
+    //功能：查询元素888对应的索引：
+    int index = -1; //这个初始值只要不是数组的索引即可
+    for(int i=0;i<arr.length;i++){
+      if(arr[i]==12){
+        index = i;//只要找到了元素，那么index就变成为i
+        break;//只要找到这个元素，循环就停止
+      }
+    }
+    if(index!=-1){
+      System.out.println("元素对应的索引："+index);
+    }else{//index==-1
+      System.out.println("查无次数！");
+    }
+  }
+}
+```
+3. 将查指定元素对应的索引的功能提取为方法：
+```java
+public class TestArray06{
+    public static void main(String[] args){
+      //查询指定元素的位置--》找出元素对应的索引 
+      //给定一个数组：
+      int[] arr = {12,34,56,7,3,56};
+      //           0  1  2  3 4  5
+      
+      //功能：查询元素888对应的索引：
+      //调用方法：
+      int index = getIndex(arr,999);
+      //后续对index的值进行判断：
+      if(index!=-1){
+        System.out.println("元素对应的索引："+index);
+      }else{//index==-1
+        System.out.println("查无次数！");
+      }
+    }
+        
+    /*
+    定义一个方法：查询数组中指定的元素对应的索引：
+    不确定因素：哪个数组，哪个指定元素  （形参）
+    返回值：索引
+    
+    */
+    public static int getIndex(int[] arr,int ele){
+      int index = -1; //这个初始值只要不是数组的索引即可
+      for(int i=0;i<arr.length;i++){
+        if(arr[i]==ele){
+          index = i;//只要找到了元素，那么index就变成为i
+          break;//只要找到这个元素，循环就停止
+        }
+      }
+      return index;
+    }
+}
+```
+
+### 添加元素
+
+1. 实现一个功能：
+添加逻辑：
+
+<img src="images/6/1-4-3.png">
+
+```java
+public class TestArray07{
+  public static void main(String[] args){
+    //功能：给定一个数组,在数组下标为2的位置上添加一个元素91
+    
+    //1.给定一个数组：
+    int[] arr = {12,34,56,7,3,10,55,66,77,88,999,89};
+    //           0  1   2 3 4 5
+    //2.输出增加元素前的数组：
+    System.out.print("增加元素前的数组：");
+    for(int i=0;i<arr.length;i++){
+      if(i!=arr.length-1){
+        System.out.print(arr[i]+",");
+      }else{//i==arr.length-1 最后一个元素不用加,
+        System.out.print(arr[i]);
+      }
+    }
+    
+    //3.增加元素
+    /*
+    arr[5] = arr[4];
+    arr[4] = arr[3];
+    arr[3] = arr[2];
+    */
+    int index = 1;//在这个指定位置添加 元素
+    for(int i=arr.length-1;i>=(index+1);i--){
+      arr[i] = arr[i-1];
+    }
+    arr[index] = 666;
+    
+    
+    //4.输出增加元素后的数组：
+    System.out.print("\n增加元素后的数组：");
+    for(int i=0;i<arr.length;i++){
+      if(i!=arr.length-1){
+        System.out.print(arr[i]+",");
+      }else{//i==arr.length-1 最后一个元素不用加,
+        System.out.print(arr[i]);
+      }
+    }
+  }	
+}
+```
+2. 将添加功能提取为一个 方法：
+```java
+import java.util.Scanner;
+public class TestArray07{
+  public static void main(String[] args){
+    //功能：给定一个数组,在数组下标为2的位置上添加一个元素91
+    
+    //1.给定一个数组：
+    int[] arr = {12,34,56,7,3,10,55,66,77,88,999,89};
+    //           0  1   2 3 4 5
+    //2.输出增加元素前的数组：
+    /*
+    System.out.print("增加元素前的数组：");
+    for(int i=0;i<arr.length;i++){
+      if(i!=arr.length-1){
+        System.out.print(arr[i]+",");
+      }else{//i==arr.length-1 最后一个元素不用加,
+        System.out.print(arr[i]);
+      }
+    }
+    */
+    
+    //从键盘接收数据：
+    Scanner sc = new Scanner(System.in);
+    System.out.println("请录入你要添加元素的指定下标：");
+    int index = sc.nextInt();
+    System.out.println("请录入你要添加的元素：");
+    int ele = sc.nextInt();
+    
+    //3.增加元素
+    //调用方法：
+    insertEle(arr,index,ele);
+    
+    //4.输出增加元素后的数组：
+    System.out.print("\n增加元素后的数组：");
+    for(int i=0;i<arr.length;i++){
+      if(i!=arr.length-1){
+        System.out.print(arr[i]+",");
+      }else{//i==arr.length-1 最后一个元素不用加,
+        System.out.print(arr[i]);
+      }
+    }
+  }	
+        
+  /*
+  提取一个添加元素的方法：
+  在数组的指定位置上添加一个指定的元素。
+  在哪个数组的哪个位置添加哪个元素！
+  不确定因素：形参：哪个数组，哪个位置，哪个元素
+  返回值：无
+  
+  */
+  public static void insertEle(int[] arr,int index,int ele){
+    for(int i=arr.length-1;i>=(index+1);i--){
+      arr[i] = arr[i-1];
+    }
+    arr[index] = ele;
+  }
+}
+```
+
+### 删除元素
+
+1. 实现一个功能：删除指定位置上的元素
+逻辑：
+
+<img src="images/6/1-4-4.png">
+
+```java
+import java.util.Arrays;
+public class TestArray08{
+  public static void main(String[] args){
+    //功能：给定一个数组,删除下标为2元素
+    
+    //1.给定一个数组：
+    int[] arr = {12,34,56,7,3,10,34,45,56,7,666};
+    //           0  1   2 3 4 5
+    //2.输出删除前的数组：
+    System.out.println("删除元素前的数组："+Arrays.toString(arr));
+    
+    //3.删除
+    /*
+    arr[2] = arr[3];
+    arr[3] = arr[4];
+    arr[4] = arr[5];
+    */
+    int index = 0;
+    for(int i=index;i<=arr.length-2;i++){
+      arr[i] = arr[i+1];
+    }
+    arr[arr.length-1] = 0;
+    
+    //4.输出删除后的数组：
+    System.out.println("删除元素后的数组："+Arrays.toString(arr));
+  }
+}
+```
+2. 实现一个功能：删除指定元素
+```java
+import java.util.Arrays;
+public class TestArray09{
+  public static void main(String[] args){
+    //功能：给定一个数组,删除元素3：
+    
+    //1.给定一个数组：
+    int[] arr = {12,34,56,7,3,10,34,45,56,7,666};
+      
+    //2.输出删除前的数组：
+    System.out.println("删除元素前的数组："+Arrays.toString(arr));
+    
+    
+    //找到要删除的元素对应的索引即可：
+    int index = -1 ;
+    for(int i=0;i<arr.length;i++){
+      if(arr[i]==1200){
+        index = i;
+        break;
+      }
+    }
+    
+    //3.删除
+    
+    if(index!=-1){
+      for(int i=index;i<=arr.length-2;i++){
+        arr[i] = arr[i+1];
+      }
+      arr[arr.length-1] = 0;
+    }else{//index==-1
+      System.out.println("根本没有你要删除的元素！");
+    }
+    
+    //4.输出删除后的数组：
+    System.out.println("删除元素后的数组："+Arrays.toString(arr));
+  }
+}
+```
+
+## 详述main方法
+
+1. main方法：程序的入口，在同一个类中，如果有多个方法，那么虚拟机就会识别main方法，从这个方法作为程序的入口
+2. main方法格式严格要求：
+```java
+public static void main(String[] args){}
+
+public static --->修饰符 ，暂时用这个 -->面向对象一章
+void --->代表方法没有返回值 对应的类型void
+main --->见名知意名字
+String[] args  --->形参  ---》不确定因素
+```
+3. 问题：程序中是否可以有其他的方法也叫main方法？
+可以，构成了方法的重载。
+```java
+public class TestArray10{
+  public static void main(String[] args){
+              
+  }
+  public static void main(String str){
+          
+  }
+}
+```
+4. 形参为String[] 那么实参到底是什么？
+```java
+public class TestArray10{
+  public static void main(String[] args){
+    //从侧面验证：
+    //int[] arr1; //如果对数组只声明，没有后续操作，那么相当于 白定义了。
+    //int[] arr2 = null; 
+    //System.out.println(arr2.length);//Exception in thread "main" java.lang.NullPointerException
+    //int[] arr3 = new int[0];
+    //System.out.println(arr3.length);
+    //int[] arr4 = new int[4];
+    //System.out.println(arr4.length);
+    
+    //System.out.println(args.length);//0
+    //从这个结果证明，参数是String[],实参是  new String[0] 
+    //默认情况下，虚拟机在调用main方法的时候就是传入了一个长度为0的数组
+    
+    System.out.println(args.length);
+    for(String str:args){
+      System.out.println(str);
+    }
+  }
+}
+```
+手动传入实参：
+有特殊符号的时候可以加上“”
+<img src="images/6/1-5-1.png">
+没有特殊符号用空格隔开即可：
+<img src="images/6/1-5-2.png">
+
+## 可变参数
+
+```java
+public class TestArray12{
+  /*
+  1.可变参数：作用提供了一个方法，参数的个数是可变的 ,解决了部分方法的重载问题
+  int...num
+  double...num
+  boolean...num
+  
+  
+  2.可变参数在JDK1.5之后加入的新特性
+  3.方法的内部对可变参数的处理跟数组是一样
+  4.可变参数和其他数据一起作为形参的时候，可变参数一定要放在最后
+  5.我们自己在写代码的时候，建议不要使用可变参数。
+  */
+  public static void main(String[] args){
+    //method01(10);
+    //method01();
+    //method01(20,30,40);
+    method01(30,40,50,60,70);
+    //method01(new int[]{11,22,33,44});
+  }
+  public static void method01(int num2,int...num){
+    System.out.println("-----1");
+    for(int i:num){
+            System.out.print(i+"\t");
+    }
+    System.out.println();
+    
+    System.out.println(num2);
+  }
+}
+```
+
+## Arrays工具类
+
+为了方便我们对数组进行操作，系统提供一个类Arrays，我们将它当做工具类来使用。
+```java
+import java.util.Arrays;
+public class TestArray13{
+  public static void main(String[] args){
+    //给定一个数组：
+    int[] arr = {1,3,7,2,4,8};
+    //toString:对数组进行遍历查看的，返回的是一个字符串，这个字符串比较好看
+    System.out.println(Arrays.toString(arr));
+    
+    //binarySearch:二分法查找：找出指定数组中的指定元素对应的索引：
+    //这个方法的使用前提：一定要查看的是一个有序的数组：
+    //sort：排序 -->升序
+    Arrays.sort(arr);
+    System.out.println(Arrays.toString(arr));
+    System.out.println(Arrays.binarySearch(arr,4));
+    
+    int[] arr2 = {1,3,7,2,4,8};
+    //copyOf:完成数组的复制：
+    int[] newArr = Arrays.copyOf(arr2,4);
+    System.out.println(Arrays.toString(newArr));
+    
+    //copyOfRange:区间复制：
+    int[] newArr2 = Arrays.copyOfRange(arr2,1,4);//[1,4)-->1,2,3位置
+    System.out.println(Arrays.toString(newArr2));
+    
+    //equals:比较两个数组的值是否一样：
+    int[] arr3 = {1,3,7,2,4,8};
+    int[] arr4 = {1,3,7,2,4,8};
+    System.out.println(Arrays.equals(arr3,arr4));//true
+    System.out.println(arr3==arr4);//false ==比较左右两侧的值是否相等，比较的是左右的地址值，返回结果一定是false
+    
+    //fill：数组的填充：
+    int[] arr5 = {1,3,7,2,4,8};
+    Arrays.fill(arr5,10);
+    System.out.println(Arrays.toString(arr5));
+  }
+}
+```
+
+## 数组的复制操作
+
+<img src="images/6/1-6-1.png">
+<img src="images/6/1-6-2.png">
+原理:
+<img src="images/6/1-6-3.png">
+
+## 二维数组
+
+1. 引入：本质上全部都是一维数组：
+<img src="images/6/1-7-1.png">
+2.基本代码：
+
+```java
+public class TestArray15{
+  public static void main(String[] args){
+    //定义一个二维数组：
+    int[][] arr = new int[3][];//本质上定义了一个一维数组，长度为3
+    
+    int[] a1 = {1,2,3};
+    arr[0] = a1;
+    
+    arr[1] = new int[]{4,5,6,7};
+    
+    arr[2] = new int[]{9,10};
+  }
+}
+```
+对应内存：
+<img src="images/6/1-7-2.png">
+
+3. 四种遍历方式：
+```java
+public class TestArray15{
+  public static void main(String[] args){
+    //定义一个二维数组：
+    int[][] arr = new int[3][];//本质上定义了一个一维数组，长度为3
+    
+    int[] a1 = {1,2,3};
+    arr[0] = a1;
+    
+    arr[1] = new int[]{4,5,6,7};
+    
+    arr[2] = new int[]{9,10};
+    
+    //读取6这个元素：
+    //System.out.println(arr[1][2]);
+    
+    //对二维数组遍历：
+    //方式1：外层普通for循环+内层普通for循环：
+    for(int i=0;i<arr.length;i++){
+      for(int j=0;j<arr[i].length;j++){
+        System.out.print(arr[i][j]+"\t");
+      }
+      System.out.println();
+    }
+    
+    //方式2：外层普通for循环+内层增强for循环：
+    for(int i=0;i<arr.length;i++){
+      for(int num:arr[i]){
+        System.out.print(num+"\t");
+      }
+      System.out.println();
+    }
+    
+    //方式3：外层增强for循环+内层增强for循环：
+    for(int[] a:arr){
+      for(int num:a){
+        System.out.print(num+"\t");
+      }
+      System.out.println();
+    }
+    
+    //方式4：外层增强for循环+内层普通for循环：
+    for(int[] a:arr){
+      for(int i=0;i<a.length;i++){
+        System.out.print(a[i]+"\t");
+      }
+      System.out.println();
+    }
+  }
+}
+```
+
+## 二维数组的初始化方式
+
+数组的初始化方式总共有三种：静态初始化、动态初始化、默认初始化。
+
+- 静态初始化
+除了用new关键字来产生数组以外，还可以直接在定义数组的同时就为数组元素分配空间并赋值。
+
+eg:
+```java
+int[][] arr = {{1,2},{4,5,6},{4,5,6,7,8,9,9}};
+int[][] arr =new int[][] {{1,2},{4,5,6},{4,5,6,7,8,9,9}};
+```
+- 动态初始化
+数组定义与为数组元素分配空间并赋值的操作分开进行。
+eg:
+```java
+int[][] arr = new int[3][]; //本质上定义了一维数组长度为3，每个“格子”中放入的是一个数组
+arr[0] = new int[]{1,2};
+arr[1] = new int[]{3,4,5,6};
+arr[2] = new int[]{34,45,56};
+```
+eg:
+```java
+int[][] arr = new int[3][2]; 
+public class TestArray16{
+  public static void main(String[] args){
+    int[][] arr = new int[3][2];
+    //本质上：定义一维数组，长度为3，每个数组“格子”中，有一个默认的长度为2的数组：
+
+    arr[1] = new int[]{1,2,3,4};
+
+    //数组遍历：
+    for(int[] a:arr){
+      for(int num:a){
+        System.out.print(num+"\t");
+      }
+      System.out.println();
+    }
+  }
+}
+```
+- 默认初始化
+数组是引用类型，它的元素相当于类的实例变量，因此数组一经分配空间，其中的每个元素也被按照实例变量同样的方式被隐式初始化。
+
+# 第七章_IDEA的使用
+
+## IDEA
+
+### IDE
+
+集成开发环境（<strong style="color:#DD5145">IDE，Integrated Development Environment</strong> ）是用于提供程序开发环境的应用程序，一般包括代码编辑器、编译器、调试器和图形用户界面等工具。集成了代码编写功能、分析功能、编译功能、调试功能等一体化的开发软件服务套。所有具备这一特性的软件或者软件套（组）都可以叫集成开发环境。如微软的Visual Studio系列，Borland的C++ Builder、Delphi系列等。该程序可以独立运行，也可以和其它程序并用。IDE多被用于开发HTML应用软件。例如，许多人在设计网站时使用IDE（如HomeSite、DreamWeaver等），因为很多项任务会自动生成。编程开发软件将编辑、编译、调试等功能集成在一个桌面环境中,这样就大大方便了用户。
+
+- 优点
+节省时间和精力。IDE的目的就是要让开发更加快捷方便，通过提供工具和各种性能来帮助开发者组织资源，减少失误，提供捷径。
+建立统一标准。当一组程序员使用同一个开发环境时，就建立了统一的工作标准，当IDE提供预设的模板，或者不同团队分享代码库时，这一效果就更加明显了。
+管理开发工作。首先，IDE提供文档工具，可以自动输入开发者评论，或者迫使开发者在不同区域编写评论。其次，IDE可以展示资源，更便于发现应用所处位置，无需在文件系统里面艰难的搜索。
+
+- 缺点
+学习曲线问题。IDE基本上是比较复杂的工具，为了更好的熟练使用，需要一定的时间和耐心。
+初学者的困难。对初学者来说，使用IDE来学习开发有相当的难度，不适合学习一种新语言时使用。
+无法修复坏代码或设计。开发者不能完全依赖工具的便捷，还是必须保持专业水准和熟练度，开发的成果好坏主要还是看开发员的技术。
+
+### JetBrains公司介绍
+
+1. IntelliJ IDEA就是Java的IDE。
+2. 市场占有率竹节攀升，超过了Eclipse。
+3. JetBrains公司介绍：
+
+JetBrains是一家捷克的软件开发公司，该公司位于捷克的布拉格，并在俄罗斯的圣彼得堡及美国麻州波士顿都设有办公室，该公司最为人所熟知的产品是Java编程语言开发撰写时所用的集成开发环境：IntelliJ IDEA。公司旗下还有其它产品，比如：
+- WebStorm: 用于开发JavaScript、HTML5、 CS3等前端技术;
+- PyCharm: 用于开发python（python语言热度排行榜排名第一，在人工智能大数据领域应用）
+- PhpStorm: 用于开发PHP
+- RubyMine: 用于开发Ruby/Rails
+- AppCode: 用于开发Objective - C/Swift,替换xcode的
+- CLion: 用于开发C/C++
+- DataGrip: 用于开发数据库和SQL
+- Rider: 用于开发.NET
+- GoLand: 用于开发Go（区块链主流开发语言就是Go语言）
+
+4. 官网: https://www.jetbrains.com
+<img src="images/7/1-1-1.png">
+
+### IntelliJ_IDEA介绍
+
+1. IDEA 全称IntelliJ IDEA，是用于java语言开发的集成环境IDE(Integrated Development Environment)，也可用于其他语言。
+IntelliJ在业界被公认为最好的java开发工具之一，尤其在智能代码助手、代码自动提示、重构、J2EE支持、Ant、JUnit、CVS整合、代码审查、 创新的GUI设计等方面的功能可以说是超常的。
+
+IDEA是JetBrains公司的产品，这家公司总部位于捷克共和国的首都布拉格，开发人员以严谨著称的东欧程序员为主。
+
+2. IDEA的支持：
+<img src="images/7/1-2-1.png">
+<img src="images/7/1-2-2.png">
+
+3. IDEA的优势（相对于Eclipse）
+    1. 强大的整合能力。比如: Git、 Maven、 Spring 等
+    2. 提示功能的快速、便捷
+    3. 提示功能的范围广
+    4. 好用的快捷键和代码模板
+    5. 精准搜索
+
+### IntelliJ_IDEA的下载和安装的准备
+
+1. 官网: https://www.jetbrains.com
+<img src="images/7/1-3-1.png">
+
+2. 安装的准备：
+    1. 硬件环境：
+    内存8G以上
+    CPU i5以上
+    安装在固态硬盘下
+    2. 软件环境：
+    需要安装JDK
+
+### IDEA的卸载
+
+对于免安装的idea：
+1. 删除安装文件
+2. 到用户下将idea的缓存，配置的目录删除掉即可 
+
+安装idea:
+1. 可以用控制面板--》程序
+
+### IDEA的安装和破解
+
+1. 将安装包进行解压--》选择固态盘符
+2. 发送到桌面快捷方式，生成一个快捷方式
+3. 打开：
+<img src="images/7/1-4-1.png">
+选择主题：
+<img src="images/7/1-4-2.png">
+<img src="images/7/1-4-3.png">
+<img src="images/7/1-4-4.png">
+先进入再说，免费试用：
+<img src="images/7/1-4-5.png">
+创建一个项目：
+<img src="images/7/1-4-6.png">
+选择JDK：
+<img src="images/7/1-4-7.png">
+<img src="images/7/1-4-8.png">
+<img src="images/7/1-4-9.png">
+<img src="images/7/1-4-10.png">
+<img src="images/7/1-4-11.png">
+<img src="images/7/1-4-12.png">
+找到jetbrains-agent.jar 文件，然后放入合适的文件夹内（我一般直接放入idea的安装位置了，你随意，不建议有中文路径）
+点击IDEA的菜单，找到： Help---》Edit Custom VM Options
+<img src="images/7/1-4-13.png">
+然后在文件中最后一行填入：
+-javaagent:D:\soft_setup\IDEA\ideaIU-2019.2.3.win\jetbrains-agent.jar
+注意这个jetbrains-agent.jar的路径要是你自己的真实的路径。
+<img src="images/7/1-4-14.png">
+关闭IDEA
+再次打开IDEA，点击菜单 ，Help---》Register:
+<img src="images/7/1-4-15.png">
+<img src="images/7/1-4-16.png">
+关闭IDEA
+重启IDEA
+看到带Licenseed to..字样的 证明激活成功！
+
+### IDEA页面展示
+
+1. 项目下内容：
+- 工程下的src类似于Eclipse下的src目录，用于存放代码。。
+- 工程下的.idea 和TestProject.iml文件都是IDEA工程特有的。类似于Eclipse 工程下的settings、.classpath、.project 等。
+2. 配置：
+<img src="images/7/1-5-1.png">
+<img src="images/7/1-5-2.png">
+
+### Module的概念和使用
+
+1. 在Eclipse中我们有Workspace (工作空间)和Project (工程)的概念，在IDEA中只有Project (工程)和Module (模块)的概念。
+这里的对应关系为: 
+IDEA官网说明:
+An Eclipse workspace is similar to a project in IntelliJ IDEA 
+An Eclipse project maps to a module in IntelliJ IDEA
+翻译:
+Eclipse中 workspace 相当于 IDEA中的Project
+Eclipse中   Project     相当于 IDEA中的Module
+在IntelliJ IDEA中Project(工程) 是最顶级的级别，次级别是Module(模块)。 
+一个Project下可以有多个Module。
+2. 从Eclipse 转过来的人总是下意识地要在同一个窗口管理n个项目，这在Intellij IDEA是无法做到的。Intellij IDEA提供的解决方案是打开多个项目实例，即打开多个项目窗口。即:一个Project 打开一个Window窗口。
+3. IDEA这样设置的原因：
+目前主流的大型项目都是分布式部署的，结构都是类似这种多Module的。
+这类项目一般是这样划分的，比如: 积分模块、任务模块、活动模块等等，模块之间彼此可以相互依赖。这些Module之间都是处于同一个项目业务下的模块，彼此之间是有不可分割的业务关系的。
+<img src="images/7/1-6-1.png">
+
+4. out目录的说明：里面存放的是编译后的字节码文件
+<img src="images/7/1-6-2.png">
+
+5. 删除模块：
+<img src="images/7/1-6-3.png">
+
+### IDEA的常用设置
+
+1. 进入设置：
+<img src="images/7/1-7-1.png">
+<img src="images/7/1-7-2.png">
+<img src="images/7/1-7-3.png">
+
+2. 设置主题：
+<img src="images/7/1-7-4.png">
+
+3. 编辑区的字体变大或者变小：
+<img src="images/7/1-7-5.png">
+
+4. 鼠标悬浮在代码上有提示：
+<img src="images/7/1-7-6.png">
+
+5. 自动导包和优化多余的包：
+手动导包：快捷键：alt+enter
+自动导包和优化多余的包：
+<img src="images/7/1-7-7.png">
+
+6. 同一个包下的类，超过指定个数的时候，导包合并为*
+<img src="images/7/1-7-8.png">
+<img src="images/7/1-7-9.png">
+
+7. 显示行号 ，  方法和方法间的分隔符：
+<img src="images/7/1-7-10.png">
+
+8. 忽略大小写，进行提示：
+<img src="images/7/1-7-11.png">
+
+9. 多个类不隐藏，多行显示：
+<img src="images/7/1-7-12.png">
+
+10. 设置默认的字体，字体大小，字体行间距：(编辑区和控制台都会变化)
+<img src="images/7/1-7-13.png">
+
+11. 修改代码中注释的字体颜色：
+<img src="images/7/1-7-14.png">
+
+12. 修改类头的文档注释信息：---》注意：对新建的类才有效
+```java
+/**
+* @Auther: zhaoss
+* @Date: ${DATE} - ${MONTH} - ${DAY} - ${TIME} 
+* @Description: ${PACKAGE_NAME}
+* @version: 1.0
+*/
+```
+<img src="images/7/1-7-15.png">
+
+13. 设置项目文件编码：
+<img src="images/7/1-7-16.png">
+文件右下角可以调节编码格式：
+<img src="images/7/1-7-17.png">
+
+14. 自动编译：
+<img src="images/7/1-7-18.png">
+
+15. 省电模式：
+<img src="images/7/1-7-19.png">
+
+16. 代码显示结构：
+<img src="images/7/1-7-20.png">
+
+17. 导入jar包：
+<img src="images/7/1-7-21.png">
+
+18. 生成序列化版本号：
+<img src="images/7/1-7-22.png">
+<img src="images/7/1-7-23.png">
+
+### IDEA的常用快捷键
+
+1. 创建内容：alt+insert
+2. main方法：psvm
+3. 输出语句：sout
+4. 复制行：ctrl+d
+5. 删除行：ctrl+y
+<img src="images/7/1-8-1.png">
+
+6. 代码向上/下移动：Ctrl + Shift + Up / Down
+7. 搜索类：  ctrl+n
+8. 生成代码  ：alt + Insert（如构造函数等，getter,setter,hashCode,equals,toString）
+9. 百能快捷键 : alt + Enter （导包，生成变量等）
+10. 单行注释或多行注释 ：  Ctrl + / 或 Ctrl + Shift + /
+11. 重命名 shift+f6
+12. for循环  直接 ：fori   回车即可
+13. 代码块包围：try-catch,if,while等  ctrl+alt+t
+14. 代码自动补全提示:
+<img src="images/7/1-8-2.png">
+
+15. idea代码字体大小放大和缩小的快捷键
+<img src="images/7/1-8-3.png">
+
+16. 代码一层一层调用的快捷键：
+点进源码：ctrl+鼠标悬浮在代码上+点进去即可：
+<img src="images/7/1-8-4.png">
+
+17. 显示代码结构  : alt + 7
+18. 显示导航栏： alt +1 
+19. 撤回：ctrl+z
+20. REDO操作：
+如果跟搜狗输入法的快捷键冲突，可以选择将搜狗的快捷键取消。
+<img src="images/7/1-8-5.png">
+
+21. 缩进：tab  取消缩进： shift+tab
+
+### 模板的使用
+
+#### 代码模板是什么
+
+它的原理就是配置一些常用代码字母缩写，在输入简写时可以出现你预定义的固定模式的代码，使得开发效率大大提高，同时也可以增加个性化。最简单的例子就是在Java中输入sout会出现System.out.println();
+
+1. 所处位置：
+    1. Live Templates
+    2. Postfix Completion
+<img src="images/7/1-9-1.png">
+
+2. 区别：
+    1. Live Templates中可以做用户的个性化定制。
+    Postfix Completion中只能用，不能修改。
+    2. 使用方式不同
+<img src="images/7/1-9-2.png">
+<img src="images/7/1-9-3.png">
+
+#### 修改现有模板
+
+1. 案例1：改main方法：  psvm
+<img src="images/7/1-10-1.png">
+<img src="images/7/1-10-2.png">
+
+2. 案例2：修饰属性的修饰符：
+<img src="images/7/1-10-3.png">
+<img src="images/7/1-10-4.png">
+
+#### 常用的代码模板
+
+1. 模板1： main方法：
+main  或者 psvm
+
+2. 模板2：输出语句：
+sout   或者   .sout
+一些变型：
+soutp:打印方法的形参
+soutm:打印方法的名字
+soutv:打印变量
+
+3. 模板3： 循环
+普通for循环：   fori（正向）   或者   .fori （正向）   . forr(逆向)
+增强for循环：  iter  或者  .for
+（可以用于数组的遍历，集合的遍历）
+
+4. 模板4： 条件判断
+ifn 或者  .null ：判断是否为null  （if null）
+inn 或者 .nn ：判断不等于null   (if not null)
+
+5. 模板5： 属性修饰符：
+prsf : private static final
+psf  :public static final
+
+#### 自定义模板
+
+1. 测试方法：
+<img src="images/7/1-11-1.png">
+
+2. 常用属性：($$中的内容其实就是在定义光标的位置，光标可以切换，用回车切换)
+<img src="images/7/1-11-2.png">
+
+3. 方法注释模板：
+```java
+/**
+* 功能描述:
+* @param: $param$
+* @return: $return$
+* @auther: $user$
+* @date: $date$ $time$
+*/  
+```
+<img src="images/7/1-11-3.png">
+
+### IDEA中的断点调试
+
+#### 常用断点调试快捷键
+
+调试在开发中大量应用：
+1. Debug的优化设置：更加节省内存空间：
+设置Debug连接方式，默认是Socket。 Shared memory是Windows 特有的一个属性，一般在Windows系统下建议使用此设置，
+内存占用相对较少。
+<img src="images/7/1-12-1.png">
+
+2. 常用断点调试快捷键：
+
+<img src="images/7/1-12-2.png">一步一步的向下运行代码，不会走入任何方法中。
+<img src="images/7/1-12-3.png">一步一步的向下运行代码，不会走入系统类库的方法中，但是会走入自定义的方法中。
+<img src="images/7/1-12-4.png">一步一步的向下运行代码，会走入系统类库的方法中，也会走入自定义的方法中。
+<img src="images/7/1-12-5.png">跳出方法
+<img src="images/7/1-12-6.png">结束程序
+<img src="images/7/1-12-7.png">进入到下一个断点，如果没有下一个断点了，就直接运行到程序结束。
+<img src="images/7/1-12-8.png">在当前次取消未执行的断点。
+
+#### 条件判断，查看表达式的值
+
+1. 条件判断：
+说明:
+调试的时候，在循环里增加条件判断，可以极大的提高效率，心情也能惧悦。 
+具体操作: 
+在断点处右击调出条件断点。可以在满足某个条件下，实施断点。 
+<img src="images/7/1-13-1.png">
+
+2. 查看表达式的值：
+选择行，alt+f8。
+<img src="images/7/1-13-2.png">
