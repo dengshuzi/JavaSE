@@ -4172,7 +4172,7 @@ Eclipse中   Project     相当于 IDEA中的Module
 12. 修改类头的文档注释信息：---》注意：对新建的类才有效
 ```java
 /**
-* @Auther: zhaoss
+* @Auther:  
 * @Date: ${DATE} - ${MONTH} - ${DAY} - ${TIME} 
 * @Description: ${PACKAGE_NAME}
 * @version: 1.0
@@ -4342,3 +4342,836 @@ psf  :public static final
 2. 查看表达式的值：
 选择行，alt+f8。
 <img src="images/7/1-13-2.png">
+
+# 第八章_面向对象
+
+## 面向过程和面向对象的区别
+
+面向过程: 当事件比较简单的时候, 利用面向过程, 注重的是事件的具体的步骤/过程, 注重的时过程中的具体行为, 以函数为最小单位, <strong style="color:orange">考虑怎么做</strong>
+面向对象: 注重找"参与者", 将功能封装进对象, 强调具备了功能的对象, 以类/对象为最小单位, <strong style="color:orange">考虑谁来做</strong>
+案例：
+人把大象装进冰箱：
+面向过程：
+函数1：打开冰箱(){人站在冰箱前，打开冰箱，冰箱卡到30度角的时候，冰箱的灯打开了.........}
+函数2：储存大象(){大象先迈左腿，再迈右退，考虑冰箱能不能装下......}
+函数3：关闭冰箱(){人站在冰箱前，关闭冰箱，冰箱开到30度角的时候，冰箱的灯关闭了..........}
+面向对象：
+人{
+  打开(冰箱){
+    冰箱.打开();
+  }
+
+  存储(大象){
+    大象.进入();
+  }
+
+  关闭(冰箱){
+    冰箱.关闭();
+  }
+}
+
+
+冰箱{
+  打开() { 1.2.3.}
+  关闭() {}
+}
+
+柜子{
+}
+
+大象{
+  进入(冰箱){
+  }
+}
+
+面向过程 ---> 面向对象, 其实就是由执行者 ---> 指挥者的一个过渡
+面向过程：编年体
+面向对象：纪传体
+二者相辅相成, 并不是对立的, 解决复杂问题, 通过面向对象方式便于我们从宏观上把握事物之间复杂的关系, 方便我们分析整个系统, 具体到围观操作, 仍然使用面向过程方式来处理
+
+## 类和对象的关系
+
+1. 万事万物皆对象
+2. 对象: 具体的事物, 具体的实体, 具体的实例, 模板下具体的产品
+3. 类: 对对象向上抽取出公共的部分, 形成类, 类是对象的, 是一个模板
+4. 一般卸载代码的时候先写类, 然后在根据类创建对应的对象
+
+## 面向对象的三个阶段
+
+面向对象的三个阶段:
+1. 面向对象分析OOA —— Object Oriented Analysis
+对象: 张三, 李四, 王五
+抽取出一个人类 ---> 人类
+类里有什么:
+动词 --> 动态特性 --> 方法体
+名词 --> 静态特性 --> 属性
+2. 面向对象设计OOD —— Object Oriented Design
+现有类, 再有对象
+类: 人类: Person
+对象: 张三, 李四, 王五
+3. 面向对象编程OOP —— Object Oriented Programming
+
+## 创建类
+
+- 创建类
+1. 属性(field成员变量)
+属性用于定义该类或该对象包含的数据或者说静态特征, 属性作用范围是整个类体
+属性定义格式:
+```java
+[修饰符] 属性类型 属性名 = [默认值];
+```
+2. 方法
+方法用于定义该类或该类的实例的行为特征和功能实现, 方法是类和对象行为特征的抽象, 方法很类似于面向过程中的函数, 面向过程中, 函数是最基本单位, 整个程序由一个个函数调用组成, 面向对象中, 整个程序的基本单位是类, 方法是从属于类和对象的
+方法定义格式:
+```java
+[修饰符] 方法返回值类型 方法名(形参列表) {
+  // n条语句
+}
+```
+void代表没有返回值, 方法的作用: 重用代码, 封装功能, 便于修改
+
+代码:
+```java
+package com.cn.dhc;
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/9/24 - 上午10:44
+ * @Description: com.cn.dhc
+ * @version: 1.0
+ */
+public class Person {
+    // 名词 ---> 属性 ---> 成员变量 ---> 放在类中方法外(注意: 我们值把有需要的内容写到代码里, 不相关的东西不要放在代码中)
+    int age; // 年龄
+    String name; // 姓名
+    double height; // 身高
+    double weight; // 体重
+
+    // 动词 ---> 方法
+    /**
+    * 功能描述:吃饭
+    * @param: null
+    * @return: null
+    * @auther: Evin_D
+    * @date: 2022/9/24 - 上午11:10
+     */  
+    public void eat() {
+        System.out.println("吃饭");
+    }
+    /**
+    * 功能描述: 睡觉
+    * @param: String address
+    * @return: null
+    * @auther: Evin_D
+    * @date: 2022/9/24 - 上午11:15
+     */
+    public void sleep(String address) {
+        System.out.println("我在" + address + "睡觉");
+    }
+    /**
+    * 功能描述: 自我介绍
+    * @param: 
+    * @return: String
+    * @auther: Evin_D
+    * @date: 2022/9/24 - 上午11:18
+     */
+    public String introduce() {
+        return "我的名字是: " + name + ", 我的年龄是: " + age + ", 我的身高是: " + height + ", 我的体重是:" + weight;
+    }
+}
+```
+
+## 创建对象
+
+```java
+package com.cn.dhc;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/9/24 - 上午11:44
+ * @Description: com.cn.dhc
+ * @version: 1.0
+ */
+public class Test { // 测试类
+  // 这是一个main方法, 是程序的入口
+  public static void main(String[] args) {
+    // 创建一个人类的具体的对象/实例
+    // 创建一个对象, 对象的名字叫:person
+    // Person属于引用数据类型
+    // 第一次加载类的时候, 会进行类的加载, 初始化创建对象的时候, 对象的属性没有给赋值, 有默认的初始化的值
+    Person person = new Person();
+    person.name = "张三";
+    person.age = 19;
+    person.height = 170.0;
+    person.weight = 155.0;
+
+    // 再创建一个对象
+    // 再次创建类的时候, 就不会进行类的加载了, 类的加载只在第一次需要的时候加载一次
+    Person person1 = new Person();
+    person1.name = "李四";
+    person1.age = 20;
+    person1.height = 180.0;
+    person1.weight = 167.0;
+
+    // 对属性值进行读取:
+    System.out.println(person.name);
+    System.out.println(person1.age);
+
+    // 对方法进行操作
+    // 不同的对象, 属性有自己的特有的值, 但是方法都是调用类中通用的方法
+    // 属性: 各个对象的属性是独立的
+    // 方法： 各个对象的方法是共享的
+    person.eat();
+    person1.eat();
+    person.sleep("教室");
+    System.out.println(person.introduce());
+  }
+}
+```
+
+## 局部变量和成员变量的区别
+
+- 区别1：代码中位置不同
+         成员变量：类中方法外定义的变量
+         局部变量：方法中定义的变量  代码块中定义的变量
+- 区别2：代码的作用范围
+         成员变量：当前类的很多方法
+         局部变量：当前一个方法（当前代码块）   
+
+- 区别3：是否有默认值
+         成员变量：有
+         局部变量：没有
+<img src="images/8/1-1-1.png">
+
+引用数据类型： null
+- 区别4：是否要初始化
+         成员变量：不需要，不建议初始化，后续使用的时候再赋值即可
+         局部变量：一定需要，不然直接使用的时候报错
+
+- 区别5：内存中位置不同
+         成员变量：堆内存
+         局部变量：栈内存   
+- 区别6：作用时间不同
+         成员变量：当前对象从创建到销毁
+         局部变量：当前方法从开始执行到执行完毕
+代码:
+```java
+package com.cn.dhc;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/9/24 - 下午1:29
+ * @Description: com.cn.dhc
+ * @version: 1.0
+ */
+public class Student {
+    byte e;
+    short s;
+    int c; // 成员变量: 在类中方法外
+    long num2;
+    float f;
+    double d;
+    char ch;
+    boolean bo;
+    String name;
+    public void study() {
+        int num = 10; // 局部变量: 在方法中
+        System.out.println(num); // 10
+        // int num; 重复命名, 出错了
+        {
+            int a; // 局部变量: 在代码块中
+        }
+        if (1==3) {
+            int b;
+        }
+        System.out.println(c);
+    }
+    public void eat() {
+        System.out.println(c);
+    }
+
+    public static void main(String[] args) {
+        Student student = new Student();
+        System.out.println(student.c);
+        System.out.println(student.bo);
+        System.out.println(student.ch);
+        System.out.println(student.d);
+        System.out.println(student.e);
+        System.out.println(student.f);
+        System.out.println(student.name);
+        System.out.println(student.num2);
+        System.out.println(student.s);
+    }
+}
+```
+运行结果:
+<img src="images/8/1-1-2.png">
+
+## 构造器
+
+```java
+package com.cn.dhc2;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/9/24 - 下午1:46
+ * @Description: com.cn.dhc2
+ * @version: 1.0
+ */
+public class Person {
+    // 构造器: 没有任何参数的构造器我们叫做: 无参构造器
+    public Person() {
+        /*age = 19;
+        name = "张三";
+        height = 170.0;*/
+    }
+    // 属性
+    String name;
+    int age;
+    double height;
+
+    // 方法
+    /**
+    * 功能描述: 吃
+    * @param:
+    * @return: null
+    * @auther: Evin_D
+    * @date: 2022/9/24 - 下午1:47
+     */
+    public void eat() {
+        System.out.println("吃");
+    }
+}
+```
+
+```java
+package com.cn.dhc2;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/9/24 - 下午1:47
+ * @Description: com.cn.dhc2
+ * @version: 1.0
+ */
+public class Test {
+    public static void main(String[] args) {
+        // 创建一个Person类的具体对象/实例/实体:
+        /**
+         * 创建对象的过程
+         * 1. 第一次遇到Person的时候, 进行类的加载(只加载一次)
+         * 2. 创建对象, 为这个对象在堆中开辟空间
+         * 3. 为对象进行属性的初始化动作
+         * new关键字实际上是在调用一个方法, 这个方法叫构造方法(构造器)
+         * 调用构造器的时候, 如果你的类中没有写构造器, 那么系统会默认给你分配一个构造器, 只是我们看不到罢了
+         * 可以自己显示的将构造器编写出来
+         * 构造器的格式:
+         * [修饰符] 构造器的名字() {
+         *
+         * }
+         * 构造器和方法的区别:
+         * 1. 没有方法的返回值类型
+         * 2. 方法体内部不能有return语句
+         * 3. 构造器的名字很特殊, 必须跟类名一样
+         * 构造器的作用: 不是为了创建对象, 因为在调用构造器前, 这个对象就已经创建好了, 并且属性有默认的初始化的值调用构造器的目的时给属性进行赋值操作的
+         * 注意: 我们一般不会在空构造器中进行初始化操作, 因为那样的话每个对象的属性就一样了
+         * 实际上, 我们只要保证空构造器的存在就可以了, 里面的东西不用写
+         */
+        Person person = new Person();
+        System.out.println(person.age);
+        System.out.println(person.name);
+        System.out.println(person.height);
+
+        Person person1 = new Person();
+        System.out.println(person1.age);
+        System.out.println(person1.name);
+        System.out.println(person1.height);
+
+    }
+}
+```
+
+## 构造器的重载
+
+```java
+package com.cn.dhc3;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/9/24 - 下午1:46
+ * @Description: com.cn.dhc2
+ * @version: 1.0
+ */
+public class Person {
+    // 属性
+    String name;
+    int age;
+    double height;
+
+    // 构造器: 没有任何参数的构造器我们叫做: 无参构造器
+    public Person() {
+    }
+    public Person(String name, int age, double height) {
+        // 当形参名字和属性名字重名的时候, 会出现就近原则:
+        // 在要表示对象的属性前加上this.来修饰, 因为this代表的就是你创建的哪个对象
+        this.name = name;
+        this.age = age;
+        this.height = height;
+    }
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    // 方法
+    /**
+    * 功能描述: 吃
+    * @param:
+    * @return: null
+    * @auther: Evin_D
+    * @date: 2022/9/24 - 下午1:47
+     */
+    public void eat() {
+        System.out.println("吃");
+    }
+}
+```
+```java
+package com.cn.dhc3;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/9/24 - 下午1:47
+ * @Description: com.cn.dhc2
+ * @version: 1.0
+ */
+public class Test {
+    public static void main(String[] args) {
+        /**
+         * 1. 一般保证空构造器的存在, 空构造器中一般不会进行属性的赋值操作
+         * 2. 一般我们会重载构造器, 在重载构造器中进行属性赋值
+         * 3. 在重载构造器以后, 假如空构造器忘写了, 系统也不会给你分配默认的空构造器了, 那么你要调用的话就会出错了
+         * 4. 在要表示对象的属性前加上this.来修饰, 因为this代表的就是你创建的哪个对象
+         */
+        // 创建一个Person类的具体对象/实例/实体:
+        Person person = new Person();
+        Person person1 = new Person("zhangsan", 19, 170.0);
+        System.out.println(person1.age);
+        System.out.println(person1.name);
+        System.out.println(person1.height);
+    }
+}
+```
+
+## 内存分析
+
+### 代码1
+
+```java
+ public class Person {
+  int  id;
+  int  age;
+
+  public static void main(String args[]){
+    Person p1= new Person();
+  }
+}
+```
+内存分析:
+<img src="images/8/1-2-1.png">
+
+### 代码2
+
+```java
+public class Person {
+  int id;
+  int age;
+  String school;
+  public Person (int a,int b,String c){
+    id=a;
+    age=b;
+    school=c;
+  }
+  public static void main(String args[]){
+    Person p= new Person(1,20, "海淀");
+  }
+}
+```
+内存分析:
+<img src="images/8/1-2-2.png">
+
+### 代码3
+
+```java
+class Person{
+  int id;
+  int age;
+  String school;
+  Person (int a,int b,String c){
+    id=a;
+    age=b;
+    school=c;
+  }
+
+  public void setAge(int a){
+    age=a;
+  }
+}
+```
+```java
+
+public class Test {
+    public static void main(String[] args) {
+      Test t=new Test();
+      int age=40;
+      Person tom=new Person(1,20,"海淀");
+      Person jack=new Person(2,30,"朝阳");
+      t.change1(age);
+      t.change2(tom);
+      t.change3(jack);
+      System.out.println(age); //40
+      System.out.println("id:"+jack.id+",age:"+jack.age+",school:"+jack.school); //id:2,age:66,school:"朝阳"
+    }
+    public void change1(int i){
+      i=3366;
+    }
+
+    public void change2(Person p){
+      p=new Person(3,22,"西城");
+    }
+
+    public void change3(Person p){
+      p.setAge(66);
+    }
+}
+```
+<img src="images/8/1-2-3.png">
+
+## this
+
+1. 创建对象的过程：
+    1. 在第一次遇到一个类的时候，对这个类要进行加载，只加载一次。
+    2. 创建对象，在堆中开辟空间
+    3. 对对象进行初始化操作，属性赋值都是默认的初始值。
+    4. new关键字调用构造器，执行构造方法，在构造器中对属性重新进行赋值
+this:
+<img src="images/8/1-3-1.png">
+<img src="images/8/1-3-2.png">
+从上面的效果能够看到：this指代的就是当前对象：
+
+内存：
+<img src="images/8/1-3-3.png">
+this关键字 用法：
+1. this可以修饰属性：
+总结：当属性名字和形参发生重名的时候，或者  属性名字 和局部变量重名的时候，都会发生就近原则，所以如果我要是直接使用变量名字的话就指的是离的近的那个形参或者局部变量，这时候如果我想要表示属性的话，在前面要加上：this.修饰
+如果不发生重名问题的话，实际上你要是访问属性也可以省略this.
+
+```java
+package com.cn.dhc4;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/9/24 - 下午3:29
+ * @Description: com.cn.dhc4
+ * @version: 1.0
+ */
+public class Person {
+    int age;
+    String name;
+    double height;
+    public Person() {
+    }
+    public Person(int age, String name, double height) {
+        this.age = age;
+        this.name = name;
+        this.height = height;
+    }
+    public void eat() {
+        int age = 10;
+        System.out.println(age); // 就近原则, age指的是离他近的age ---> 局部变量的age
+        System.out.println(this.age); // 这里指代的就是属性的age
+        System.out.println("吃");
+    }
+}
+```
+2. this修饰方法：
+总结：在同一个类中，方法可以互相调用，this.可以省略不写。
+
+```java
+package com.cn.dhc4;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/9/24 - 下午3:29
+ * @Description: com.cn.dhc4
+ * @version: 1.0
+ */
+public class Person {
+    int age;
+    String name;
+    double height;
+    public Person() {
+    }
+    public Person(int age, String name, double height) {
+        this.age = age;
+        this.name = name;
+        this.height = height;
+    }
+    public void play() {
+        /*this.*/eat();
+        System.out.println("上网");
+        System.out.println("洗澡");
+    }
+    public void eat() {
+        System.out.println(/*this.*/age);
+        System.out.println("吃饭");
+    }
+}
+```
+3. this可以修饰构造器：
+总结：同一个类中的构造器可以相互用this调用，注意：this修饰构造器必须放在第一行
+```java
+package com.cn.dhc4;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/9/24 - 下午3:29
+ * @Description: com.cn.dhc4
+ * @version: 1.0
+ */
+public class Person {
+    int age;
+    String name;
+    double height;
+    public Person() {
+    }
+    public Person(int age, String name, double height) {
+        this(age, name);
+        this.height = height;
+    }
+    public Person(int age, String name) {
+        this(age);
+        this.name = name;
+    }
+    public Person(int age) {
+        this.age = age;
+    }
+}
+```
+
+## static
+
+1. static可以修饰：属性，方法，代码块，内部类。
+2. static修饰属性；
+```java
+package com.cn.dhc5;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/9/24 - 下午5:18
+ * @Description: com.cn.dhc5
+ * @version: 1.0
+ */
+public class Test {
+    int id;
+    static int sid;
+
+    public static void main(String[] args) {
+        Test.sid = 100;
+        System.out.println(Test.sid);
+
+        Test test1 = new Test();
+        test1.id = 10;
+        test1.sid = 10;
+
+        Test test2 = new Test();
+        test2.id = 20;
+        test2.sid = 20;
+
+        Test test3 = new Test();
+        test3.id = 30;
+        test3.sid = 30;
+
+        System.out.println(test1.id);
+        System.out.println(test2.id);
+        System.out.println(test3.id);
+
+        System.out.println(test1.sid);
+        System.out.println(test2.sid);
+        System.out.println(test3.sid);
+    }
+}
+```
+内存分析：
+<img src="images/8/1-4-1.png">
+一般官方的推荐访问方式：可以通过类名.属性名的方式去访问：
+<img src="images/8/1-4-2.png">
+
+static修饰属性总结：
+  1. 在类加载的时候一起加载入方法区中的静态域中
+  2. 先于对象存在
+  3. 访问方式： 对象名.属性名    类名.属性名（推荐）
+
+  static修饰属性的应用场景：某些特定的数据想要在内存中共享，只有一块 --》这个情况下，就可以用static修饰的属性
+  ```java
+  package com.cn.dhc5;
+
+  /**
+  * @Auther: Evin_D
+  * @Date: 2022/9/24 - 下午5:28
+  * @Description: com.cn.dhc5
+  * @version: 1.0
+  */
+  public class Student {
+      String name;
+      int age;
+      static String school;
+
+      public static void main(String[] args) {
+          Student.school = "辽宁工业大学";
+          Student student1 = new Student();
+          student1.name = "张三";
+          student1.age = 19;
+  //        student1.school = "辽宁工业大学";
+
+          Student student2 = new Student();
+          student2.name = "李四";
+          student2.age = 20;
+  //        student2.school = "辽宁工业大学";
+          System.out.println(student2.school);
+      }
+  }
+  ```
+  属性：
+  静态属性 （类变量）
+  非静态属性（实例变量）
+
+3. static修饰方法；
+```java
+package com.cn.dhc5;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/9/24 - 下午5:34
+ * @Description: com.cn.dhc5
+ * @version: 1.0
+ */
+public class Demo {
+    int id;
+    static int sid;
+    public void a() {
+        System.out.println(id);
+        System.out.println(sid);
+        System.out.println("---------a");
+    }
+    // 1. static和Public都是修饰符, 并列的没有先后顺序, 先写谁厚些谁都行
+    static public void b() {
+//         System.out.println(id); // 2. 在静态方法中不能访问非静态的属性
+//         a(); // 3. 在静态方法中不能访问非静态的方法
+//        System.out.println(this.id); //4. 在静态方法中不能使用this关键字
+        System.out.println(sid);
+        System.out.println("---------b");
+    }
+
+    public static void main(String[] args) {
+        // 5. 非静态的方法可以用对象名.方法名去调用
+        Demo demo = new Demo();
+        demo.a();
+
+        // 6. 静态的方法可以用对象名.方法名去调用也可以用类名.方法名调用(推荐)
+        Demo.b();
+        demo.b();
+
+        // 在同一个类中可以直接调用
+        b();
+    }
+}
+```
+
+## 代码块
+
+1. 类的组成：属性，方法，构造器，代码块，内部类
+2. 代码块分类：普通块，构造块，静态块，同步块（多线程）
+3. 代码：
+```java
+package com.cn.dhc6;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/9/24 - 下午5:45
+ * @Description: com.cn.dhc6
+ * @version: 1.0
+ */
+public class Test {
+    // 属性
+    int a;
+    static int sa;
+
+    // 方法
+    public void a() {
+        System.out.println("方法a");
+        {
+            // 普通块限制了局部变量的作用范围
+            System.out.println("普通块");
+            int num = 10;
+            System.out.println(num);
+        }
+    }
+    public static void b() {
+        System.out.println("方法b");
+    }
+    // 构造块
+    {
+        System.out.println("构造块");
+    }
+    // 静态块
+    static{
+        // 在静态块中只能访问: 静态属性, 静态方法
+        System.out.println("静态块");
+        System.out.println(sa);
+        b();
+    }
+    // 构造器
+    public Test() {
+        System.out.println("这是空构造器");
+    }
+    public Test(int a) {
+        this.a = a;
+    }
+    public static void main(String[] args) {
+        Test test1 = new Test();
+        test1.a();
+
+        Test test2 = new Test();
+        test2.a();
+    }
+}
+```
+- 总结：
+代码块执行顺序：
+最先执行静态块，只在类加载的时候执行一次，所以一般以后实战写项目：创建工厂，数据库的初始化信息都放入静态块。
+一般用于执行一些全局性的初始化操作。
+再执行构造块，（不常用）
+再执行构造器，
+再执行方法中的普通块。
+
+## 包，import
+
+1. 生活案例：
+邮寄快递：中国.北京.通州区.****小区.5号楼.3单元.101房.赵珊珊
+历史：常山赵子龙
+
+2. 包的作用：
+为了解决重名问题（实际上包对应的就是盘符上的目录）
+解决权限问题
+
+3. 创建包：
+
+包名定义：
+
+  1. 名字全部小写
+  2. 中间用.隔开
+  3. 一般都是公司域名倒着写 ：  com.jd   com.dhc
+  4. 加上模块名字：com.jd.login    com.jd.register
+  5. 不能使用系统中的关键字：nul,con,com1---com9.....
+  6. 包声明的位置一般都在非注释性代码的第一行：
+
+4. 1
