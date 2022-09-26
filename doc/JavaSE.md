@@ -5164,14 +5164,221 @@ public class Test {
 解决权限问题
 
 3. 创建包：
+<img src="images/8/1-5-1.png">
+<img src="images/8/1-5-2.png">
 
 包名定义：
+    1. 名字全部小写
+    2. 中间用.隔开
+    3. 一般都是公司域名倒着写 ：  com.jd   com.dhc
+    4. 加上模块名字：com.jd.login    com.jd.register
+    5. 不能使用系统中的关键字：nul,con,com1---com9.....
+    6. 包声明的位置一般都在非注释性代码的第一行：
 
-  1. 名字全部小写
-  2. 中间用.隔开
-  3. 一般都是公司域名倒着写 ：  com.jd   com.dhc
-  4. 加上模块名字：com.jd.login    com.jd.register
-  5. 不能使用系统中的关键字：nul,con,com1---com9.....
-  6. 包声明的位置一般都在非注释性代码的第一行：
+4. 导包问题
+```java
+package com.cn.dhc7;
 
-4. 1
+import com.cn.dhc2.Person; // 导包
+
+import java.util.Date;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/9/26 - 下午9:06
+ * @Description: com.cn.dhc7
+ * @version: 1.0
+ */
+public class Test {
+    public static void main(String[] args) {
+        new Person();
+        new Date();
+        new java.sql.Date(1000L); // 在导包以后, 还想用其他包下同名的类, 就必须要手动自己写所在的包
+        new Demo();
+    }
+}
+```
+
+- 总结：
+ 
+
+5. 在Java中的导包没有包含和被包含的关系：
+设置目录平级的格式（不是包含和被包含的显示）：
+<img src="images/8/1-5-5.png">
+<img src="images/8/1-5-6.png">
+
+6. 静态导入：
+```java
+package com.cn.dhc11;
+// 静态导入
+import static java.lang.Math.*;
+// 导入: java.lang下的Math类中的所有静态内容
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/9/26 - 下午9:23
+ * @Description: com.cn.dhc11
+ * @version: 1.0
+ */
+public class Test {
+    public static void main(String[] args) {
+        System.out.println(random());
+        System.out.println(PI);
+        System.out.println(round(5.6));
+    }
+    // 在静态导入后, 同一个类中所有相同的方法的时候, 会有限走自己定义的方法
+    public static int round(double a) {
+        return 1000;
+    }
+}
+```
+
+## 三大特性
+
+### 封装(Encapsulation)
+
+1. 生活案例：
+ATM ,  电线
+2. Java中封装的理解：
+将某些东西进行隐藏，然后提供相应的方式进行获取。
+<img src="images/8/1-6-1.png">
+我们程序设计追求“高内聚，低耦合”。
+
+- 高内聚:类的内部数据操作细节自己完成，不允许外部干涉;
+- 低耦合:仅对外暴露少量的方法用于使用。 
+隐藏对象内部的复杂性，只对外公开简单的接口。便于外界调用，从而提
+高系统的可扩展性、可维护性。通俗的说，把该隐藏的隐藏起来，该暴露
+的暴露出来。这就是封装性的设计思想。 
+3. 封装的好处：
+提高代码的安全性
+4. 代码：通过一个属性感受封装：
+```java
+package cn.com.dhc;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/9/26 - 下午9:35
+ * @Description: cn.com.dhc
+ * @version: 1.0
+ */
+public class Girl {
+    // 属性:
+    private int age;
+
+    // 读取年龄
+    public int getAge() {
+        return age;
+    }
+
+    // 设置年龄
+    public void setAge(int age) {
+        if (age >= 30) {
+            this.age = 18;
+        }
+        this.age = age;
+    }
+}
+```
+```java
+package cn.com.dhc;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/9/26 - 下午9:35
+ * @Description: cn.com.dhc
+ * @version: 1.0
+ */
+public class Test {
+    public static void main(String[] args) {
+        Girl girl = new Girl();
+        /*girl.age = 18;
+        System.out.println(girl.age);*/
+        // 设置年龄
+        girl.setAge(29);
+        // 读取年龄
+        System.out.println(girl.getAge());
+    }
+}
+```
+
+上面的代码，对于属性age来说，我加了修饰符private，这样外界对它的访问就受到了限制，现在我还想加上其他的限制条件，但是在属性本身上没有办法再加了，所以我们通过定义方法来进行限制条件的添加。
+  以属性为案例：
+  进行封装：
+    1. 将属性私有化，被private修饰--》加入权限修饰符
+    一旦加入了权限修饰符，其他人就不可以随意的获取这个属性
+    2. 提供public修饰的方法让别人来访问/使用
+    3. 即使外界可以通过方法来访问属性了，但是也不能随意访问，因为咱们在方法中可以加入 限制条件。
+
+5. 实际开发中，方法一般会写成 setter，getter方法：
+可以利用IDEA快捷键生成：alt+insert -->getter and setter:
+6. 加深练习：
+```java
+package cn.com.dhc2;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/9/26 - 下午9:47
+ * @Description: cn.com.dhc2
+ * @version: 1.0
+ */
+public class Student {
+    private int age;
+    private String name;
+    private String sex;
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        if ("男".equals(sex) || "女".equals(sex)) {
+            this.sex = sex;
+        } else  {
+            this.sex = "男";
+        }
+    }
+    public Student() {}
+    public Student(String name, int age, String sex) {
+        this.name = name;
+        this.age = age;
+        this.setSex(sex);
+    }
+}
+```
+```java
+package cn.com.dhc2;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/9/26 - 下午9:47
+ * @Description: cn.com.dhc2
+ * @version: 1.0
+ */
+public class Test {
+    public static void main(String[] args) {
+        Student student = new Student();
+        student.setName("张三");
+        student.setAge(20);
+        student.setSex("男");
+        System.out.println(student.getName() + "-----" + student.getAge() + "-----" + student.getSex());
+
+        Student student1 = new Student("李四", 21, "女");
+        System.out.println(student1.getName() + "-----" + student1.getAge() + "-----" + student1.getSex());
+
+    }
+}
+```
