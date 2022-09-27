@@ -5382,3 +5382,205 @@ public class Test {
     }
 }
 ```
+
+### 继承(Inheritance)
+
+1. 类是对对象的抽象：
+举例：
+荣耀20 ，小米 红米3，华为 p40 pro   ---> 类：手机类
+2. 继承是对类的抽象：
+举例：
+学生类：Student：
+属性：姓名，年龄，身高，学生编号
+方法：吃饭，睡觉，喊叫，学习
+教师类：Teacher:
+属性：姓名，年龄，身高，教师编号
+方法：吃饭，睡觉，喊叫，教学
+员工类：Emploee:
+属性：姓名，年龄，身高，员工编号
+方法：吃饭，睡觉，喊叫，工作
+共同的东西：
+人类：
+属性：姓名，年龄，身高
+方法：吃饭，睡觉，喊叫
+学生类/教师类/员工类  继承 自   人类  
+以后定义代码：
+先定义人类：
+人类： ---》父类，基类，超类
+属性：姓名，年龄，身高
+方法：吃饭，睡觉，喊叫
+再定义 ： ---》子类，派生类
+学生类：Student：
+属性：学生编号
+方法：学习
+教师类：Teacher:
+属性：教师编号
+方法：教学
+员工类：Emploee:
+属性：员工编号
+方法：工作 
+子类  继承自  父类 
+狗类：
+属性：姓名，年龄，身高
+方法：吃饭，睡觉，喊叫
+我们的继承关系，是在合理的范围中进行的抽取 ，抽取出子类父类的关系：
+上面的案例中：
+学生类/教师类/员工类  继承 自   人类   ---》合理
+学生类/教师类/员工类  继承 自   狗类   ---》不合理
+区分：
+学生是一个人
+教师是一个人
+员工是一个人   ---》合理
+学生是一个狗    ---》不合理
+总结：继承 就是  is - a 的关系 
+3. 代码层面的解释：
+先写父类，再写子类：
+父类：人类  Person
+子类：学生类   Student
+```java
+package cn.com.dhc3;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/9/27 - 下午9:28
+ * @Description: cn.com.dhc3
+ * @version: 1.0
+ */
+public class Person {
+    private int age;
+    private String name;
+    private double height;
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public double getHeight() {
+        return height;
+    }
+
+    public void setHeight(double height) {
+        this.height = height;
+    }
+    public void eat() {
+        System.out.println("吃饭");
+    }
+    public void sleep() {
+        System.out.println("睡觉");
+    }
+}
+```
+```java
+package cn.com.dhc3;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/9/27 - 下午9:32
+ * @Description: cn.com.dhc3
+ * @version: 1.0
+ */
+public class Student extends Person{ // 子类Student继承父类Person
+    private int sno;
+    public int getSno() {
+        return sno;
+    }
+
+    public void setSno(int sno) {
+        this.sno = sno;
+    }
+
+    public void study() {
+        System.out.println("学习");
+    }
+}
+```
+```java
+package cn.com.dhc3;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/9/27 - 下午9:40
+ * @Description: cn.com.dhc3
+ * @version: 1.0
+ */
+public class Test {
+    public static void main(String[] args) {
+        Student student = new Student();
+        student.setSno(1001);
+        student.setName("张三");
+        student.setAge(18);
+        student.setHeight(180.0);
+        System.out.println("姓名" + student.getName() + "学号" + student.getSno());
+        student.eat();
+        student.study();
+    }
+}
+```
+4. 继承的好处：提高代码的复用性
+父类定义的内容，子类可以直接拿过来用就可以了，不用代码上反复重复定义了
+需要注意的点：
+父类private修饰的内容，子类实际上也继承，只是因为封装的特性阻碍了直接调用，但是提供了间接调用的方式，可以间接调用。
+5. 总结：
+    1. 继承关系 ：
+    父类/基类/超类
+    子类/派生类
+    子类继承父类一定在合理的范围进行继承的    子类 extends  父类
+    2. 继承的好处：
+        1.提高了代码的复用性，父类定义的内容，子类可以直接拿过来用就可以了，不用代码上反复重复定义了
+        2.便于代码的扩展
+        3.为了以后多态的使用。是多态的前提。
+    3. 父类private修饰的内容，子类也继承过来了。
+    4. 一个父类可以有多个子类。
+    5. 一个子类只能有一个直接父类。
+    但是可以间接的继承自其它类。
+<img src="images/9/1-1-1.png">
+
+6. 继承具有传递性：
+Student --》继承自  Person  ---》继承自Object
+Object类是所有类的根基父类。
+所有的类都直接或者间接的继承自Object。
+
+#### 内存分析
+
+<img src="images/9/1-1-2.png">
+
+#### 权限修饰符
+
+ <img src="images/9/1-1-3.png">
+
+1. private：权限：在当前类中可以访问
+<img src="images/9/1-1-4.png">
+<img src="images/9/1-1-5.png">
+<img src="images/9/1-1-6.png">
+
+2. default:缺省修饰符：权限：到同一个包下的其他类都可以访问
+<img src="images/9/1-1-7.png">
+<img src="images/9/1-1-8.png">
+<img src="images/9/1-1-9.png">
+
+3. protected：权限：最大到不同包下的子类
+<img src="images/9/1-1-10.png">
+<img src="images/9/1-1-11.png">
+<img src="images/9/1-1-12.png">
+
+4. public：在整个项目中都可以访问
+- 总结：
+属性，方法：修饰符：四种：private，缺省，protected，public
+类：修饰符：两种：缺省，public
+以后写代码
+一般属性：用private修饰 ，方法：用public修饰
+
+#### 方法的重写
+
