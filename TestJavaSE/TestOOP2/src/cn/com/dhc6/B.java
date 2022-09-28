@@ -1,6 +1,6 @@
-package cn.com.dhc5;
+package cn.com.dhc6;
 
-import cn.com.dhc4.A;
+import cn.com.dhc5.A;
 
 /**
  * @Auther: Evin_D

@@ -5584,3 +5584,409 @@ Object类是所有类的根基父类。
 
 #### 方法的重写
 
+1. 重写：
+发生在子类和父类中，当子类对父类提供的方法不满意的时候，要对父类的方法进行重写。
+2. 重写有严格的格式要求：
+子类的方法名字和父类必须一致，参数列表（个数，类型，顺序）也要和父类一致。
+3. 代码：
+```java
+package cn.com.dhc4;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/9/28 - 下午7:10
+ * @Description: cn.com.dhc4
+ * @version: 1.0
+ */
+public class Person {
+    public void eat() {
+        System.out.println("吃");
+    }
+    public void sleep() {
+        System.out.println("睡");
+    }
+}
+```
+```java
+package cn.com.dhc4;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/9/28 - 下午7:10
+ * @Description: cn.com.dhc4
+ * @version: 1.0
+ */
+public class Student extends Person{
+    public void study() {
+        System.out.println("学习");
+    }
+    public void eat() {
+        System.out.println("吃板面");
+    }
+}
+```
+```java
+package cn.com.dhc4;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/9/28 - 下午7:10
+ * @Description: cn.com.dhc4
+ * @version: 1.0
+ */
+public class Student extends Person{
+    public void study() {
+        System.out.println("学习");
+    }
+    public void eat() {
+        System.out.println("吃板面");
+    }
+}
+```
+<img src="images/9/1-2-1.png">
+
+4. 内存：
+<img src="images/9/1-2-2.png">
+
+5. 重载和重写的区别：
+重载：在同一个类中，当方法名相同，形参列表不同的时候  多个方法构成了重载
+重写：在不同的类中，子类对父类提供的方法不满意的时候，要对父类的方法进行重写。
+<img src="images/9/1-2-3.png">
+
+#### super
+
+1. super:指的是：  父类的
+2. super可以修饰属性，可以修饰方法；
+在子类的方法中，可以通过  super.属性  super.方法 的方式，显示的去调用父类提供的属性，方法。在通常情况下，super.可以省略不写：
+<img src="images/9/1-3-1.png">
+在特殊情况下，当子类和父类的属性重名时，你要想使用父类的属性，必须加上修饰符super.，只能通过super.属性来调用
+在特殊情况下，当子类和父类的方法重名时，你要想使用父类的方法，必须加上修饰符super.，只能通过super.方法来调用
+在这种情况下，super.就不可以省略不写。
+<img src="images/9/1-3-2.png">
+
+3. super修饰构造器：
+其实我们平时写的构造器的第一行都有：super()  -->作用：调用父类的空构造器，只是我们一般都省略不写
+（所有构造器的第一行默认情况下都有super(),但是一旦你的构造器中显示的使用super调用了父类构造器，那么这个super()就不会给你默认分配了。如果构造器中没有显示的调用父类构造器的话，那么第一行都有super(),可以省略不写）
+<img src="images/9/1-3-3.png">
+如果构造器中已经显示的调用super父类构造器，那么它的第一行就没有默认分配的super();了
+<img src="images/9/1-3-4.png">
+在构造器中，super调用父类构造器和this调用子类构造器只能存在一个，两者不能共存：
+因为super修饰构造器要放在第一行，this修饰构造器也要放在第一行：
+<img src="images/9/1-3-5.png">
+改正二选一即可：
+<img src="images/9/1-3-6.png">
+
+4. 以后写代码构造器的生成可以直接使用IDEA提供的快捷键：
+alt+insert
+<img src="images/9/1-3-7.png">
+
+#### 继承条件下构造方法的执行过程
+
+<img src="images/9/1-4-1.png">
+
+```java
+package cn.com.dhc10;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/9/28 - 下午8:34
+ * @Description: cn.com.dhc10
+ * @version: 1.0
+ */
+public class Person {
+    int age;
+    String name;
+
+    public Person(int age, String name) {
+        this.age = age;
+        this.name = name;
+    }
+
+    public Person() {
+    }
+}
+```
+```java
+package cn.com.dhc10;
+
+import cn.com.dhc8.Person;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/9/28 - 下午8:35
+ * @Description: cn.com.dhc10
+ * @version: 1.0
+ */
+public class Student extends Person {
+    double height;
+
+    public Student(int age, String name, double height) {
+        super(age, name);
+        this.height = height;
+    }
+
+    public Student() {
+    }
+}
+```
+```java
+package cn.com.dhc10;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/9/28 - 下午8:39
+ * @Description: cn.com.dhc10
+ * @version: 1.0
+ */
+public class Test {
+    public static void main(String[] args) {
+        Student student = new Student(19, "张三", 180.0);
+    }
+}
+```
+
+#### Object类
+
+所有类都直接或间接的继承自Object类，Object类是所有Java类的根基类。
+也就意味着所有的Java对象都拥有Object类的属性和方法。
+如果在类的声明中未使用extends关键字指明其父类，则默认继承Object类。
+
+<img src="images/9/1-5-1.png">
+
+##### toString()方法
+
+1. Object类的toString()的作用：
+<img src="images/9/1-5-2.png">
+方法的原理：
+<img src="images/9/1-5-3.png">
+现在，使用toString方法的时候，打印出来的东西 “不好看”，对于其他人来说不友好，可读性不好
+我们现在是想知道对象的信息，名字，年龄，身高。。。。。。
+现在的格式不好：
+<img src="images/9/1-5-4.png">
+出现的问题：子类Student对父类Object提供的toString方法不满意，不满意--》对toString方法进行重写：
+
+```java
+package cn.com.dhc1;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/9/28 - 下午9:06
+ * @Description: cn.com.dhc1
+ * @version: 1.0
+ */
+public class Student {
+    private String name;
+    private int age;
+    private double height;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public double getHeight() {
+        return height;
+    }
+
+    public void setHeight(double height) {
+        this.height = height;
+    }
+
+    public Student() {
+    }
+
+    public Student(String name, int age, double height) {
+        this.name = name;
+        this.age = age;
+        this.height = height;
+    }
+    public String toString() {
+        return "这是一个Student对象, 这个对象的名字: " + name + ", 年龄" + age + ", 身高" + height;
+    }
+}
+```
+测试类：
+<img src="images/9/1-5-5.png">
+总结：toString的作用就是对对象进行“自我介绍”，一般子类对父类提供的toString都不满意，都要进行重写。
+IDEA提供了快捷键：
+
+```java
+package cn.com.dhc1;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/9/28 - 下午9:06
+ * @Description: cn.com.dhc1
+ * @version: 1.0
+ */
+public class Student {
+    private String name;
+    private int age;
+    private double height;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public double getHeight() {
+        return height;
+    }
+
+    public void setHeight(double height) {
+        this.height = height;
+    }
+
+    public Student() {
+    }
+
+    public Student(String name, int age, double height) {
+        this.name = name;
+        this.age = age;
+        this.height = height;
+    }
+    /*public String toString() {
+        return "这是一个Student对象, 这个对象的名字: " + name + ", 年龄" + age + ", 身高" + height;
+    }*/
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "name='" + name + '\'' +
+                ", age=" + age +
+                ", height=" + height +
+                '}';
+    }
+}
+```
+
+#### equals方法
+
+```java
+package cn.com.dhc2;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/9/28 - 下午9:27
+ * @Description: cn.com.dhc2
+ * @version: 1.0
+ */
+public class Phone {
+    private String brand;
+    private double price;
+    private int year;
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public Phone() {
+    }
+
+    public Phone(String brand, double price, int year) {
+        this.brand = brand;
+        this.price = price;
+        this.year = year;
+    }
+
+    @Override
+    public String toString() {
+        return "Phone{" +
+                "brand='" + brand + '\'' +
+                ", price=" + price +
+                ", year=" + year +
+                '}';
+    }
+
+    // 对equals方法进行重写:
+    public boolean equals(Object obj) {
+        // 将obj转为Phone类型
+        Phone other = (Phone)obj;
+        if (this.getBrand() == other.getBrand() && this.getPrice() == other.getPrice() && this.getYear() == other.getYear()) {
+            return true;
+        } else {
+            return  false;
+        }
+    }
+}
+```
+```java
+package cn.com.dhc2;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/9/28 - 下午9:29
+ * @Description: cn.com.dhc2
+ * @version: 1.0
+ */
+public class Test {
+    public static void main(String[] args) {
+        Phone phone1 = new Phone("Mi10", 6999.0, 2022);
+        Phone phone2 = new Phone("Mi10", 6999.0, 2022);
+        // 比较两个对象: p1和p2对象:
+        // ==的作用, 比较左右两侧的值是否相等, 要么相等, 返回true, 要么不相等, 返回false
+        System.out.println(phone1 == phone2); // --> 对于引用数据类型来说, 比较的是地址值 ---> 一定返回的是false
+
+        // Object类提供了一个方法equals方法: 作用: 比较对象具体内容是否相等
+        System.out.println(phone1.equals(phone2));
+    }
+}
+```
+总结：
+equals作用：这个方法提供了对对象的内容是否相等 的一个比较方式，对象的内容指的就是属性。
+父类Object提供的equals就是在比较==地址，没有实际的意义，我们一般不会直接使用父类提供的方法，
+而是在子类中对这个方法进行重写。
+
+##### instanceof
+
+<img src="images/9/1-6-1.png">
+
+##### 利用集成开发工具生成equals方法
+
+1. 利用eclipse：
+<img src="images/9/1-6-2.png">
+
+2. 利用idea：
+<img src="images/9/1-6-3.png">
