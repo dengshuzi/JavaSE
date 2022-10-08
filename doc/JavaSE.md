@@ -5882,7 +5882,7 @@ public class Student {
 }
 ```
 
-#### equals方法
+##### equals方法
 
 ```java
 package cn.com.dhc2;
@@ -5979,14 +5979,318 @@ equals作用：这个方法提供了对对象的内容是否相等 的一个比�
 父类Object提供的equals就是在比较==地址，没有实际的意义，我们一般不会直接使用父类提供的方法，
 而是在子类中对这个方法进行重写。
 
-##### instanceof
+###### instanceof
 
 <img src="images/9/1-6-1.png">
 
-##### 利用集成开发工具生成equals方法
+###### 利用集成开发工具生成equals方法
 
 1. 利用eclipse：
 <img src="images/9/1-6-2.png">
 
 2. 利用idea：
 <img src="images/9/1-6-3.png">
+
+#### 类和类的关系
+
+##### 代码
+
+总结：
+1. 面向对象的思维：找参与者，找女孩类，找男孩类
+2. 体会了什么叫方法的性擦，什么叫方法的实参：
+<img src="images/9/1-7-1.png">
+具体传入的内容 实参：
+<img src="images/9/1-7-2.png">
+
+3. 类和类可以产生关系：
+    1. 将一个类作为另一个类中的方法的形参
+    2. 将一个类作为另一个类的属性
+```java
+package cn.com.dhc3;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/7 - 下午6:00
+ * @Description: cn.com.dhc3
+ * @version: 1.0
+ */
+public class Girl {
+    String name;
+    double weight;
+    public void add(int a) {
+        System.out.println(a);
+        System.out.println(a + 100);
+    }
+    public void love(Boy boy) {
+        System.out.println("男友名字" + boy.name + "男友年龄:" + boy.age);
+        boy.buy();
+    }
+    public Girl(String name, double weight) {
+        this.name = name;
+        this.weight = weight;
+    }
+}
+```
+```java
+package cn.com.dhc3;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/7 - 下午5:59
+ * @Description: cn.com.dhc3
+ * @version: 1.0
+ */
+public class Boy {
+    int age;
+    String name;
+    public void buy() {
+        System.out.println("买");
+    }
+
+    public Boy(int age, String name) {
+        this.age = age;
+        this.name = name;
+    }
+}
+```
+```java
+package cn.com.dhc3;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/8 - 下午9:18
+ * @Description: cn.com.dhc3
+ * @version: 1.0
+ */
+public class Mom {
+    public void say() {
+        System.out.println("唠叨");
+    }
+}
+```
+```java
+package cn.com.dhc3;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/8 - 下午9:12
+ * @Description: cn.com.dhc3
+ * @version: 1.0
+ */
+public class Test {
+    public static void main(String[] args) {
+        Boy boy = new Boy(30, "张三");
+        Girl girl = new Girl( "李四", 100.0);
+//        girl.love(boy);
+        Boy boy2 = new Boy(35, "王五");
+        girl.love(boy2);
+        girl.mom = new Mom();
+        girl.wechat();
+    }
+}
+```
+
+##### 总结
+
+1. 继承关系      
+继承指的是一个类（称为子类、子接口）继承另外的一个类（称为父类、父接口）的功能，并可以增加它自己的新功能的能力。在Java中继承关系通过关键字extends明确标识，在设计时一般没有争议性。在UML类图设计中，继承用一条带空心三角箭头的实线表示，从子类指向父类，或者子接口指向父接口。
+<img src="images/9/1-7-3.png">
+
+2. 实现关系      
+实现指的是一个class类实现interface接口（可以是多个）的功能，实现是类与接口之间最常见的关系。在Java中此类关系通过关键字implements明确标识，在设计时一般没有争议性。在UML类图设计中，实现用一条带空心三角箭头的虚线表示，从类指向实现的接口。
+<img src="images/9/1-7-4.png">
+
+3. 依赖关系      
+简单的理解，依赖就是一个类A使用到了另一个类B，而这种使用关系是具有偶然性的、临时性的、非常弱的，但是类B的变化会影响到类A。比如某人要过河，需要借用一条船，此时人与船之间的关系就是依赖。表现在代码层面，让类B作为参数被类A在某个method方法中使用。在UML类图设计中，依赖关系用由类A指向类B的带箭头虚线表示。
+<img src="images/9/1-7-5.png">
+
+4. 关联关系  
+关联体现的是两个类之间语义级别的一种强依赖关系，比如我和我的朋友，这种关系比依赖更强、不存在依赖关系的偶然性、关系也不是临时性的，一般是长期性的，而且双方的关系一般是平等的。关联可以是单向、双向的。表现在代码层面，为被关联类B以类的属性形式出现在关联类A中，也可能是关联类A引用了一个类型为被关联类B的全局变量。在UML类图设计中，关联关系用由关联类A指向被关联类B的带箭头实线表示，在关联的两端可以标注关联双方的角色和多重性标记。
+<img src="images/9/1-7-6.png">
+
+5. 聚合关系      
+聚合是关联关系的一种特例，它体现的是整体与部分的关系，即has-a的关系。此时整体与部分之间是可分离的，它们可以具有各自的生命周期，部分可以属于多个整体对象，也可以为多个整体对象共享。比如计算机与CPU、公司与员工的关系等，比如一个航母编队包括海空母舰、驱护舰艇、舰载飞机及核动力攻击潜艇等。表现在代码层面，和关联关系是一致的，只能从语义级别来区分。在UML类图设计中，聚合关系以空心菱形加实线箭头表示。
+<img src="images/9/1-7-7.png">
+
+6. 组合关系     
+组合也是关联关系的一种特例，它体现的是一种contains-a的关系，这种关系比聚合更强，也称为强聚合。它同样体现整体与部分间的关系，但此时整体与部分是不可分的，整体的生命周期结束也就意味着部分的生命周期结束，比如人和人的大脑。表现在代码层面，和关联关系是一致的，只能从语义级别来区分。在UML类图设计中，组合关系以实心菱形加实线箭头表示。
+<img src="images/9/1-7-8.png">
+
+7. 总结     
+对于继承、实现这两种关系没多少疑问，它们体现的是一种类和类、或者类与接口间的纵向关系。其他的四种关系体现的是类和类、或者类与接口间的引用、横向关系，是比较难区分的，有很多事物间的关系要想准确定位是很难的。前面也提到，这四种关系都是语义级别的，所以从代码层面并不能完全区分各种关系，但总的来说，后几种关系所表现的强弱程度依次为：组合>聚合>关联>依赖。
+
+### 多态(Polymorphism)
+
+1. 多态跟属性无关，多态指的是方法的多态，而不是属性的多态。
+2. 案例代入：
+```java
+package cn.com.dhc1;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/8 - 下午9:42
+ * @Description: cn.com.dhc1
+ * @version: 1.0
+ */
+public class Animal {
+    public void shout() {
+        System.out.println("叫");
+    }
+}
+```
+```java
+package cn.com.dhc1;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/8 - 下午9:37
+ * @Description: cn.com.dhc1
+ * @version: 1.0
+ */
+public class Cat extends Animal {
+    public void shout() {
+        System.out.println("喵");
+    }
+    public void scratch() {
+        System.out.println("挠");
+    }
+}
+```
+```java
+package cn.com.dhc1;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/8 - 下午9:39
+ * @Description: cn.com.dhc1
+ * @version: 1.0
+ */
+public class Dog extends Animal {
+    public void shout() {
+        System.out.println("汪");
+    }
+    public void guard() {
+        System.out.println("保护");
+    }
+}
+```
+```java
+package cn.com.dhc1;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/8 - 下午9:47
+ * @Description: cn.com.dhc1
+ * @version: 1.0
+ */
+public class Pig extends Animal {
+    public void shout() {
+        System.out.println("哼");
+    }
+    public void eat() {
+        System.out.println("吃");
+    }
+}
+```
+```java
+package cn.com.dhc1;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/8 - 下午9:38
+ * @Description: cn.com.dhc1
+ * @version: 1.0
+ */
+public class Girl {
+    public void play(Cat cat) {
+        cat.shout();
+    }
+    public void play(Dog dog) {
+        dog.shout();
+    }
+    public void play(Animal animal) {
+        animal.shout();
+    }
+}
+```
+```java
+package cn.com.dhc1;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/8 - 下午9:38
+ * @Description: cn.com.dhc1
+ * @version: 1.0
+ */
+public class Test {
+    public static void main(String[] args) {
+//        Cat cat = new Cat();
+        Girl girl = new Girl();
+//        girl.play(cat);
+//        Dog dog = new Dog();
+//        girl.play(dog);
+//        Cat cat = new Cat();
+//        Dog dog = new Dog();
+        Pig pig = new Pig();
+        Animal animal = pig;
+
+        girl.play(animal);
+    }
+}
+```
+3. 总结：
+    1. 先有父类，再有子类：--》继承   先有子类，再抽取父类 ----》泛化 
+    2. 什么是多态：
+    多态就是多种状态：同一个行为，不同的子类表现出来不同的形态。
+    多态指的就是同一个方法调用，然后由于对象不同会产生不同的行为。
+    3. 多态的好处：
+    为了提高代码的扩展性，符合面向对象的设计原则：开闭原则。
+    开闭原则：指的就是扩展是 开放的，修改是关闭的。
+    > 注意：多态可以提高扩展性，但是扩展性没有达到最好，以后我们会学习 反射
+    4. 多态的要素：
+        1. 继承：   Cat extends Animal  ,Pig extends Animal,   Dog extends Animal
+        2. 重写：子类对父类的方法shout()重写
+        3. 父类引用指向子类对象：
+        ```java
+        Pig p = new Pig();
+        Animal animal = p;
+        ```
+        将上面的代码合为一句话：
+        ```java
+        Animal animal = new Pig();
+        ```
+        =左侧：编译器的类型
+        =右侧：运行器的类型
+        ```java
+        Animal an = new Pig();
+        g.play(an); //
+        ```
+        ```java
+        package cn.com.dhc1;
+
+        /**
+        * @Auther: Evin_D
+        * @Date: 2022/10/8 - 下午10:03
+        * @Description: cn.com.dhc1
+        * @version: 1.0
+        */
+        public class Demo {
+            public static void main(String[] args) {
+                Animal animal = new Pig();
+                animal.shout();
+            }
+        }
+        ```
+
+    上面的代码，也是多态的一种非常常见的应用场合：父类当方法的形参，然后传入的是具体的子类的对象，
+    然后调用同一个方法，根据传入的子类的不同展现出来的效果也不同，构成了多态。
+
+
+#### 内存分析
+
+<img src="images/9/1-8-1.png">
+
+#### 向下转型，向上转型
+
+<img src="images/9/1-8-2.png">
+<img src="images/9/1-8-3.png">
