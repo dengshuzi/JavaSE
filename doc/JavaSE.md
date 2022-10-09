@@ -6294,3 +6294,559 @@ public class Test {
 
 <img src="images/9/1-8-2.png">
 <img src="images/9/1-8-3.png">
+
+现在我就想访问到eat()方法和weight属性：
+```java
+package cn.com.dhc1;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/8 - 下午10:03
+ * @Description: cn.com.dhc1
+ * @version: 1.0
+ */
+public class Demo {
+    public static void main(String[] args) {
+        Animal animal = new Pig();
+        animal.shout();
+        // 假如转型的代码
+        // 将Animal转为Pig
+        Pig pig = (Pig) animal;
+        pig.eat();
+        pig.age = 10;
+        pig.weight = 60.8;
+    }
+}
+```
+对应内存:
+<img src="images/9/1-8-4.png">
+思考之前的equals方法：
+<img src="images/9/1-8-5.png">
+
+#### 简单工厂模式
+
+不仅可以使用父类做方法的形参，还可以使用父类做方法的返回值类型，真实返回的对象可以是该类的任意一个子类对象。
+简单工厂模式的实现，它是解决大量对象创建问题的一个解决方案。将创建和使用分开，工厂负责创建，使用者直接调用即可。简单工厂模式的基本要求是
+- 定义一个static方法，通过类名直接调用
+- 返回值类型是父类类型，返回的可以是其任意子类类型
+- 传入一个字符串类型的参数，工厂根据参数创建对应的子类产品
+```java
+package cn.com.dhc1;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/8 - 下午9:38
+ * @Description: cn.com.dhc1
+ * @version: 1.0
+ */
+public class Test {
+    public static void main(String[] args) {
+        Girl girl = new Girl();
+        Animal animal = PetStore.getAnimal("猪");
+        girl.play(animal);
+    }
+}
+```
+```java
+package cn.com.dhc1;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/9 - 下午7:30
+ * @Description: cn.com.dhc1
+ * @version: 1.0
+ */
+public class PetStore {
+    // 提供动物
+    public static Animal getAnimal(String petName) {
+        Animal animal = null;
+        if (("猫".equals((petName)))) { // petName.equals("猫") --> 这样写容易发生空指针异常
+            animal = new Cat();
+        } else if(("狗".equals((petName)))) {
+            animal = new Dog();
+        } else if(("猪".equals((petName)))) {
+            animal = new Pig();
+        }
+        return animal;
+    }
+}
+```
+
+## final
+
+1. 修饰变量；
+```java
+package cn.com.dhc2;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/9 - 下午7:48
+ * @Description: cn.com.dhc2
+ * @version: 1.0
+ */
+public class Test {
+    public static void main(String[] args) {
+        // 第一种情况
+        // final修饰一个变量, 变量的值不能改变, 这和变量也变成了一个字符常量, 约定俗成的规定: 名字大写
+        final int A = 10; // 基本数据类型
+//        A = 20; 报错: 不可以修改值
+
+        // 第二种情况
+        final Dog dog = new Dog(); // final修饰引用数据类型, 那么地址值就不可以改变
+//        dog = new Dog(); 报错: 地址值不可以更改
+        // dog对象的属性依然可以改变
+        dog.age = 10;
+        dog.weight = 13.7;
+
+        // 第三种情况
+        final Dog dog1 = new Dog();
+        a(dog1);
+        b(dog1);
+    }
+    public static void a(Dog d) {
+        d = new Dog();
+    }
+    public static void b(final Dog d) { // d被final修饰, 指向不可以改变
+//        d = new Dog();
+    }
+}
+```
+2. 修饰方法；
+final修饰方法，那么这个方法不可以被该类的子类重写：
+<img src="images/9/1-9-1.png">
+
+3. 修饰类；
+final修饰类，代表没有子类，该类不可以被继承：
+一旦一个类被final修饰，那么里面的方法也没有必要用final修饰了（final可以省略不写）
+<img src="images/9/1-9-2.png">
+
+4. 案例：JDK提供的Math类：看源码发现：
+    1. 使用Math类的时候无需导包，直接使用即可：
+    <img src="images/9/1-9-3.png">
+    2. Math类没有子类，不能被其他类继承了
+    <img src="images/9/1-9-4.png">
+    3. 里面的属性全部被final修饰，方法也是被final修饰的，只是省略不写了
+    原因：子类没有必要进行重写。
+    4. 外界不可以创建对象：
+    ```java
+    Math m = new Math();
+    ```
+    <img src="images/9/1-9-5.png">
+    5. 发现Math类中的所有的属性，方法都被static修饰
+    那么不用创建对象去调用，只能通过类名.属性名  类名.方法名 去调用
+
+## 抽象类，抽象方法
+
+1. 抽象类和抽象方法的关系：
+抽象类中可以定义0-n个抽象方法。
+2. 抽象类作用：
+在抽象类中定义抽象方法，目的是为了为子类提供一个通用的模板，子类可以在模板的基础上进行开发，先重写父类的抽象方法，然后可以扩展子类自己的内容。抽象类设计避免了子类设计的随意性，通过抽象类，子类的设计变得更加严格，进行某些程度上的限制。
+使子类更加的通用。
+3. 代码：
+```java
+package cn.com.dhc3;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/9 - 下午8:26
+ * @Description: cn.com.dhc3
+ * @version: 1.0
+ */
+// 4. 一个类中如果有方法是抽象方法, 那么这个类也要变成一个抽象类
+// 5. 一个抽象类中可以有0-n个抽象方法
+public abstract class Person {
+    // 1. 在一个类中, 会有一个类方法, 子类对这个方法非常满意, 无需重写, 直接使用
+    public void eat() {
+        System.out.println("吃");
+    }
+    // 2. 在一个类中, 会有一个类方法, 子类对这个方法永远不满意, 会对这个方法进行重写
+    // 3. 一个方法的方法体去掉, 然后被abstract修饰, 那么这个方法就变成了一个抽象方法
+    public abstract void say();
+    public abstract void sleep();
+}
+// 6. 抽象类可以被其他类继承
+// 7. 一个类继承一个抽象类, 那么这个类可以变成抽象类
+// 8. 一般子类不会加abstract修饰, 一般会让子类重写父类中的抽象方法
+// 9. 子类继承抽象类, 就必须重写全部的抽象方法
+// 10. 子类如果没有重写父类全部的抽象方法, 那么子类也可以编程一个抽象类
+class Student extends Person {
+    @Override
+    public void say() {
+        System.out.println("说");
+    }
+
+    @Override
+    public void sleep() {
+        System.out.println("睡");
+    }
+}
+class Demo {
+    public static void main(String[] args) {
+        // 11. 创建抽象类的对象: --> 抽象类不可以创建对象
+//        Person p = new Person();
+
+        // 12. 创建子类对象
+        Student s = new Student();
+        s.say();
+        s.sleep();
+
+        // 13. 多态写法: 父类引用指向子类对象
+        Person person = new Student();
+        person.say();
+        person.sleep();
+    }
+}
+```
+4. 面试题：
+    1. 抽象类不能创建对象，那么抽象类中是否有构造器？
+    抽象类中一定有构造器。构造器的作用  给子类初始化对象的时候要先super调用父类的构造器。
+    2. 抽象类是否可以被final修饰？
+    不能被final修饰，因为抽象类设计的初衷就是给子类继承用的。要是被final修饰了这个抽象类了，就不存在继承了，就没有子类。
+
+## 接口
+
+1. 接口声明格式：
+```java
+[访问修饰符]  interface 接口名   [extends  父接口1，父接口2…]  {
+  常量定义；       
+  方法定义；
+}
+```
+2. 代码：
+```java
+package cn.com.dhc4;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/9 - 下午8:59
+ * @Description: cn.com.dhc4
+ * 1. 类是类接口是接口, 是同一层次的概念
+ * 2. 接口中没有构造器
+ * 3. 接口如何声明: interface
+ * 4. 在JDK1.8之前, 接口中只有两部分内容:
+ *  (1)常量: 固定修饰符: public static final
+ *  (2)抽象方法: 固定修饰符: public abstract
+ * 注意: 修饰符可以省略不写, IDE会帮你自动不全, 但是初学着建议写上, 防止遗忘
+ * @version: 1.0
+ */
+public interface TestInterface01 {
+    // 常量:
+    /*public static final*/ int NUM = 10;
+
+    // 抽象方法:
+    /*public abstract*/ void a();
+    /*public abstract*/ void b(int num);
+    /*public abstract*/ int c(String name);
+}
+interface TestInterface02 {
+    void e();
+    void f();
+}
+/**
+ * 5. 类和接口的关系是什么? 实现关系 类实现接口
+ * 6. 一旦实现一个接口, 那么实现类要重写接口中的全部的抽象方法:
+ * 7. 如果没有全部重写抽象方法, 那么这个类可以变成一个抽象类
+ * 8. java只有单继承, java还有多实现
+ * 一个类继承其他类, 只能直接继承一个父类
+ * 但是实现类实现接口的话, 可以实现多个接口
+ * 9. 写法: 先继承 再实现: Student extends Person implements TestInterface01, TestInterface02
+ */
+class Student extends Person implements TestInterface01, TestInterface02 {
+    @Override
+    public void a() {
+        System.out.println("a");
+    }
+
+    @Override
+    public void b(int num) {
+        System.out.println("b");
+    }
+
+    @Override
+    public int c(String name) {
+        return 100;
+    }
+
+    @Override
+    public void e() {
+        System.out.println("e");
+    }
+
+    @Override
+    public void f() {
+        System.out.println("f");
+    }
+}
+class Test {
+    public static void main(String[] args) {
+        // 10. 接口不能创建对象
+//        TestInterface02 t = new TestInterface02();
+        TestInterface02 t = new Student(); // 接口指向实现类 --> 多态
+
+        // 11. 接口中常量如何访问
+        System.out.println(TestInterface01.NUM);
+        System.out.println(Student.NUM);
+        Student student = new Student();
+        System.out.println(student.NUM);
+        TestInterface01 t2 = new Student();
+        System.out.println(t2.NUM);
+    }
+}
+```
+3. 接口的作用是什么？
+定义规则，只是跟抽象类不同地方在哪？它是接口不是类。
+接口定义好规则之后，实现类负责实现即可。
+4. 
+继承：子类对父类的继承
+实现：实现类对接口的实现
+手机  是不是  照相机  
+继承：手机   extends 照相机     “is-a”的关系，手机是一个照相机 
+上面的写法 不好：
+实现：  手机    implements   拍照功能   “has-a”的关系，手机具备照相的能力
+案例：飞机，小鸟，风筝
+  定义一个接口： Flyable
+5. 多态的应用场合：
+    1. 父类当做方法的形参，传入具体的子类的对象
+    2. 父类当做方法的返回值，返回的是具体的子类的对象
+    3. 接口当做方法的形参，传入具体的实现类的对象
+    4. 接口当做方法的返回值，返回的是具体的实现类的对象
+
+6. 接口和抽象类的区别：
+<img src="images/9/1-10-1.png">
+<img src="images/9/1-10-2.png">
+
+### JDK1.8以后的接口新增内容
+
+在JDK1.8之前，接口中只有两部分内容：
+
+1. 常量：固定修饰符：public static final
+2. 抽象方法：固定修饰符：public abstract
+
+在JDK1.8之后，新增非抽象方法：
+1. 被public default修饰的非抽象方法：
+注意1：default修饰符必须要加上，否则出错
+注意2：实现类中要是想重写接口中的非抽象方法，那么default修饰符必须不能加，否则出错。
+```java
+package cn.com.dhc5;
+
+import cn.com.dhc4.TestInterface01;
+
+/**
+* @Auther: Evin_D
+* @Date: 2022/10/9 - 下午9:37
+* @Description: cn.com.dhc5
+* @version: 1.0
+*/
+public interface TestInterface {
+    // 常量:
+    public static final int NUM = 10;
+    // 抽象方法:
+    public abstract void a();
+    // public default修饰的抽象方法:
+    public default void b() {
+        System.out.println("TestInterface   b()");
+    }
+}
+class Test implements TestInterface {
+    public void c() {
+        b(); // 可以
+//        super.b(); 不可以
+        TestInterface.super.b(); // 可以
+    }
+    @Override
+    public void a() {
+        System.out.println("重写了a方法");
+    }
+    @Override
+    public void b() {
+        System.out.println("重写了b方法");
+    }
+}
+```
+2. 静态方法：
+注意1：static不可以省略不写
+注意2：静态方法不能重写
+
+```java
+package cn.com.dhc5;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/9 - 下午9:47
+ * @Description: cn.com.dhc5
+ * @version: 1.0
+ */
+public interface TestInterface2 {
+    // 常量
+    public static int NUM = 10;
+    // 抽象方法
+    public abstract void a();
+    // 非抽象方法
+    public default void b() {
+        System.out.println("TestInterface2---b");
+    }
+    // 静态方法
+    public static void c() {
+        System.out.println("TestInterface2---static");
+    }
+}
+class Demo implements TestInterface2{
+    @Override
+    public void a() {
+        System.out.println("重写a方法");
+    }
+    public static void c() {
+        System.out.println("Demo---static");
+    }
+}
+class A {
+    public static void main(String[] args) {
+        Demo demo = new Demo();
+        demo.c();
+        Demo.c();
+        TestInterface2.c();
+    }
+}
+```
+  疑问：为什么要在接口中加入非抽象方法？？？
+  如果接口中只能定义抽象方法的话，那么我要是修改接口中的内容，那么对实现类的影响太大了，所有实现类都会受到影响。
+  现在在接口中加入非抽象方法，对实现类没有影响，想调用就去调用即可。
+
+## 内部类
+
+### 成员内部类
+
+```java
+package cn.com.dhc7;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/9 - 下午10:01
+ * @Description: cn.com.dhc7
+ * 1. 类的组成: 属性, 方法, 构造器, 代码块(普通快, 静态块, 构造块, 同步块), 内部类
+ * 2. 一个类TestOuter的内部类SubTest叫内部类, 内部类: SubTest 外部类: TestOuter
+ * 3. 内部类: 成员内部类(静态, 非静态)和局部内部类(位置: 方法内, 块内, 构造器内)
+ * 4. 成员内部类：
+ *  里面属性, 方法, 构造器等
+ *  修饰符: public default, protected, private, final, abstract
+ * @version: 1.0
+ */
+public class TestOuter {
+    // 成员内部类
+    public class D {
+        String name;
+        int age = 20;
+        public void method() {
+            // 5. 内部类可以访问外部类的内容
+            /*System.out.println(age);
+            a();*/
+            int age = 30;
+            // 8. 内部类和外部类属性重名的时候, 如何进行调用
+            System.out.println(age);
+            System.out.println(this.age);
+            System.out.println(TestOuter.this.age);
+        }
+    }
+    static class E {
+        public void method() {
+            // 6. 静态内部类中只能访问外部类中被static修饰的内容
+            /*System.out.println(age);
+            a();*/
+        }
+    }
+    // 静态成员内部类
+    int age = 10;
+    public void a() {
+        System.out.println("method a");
+        {
+            System.out.println("This is a common code block");
+            class B{}
+        }
+        class A {}
+        // 7. 外部类想要访问内部类的东西, 需要创建内部类的对象进行调用
+        D d = new D();
+        System.out.println(d.name);
+        d.method();
+//        System.out.println(name);
+    }
+    {
+        System.out.println("This is a construct block");
+    }
+    static {
+        System.out.println("This is a static block");
+    }
+    public TestOuter() {
+        class C {}
+    }
+    public TestOuter(int age) {
+        this.age = age;
+    }
+}
+class Demo {
+    public static void main(String[] args) {
+        // 创建外部类的对象
+        TestOuter testOuter = new TestOuter();
+        testOuter.a();
+        // 创建内部类的对象
+        // 静态创建内部类的对象
+        TestOuter.E e = new TestOuter.E();
+        // 非静态创建内部类的对象
+//        错误: TestOuter.D d = new TestOuter.D();
+        TestOuter t = new TestOuter();
+        TestOuter.D d = t.new D();
+    }
+}
+```
+
+### 局部内部类
+
+```java
+package cn.com.dhc8;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/9 - 下午10:21
+ * @Description: cn.com.dhc8
+ * @version: 1.0
+ */
+public class TestOuter {
+    // 1. 在局部内部类中访问到的变量必须是被final修饰的
+    public void method() {
+        final int num = 10;
+        class A {
+            public void a() {
+//                num = 20;
+                System.out.println(num);
+            }
+        }
+    }
+    // 2. 如果类B在整个项目中只使用一次, 那么就没有必要单独创建一个B类, 使用内部类就可以了
+    public Comparable method2() {
+        class B implements Comparable {
+            @Override
+            public int compareTo(Object o) {
+                return 100;
+            }
+        }
+        return new B();
+    }
+    public Comparable method3() {
+        // 3. 匿名内部类
+        return new Comparable() {
+            @Override
+            public int compareTo(Object o) {
+                return 200;
+            }
+        };
+    }
+    public void test() {
+        Comparable comparable = new Comparable() {
+            @Override
+            public int compareTo(Object o) {
+                return 300;
+            }
+        };
+        System.out.println(comparable.compareTo("abc"));
+    }
+}
+```

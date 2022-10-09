@@ -16,7 +16,7 @@ public class Test {
 //        Cat cat = new Cat();
 //        Dog dog = new Dog();
         Pig pig = new Pig();
-        Animal animal = pig;
+        Animal animal = PetStore.getAnimal("猪");
 
         girl.play(animal);
     }
