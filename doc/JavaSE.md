@@ -6850,3 +6850,199 @@ public class TestOuter {
     }
 }
 ```
+
+# 第九章_异常
+
+## 习题的引入
+
+1. 代码：
+
+```java
+package cn.com.dhc1;
+
+import java.util.Scanner;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/14 - 下午9:59
+ * @Description: cn.com.dhc1
+ * @version: 1.0
+ */
+public class Test {
+    public static void main(String[] args) {
+        // 实现一个功能: 键盘录入两个数, 求商:
+        Scanner sc = new Scanner(System.in);
+        System.out.println("请录入第一个数:");
+        int num1 = sc.nextInt();
+        System.out.println("请录入第二个数:");
+        int num2 = sc.nextInt();
+        System.out.println("商:" + num1 / num2);
+    }
+}
+```
+运行结果：
+<img src="images/10/1-1-1.png">
+测试过程发现问题：
+录入的数据应为int类型，但是录入非int类型数据的时候，出异常：
+<img src="images/10/1-1-2.png">
+除数为0的时候：
+<img src="images/10/1-1-3.png">
+异常：Exception：在程序的运行过程中，发生了不正常的现象，阻止了程序的运行，我们称之为发生异常。
+
+## 通过if-else解决异常
+
+```java
+package cn.com.dhc1;
+
+import java.util.Scanner;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/14 - 下午9:59
+ * @Description: cn.com.dhc1
+ * @version: 1.0
+ */
+public class Test {
+    public static void main(String[] args) {
+        // 实现一个功能: 键盘录入两个数, 求商:
+        Scanner sc = new Scanner(System.in);
+        System.out.println("请录入第一个数:");
+        if (sc.hasNextInt()) {
+            int num1 = sc.nextInt();
+            System.out.println("请录入第二个数:");
+            if (sc.hasNextInt()) {
+                int num2 = sc.nextInt();
+                if (num2 == 0) {
+                    System.out.println("对不起除数不能为0");
+                } else {
+                    System.out.println("商:" + num1 / num2);
+                }
+            } else {
+                System.out.println("对不起, 你录入的不是int类型的数据");
+            }
+        } else {
+            System.out.println("对不起, 你录入的不是int类型的数据");
+        }
+    }
+}
+```
+用if-else堵漏洞的缺点：
+1. 代码臃肿，业务代码和处理异常的代码混在一起。
+2. 可读性差
+3. 程序员需要花费大量的经历来维护这个漏洞
+4. 程序员很难堵住所有的漏洞。
+
+## try-catch
+
+1. 基于if-else处理异常缺点太多，所以java中专门出了一个异常处理机制：
+“异常三连”  try-catch-finally
+2. 异常出现了以后怎么看：
+<img src="images/10/1-1-3.png">
+
+3. 捕获异常： try-catch
+对应代码：
+```java
+package cn.com.dhc1;
+
+import java.util.Scanner;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/14 - 下午10:15
+ * @Description: cn.com.dhc1
+ * @version: 1.0
+ */
+public class Test2 {
+    public static void main(String[] args) {
+        // 实现一个功能: 键盘录入两个数, 求商:
+        try {
+            Scanner sc = new Scanner(System.in);
+            System.out.println("请录入第一个数:");
+            int num1 = sc.nextInt();
+            System.out.println("请录入第二个数:");
+            int num2 = sc.nextInt();
+            System.out.println("对不起除数不能为0");
+            System.out.println("商:" + num1 / num2);
+        } catch (Exception e) {
+            System.out.println("对不起, 程序出现异常");
+        }
+        System.out.println("感谢使用");
+    }
+}
+```
+
+原理：
+把可能出现异常的代码放入try代码块中，然后将异常封装为对象，被catch后面的()中的那个异常对象接收，接收以后：执行catch后面的{}里面的代码，然后try-catch后面的代码，该怎么执行就怎么执行。
+
+详细说一下：
+1. try中没有异常，catch中代码不执行。
+2. try中有异常，catch进行捕获：
+如果catch中异常类型和你出的异常类型匹配的话：走catch中的代码--》进行捕获
+如果catch中异常类型和你出的异常类型不匹配的话：不走catch中的代码--》没有捕获成功，程序相当于遇到异常了，中断了，后续代码不执行
+
+注意：
+  1. try中如果出现异常，然后用catch捕获成功的话，那么try中后续的代码是不会执行的。
+  2. 如果catch捕获异常成功，那么try-catch后面的代码该执行还是执行没有影响。
+
+## catch中如何处理异常
+
+```java
+package cn.com.dhc1;
+
+import java.util.Scanner;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/14 - 下午10:22
+ * @Description: cn.com.dhc1
+ * @version: 1.0
+ */
+public class Test3 {
+    public static void main(String[] args) {
+        // 实现一个功能: 键盘录入两个数, 求商:
+        try {
+            Scanner sc = new Scanner(System.in);
+            System.out.println("请录入第一个数:");
+            int num1 = sc.nextInt();
+            System.out.println("请录入第二个数:");
+            int num2 = sc.nextInt();
+            System.out.println("商:" + num1 / num2);
+        } catch (Exception e) {
+            // 第一种处理: 什么都不写, 什么都不做
+
+            // 第二种处理: 输出自定义异常
+            /*System.out.println("对不起, 程序出现异常");*/
+
+            // 第三种处理: 打印异常信息:
+            // (1) 调用toString方法, 显示异常的类名(全限定路径)
+            /*System.out.println(e);
+            System.out.println(e.toString());*/
+
+            // (2) 显示异常描述信息对应的字符串, 如果没有就显示null
+            /*System.out.println(e.getMessage());*/
+
+            // (3) 显示异常的堆栈信息: 将异常信息捕获后, 在控制台将异常的效果给我们展示出来, 方便我们查看
+            /*e.printStackTrace();*/
+
+            // 第四种处理:  抛出异常:
+            throw e;
+        }
+
+        System.out.println("感谢使用");
+    }
+}
+```
+
+## try-catch-finally
+
+1. 在什么情况下，try-catch后面的代码不执行？
+    1. throw抛出异常的情况
+    2. catch中没有正常的进行异常捕获
+    3. 在try中遇到return
+2. 怎么样才可以将 try-catch后面的代码  必须执行？
+只要将必须执行的代码放入finally中，那么这个代码无论如何一定执行。
+3. return和finally执行顺序？
+先执行finally最后执行return
+4. 什么代码会放在finally中呢？
+关闭数据库资源，关闭IO流资源，关闭socket资源。
+5. 有一句话代码很厉害，它可以让finally中代码不执行!
