@@ -7046,3 +7046,588 @@ public class Test3 {
 4. 什么代码会放在finally中呢？
 关闭数据库资源，关闭IO流资源，关闭socket资源。
 5. 有一句话代码很厉害，它可以让finally中代码不执行!
+代码:
+```java
+package cn.com.dhc1;
+
+import java.util.Scanner;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/14 - 下午10:22
+ * @Description: cn.com.dhc1
+ * @version: 1.0
+ */
+public class Test3 {
+    public static void main(String[] args) {
+        // 实现一个功能: 键盘录入两个数, 求商:
+        try {
+            Scanner sc = new Scanner(System.in);
+            System.out.println("请录入第一个数:");
+            int num1 = sc.nextInt();
+            System.out.println("请录入第二个数:");
+            int num2 = sc.nextInt();
+            System.out.println("商:" + num1 / num2);
+            System.exit(0); // 终止当前的虚拟机执行
+            return;
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            System.out.println("感谢使用");
+        }
+    }
+}
+```
+
+## 多重catch
+
+1. try中出现异常以后，将异常类型跟catch后面的类型依次比较，按照代码的顺序进行比对，执行第一个与异常类型匹配的catch语句
+2. 一旦执行其中一条catch语句之后，后面的catch语句就会被忽略了！
+3. 在安排catch语句的顺序的时候，一般会将特殊异常放在前面（并列），一般化的异常放在后面。
+先写子类异常，再写父类异常。
+4. 在JDK1.7以后，异常新处理方式：可以并列用|符号连接：
+<img src="images/10/1-1-4.png">
+
+```java
+package cn.com.dhc1;
+
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/14 - 下午10:22
+ * @Description: cn.com.dhc1
+ * @version: 1.0
+ */
+public class Test4 {
+    public static void main(String[] args) {
+        // 实现一个功能: 键盘录入两个数, 求商:
+        try {
+            Scanner sc = new Scanner(System.in);
+            System.out.println("请录入第一个数:");
+            int num1 = sc.nextInt();
+            System.out.println("请录入第二个数:");
+            int num2 = sc.nextInt();
+            System.out.println("商:" + num1 / num2);
+        } catch (InputMismatchException e) {
+            System.out.println("对不起, 你录入的数据不是int类型的数据");
+        }  catch (ArithmeticException e) {
+            System.out.println("对不起, 除数不可以为0");
+        }   catch (Exception e) {
+            System.out.println("对不起, 你的程序出现异常");
+        } finally {
+            System.out.println("感谢使用");
+        }
+    }
+}
+```
+
+## 异常的分类
+
+1. 层次结构：
+<img src="images/10/1-1-5.png">
+
+> 注意：程序中语法错误，逻辑错误  都不属于上面的Error，Exception
+2. 运行时异常：
+```java
+package cn.com.dhc1;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/15 - 下午5:57
+ * @Description: cn.com.dhc1
+ * @version: 1.0
+ */
+public class Test5 {
+    public static void main(String[] args) {
+        // 运行时异常:
+        int[] arr = {1, 2, 3};
+        System.out.println(arr.length);
+        // NullPointerException(空指针异常)
+        /*int[] arr2 = null;
+        System.out.println(arr2.length);*/
+
+        // ArrayIndexOutOfBoundsException(数组越界异常)
+        System.out.println(arr[10]);
+    }
+}
+```
+3. 检查异常：
+处理方式1：try-catch嵌套try-catch
+```java
+package cn.com.dhc1;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/15 - 下午6:00
+ * @Description: cn.com.dhc1
+ * @version: 1.0
+ */
+public class Test6 {
+    public static void main(String[] args) {
+        // 检查异常:
+        try {
+            Class.forName("cn.com.dhc1.Test").newInstance();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
+```
+处理方式2：多重catch
+```java
+package cn.com.dhc1;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/15 - 下午6:00
+ * @Description: cn.com.dhc1
+ * @version: 1.0
+ */
+public class Test6 {
+    public static void main(String[] args) {
+        // 检查异常:
+        try {
+            Class.forName("cn.com.dhc1.Test").newInstance();
+        } catch (IllegalAccessException | ClassNotFoundException | InstantiationException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
+```
+处理方式3：throws
+```java
+package cn.com.dhc1;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/15 - 下午6:00
+ * @Description: cn.com.dhc1
+ * @version: 1.0
+ */
+public class Test6 {
+    public static void main(String[] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+        // 检查异常:
+        Class.forName("cn.com.dhc1.Test").newInstance();
+    }
+}
+```
+
+## throw和throws的区别
+
+```java
+package cn.com.dhc1;
+
+import java.util.Scanner;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/15 - 下午6:09
+ * @Description: cn.com.dhc1
+ * @version: 1.0
+ */
+public class Test7 {
+    public static void main(String[] args) throws Exception {
+        /*try {
+            devide();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }*/
+        devide();
+    }
+    public static void devide() throws Exception {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("请录入第一个数:");
+        int num1 = sc.nextInt();
+        System.out.println("请录入第二个数:");
+        int num2 = sc.nextInt();
+        System.out.println("商:" + num1 / num2);
+        if (num2 == 0) {
+            // 制造运行时异常
+            /*throw new RuntimeException();*/
+
+            // 制造检查异常:
+            /*try {
+                throw new Exception();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }*/
+            throw new Exception();
+        }
+    }
+}
+```
+总结：
+throw和throws的区别：
+1. 位置不同：
+throw：方法内部
+throws: 方法的签名处，方法的声明处
+2. 内容不同：
+throw+异常对象（检查异常，运行时异常）
+throws+异常的类型（可以多个类型，用，拼接）
+3. 作用不同：
+throw：异常出现的源头，制造异常。
+throws:在方法的声明处，告诉方法的调用者，这个方法中可能会出现我声明的这些异常。然后调用者对这个异常进行处理：
+要么自己处理要么再继续向外抛出异常
+
+### 练习
+
+```java
+package cn.com.dhc2;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/15 - 下午7:42
+ * @Description: cn.com.dhc2
+ * @version: 1.0
+ */
+public class Student {
+    private String name;
+    private int age;
+    private String sex;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) throws Exception {
+        if (sex.equals("男") || sex.equals("女")) {
+            this.sex = sex;
+        } else {
+            // 解决办法1:
+            /*this.sex = "男";*/
+
+            // 解决办法2: 给个友好型提示, 但是打印结果为默认的null效果
+            /*System.out.println("对不起, 性别错误");*/
+
+            // 解决办法3:
+            // 制造运行异常
+            /*throw new RuntimeException();*/
+            // 制造检查异常
+            /*try {
+                throw new Exception();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }*/
+            throw new Exception();
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "name='" + name + '\'' +
+                ", age=" + age +
+                ", sex='" + sex + '\'' +
+                '}';
+    }
+
+    public Student() {
+    }
+
+    public Student(String name, int age, String sex) {
+        setName(name);
+        setAge(age);
+        try {
+            setSex(sex);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+```java
+package cn.com.dhc2;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/15 - 下午7:43
+ * @Description: cn.com.dhc2
+ * @version: 1.0
+ */
+public class Test {
+    public static void main(String[] args) {
+        /*Student student = new Student();
+        student.setName("张三");
+        student.setAge(18);
+        try {
+            student.setSex("aa");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println(student);*/
+
+        Student student2 = new Student("李四", 19, "aaaa");
+        System.out.println(student2);
+    }
+}
+```
+
+## 重载和重写的异常
+
+<img src="images/10/1-1-6.png">
+
+1. 重载:
+```java
+package cn.com.dhc2;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/15 - 下午7:56
+ * @Description: cn.com.dhc2
+ * @version: 1.0
+ */
+public class Demo {
+    public void a() throws Exception {}
+    public void a(int age) throws ArithmeticException {}
+}
+```
+2. 重写:
+<img src="images/10/1-1-7.png">
+子类 <= 父类 
+
+## 自定义异常
+
+自定义的异常可以继承：运行时异常
+```java
+package cn.com.dhc4;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/15 - 下午8:00
+ * @Description: cn.com.dhc4
+ * @version: 1.0
+ */
+public class MyException extends RuntimeException {
+    static final long serialVersionUID = -7034897190L;
+    public MyException() {}
+    public MyException(String msg) {
+        super(msg);
+    }
+}
+
+```
+也可以继承检查异常：
+```java
+package cn.com.dhc4;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/15 - 下午8:00
+ * @Description: cn.com.dhc4
+ * @version: 1.0
+ */
+public class MyException extends Exception {
+    static final long serialVersionUID = -7034897190L;
+    public MyException() {}
+    public MyException(String msg) {
+        super(msg);
+    }
+}
+```
+如果继承的是运行时异常，那么在使用的时候无需额外处理
+如果继承的是检查异常，那么使用的时候需要try-catch捕获或者throws向上抛
+
+# 第十章_常用类
+
+## 包装类
+
+### 引入
+
+1. 什么是包装类：
+以前定义变量，经常使用基本数据类型，
+对于基本数据类型来说，它就是一个数，加点属性，加点方法，加点构造器，
+将基本数据类型对应进行了一个封装，产生了一个新的类，---》包装类。
+int,byte.....--->基本数据类型
+包装类--->引用数据类型
+2. 对应关系：
+基本数据类型          对应的包装类                继承关系
+byte                          Byte                           ---》Number---》Object
+short                         Short                         ---》Number---》Object
+int                             Integer                      ---》Number---》Object
+long                          Long                          ---》Number---》Object
+float                          Float                          ---》Number---》Object
+double                      Double                      ---》Number---》Object
+char                          Character                  Object
+boolean                    Boolean                    Object
+3. 已经有基本数据类型了，为什么要封装为包装类？
+    1. java语言 面向对象的语言，最擅长的操作各种各样的类。
+    2. 以前学习装数据的---》数组，int[]  String[]  double[]   Student[]
+        以后学习的装数据的---》集合，有一个特点，只能装引用数据类型的数据
+4. 是不是有了包装类以后就不用基本数据类型了？
+不是。
+
+### Integer
+
+1. 直接使用，无需导包：
+<img src="images/11/1-1-1.png">
+
+2. 类的继承关系：
+<img src="images/11/1-1-2.png">
+
+3. 实现接口：
+<img src="images/11/1-1-3.png">
+
+4. 这个类被final修饰，那么这个类不能有子类，不能被继承：
+<img src="images/11/1-1-4.png">
+
+5. 包装类是对基本数据类型的封装： 对int类型封装产生了Integer
+<img src="images/11/1-1-5.png">
+
+6. 类的历史：
+<img src="images/11/1-1-6.png">
+
+7. 属性：
+```java
+package cn.com.dhc1;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/15 - 下午9:18
+ * @Description: cn.com.dhc1
+ * @version: 1.0
+ */
+public class test01 {
+    public static void main(String[] args) {
+        System.out.println(Integer.MIN_VALUE);
+        System.out.println(Integer.MIN_VALUE);
+        System.out.println(Integer.MIN_VALUE + 1);
+        System.out.println(Integer.MIN_VALUE - 1);
+    }
+}
+```
+
+8. 构造器（发现没有空参构造器）
+
+    1. int类型作为构造器的参数：
+    ```java
+    Integer i1 = new Integer(12);
+    ```
+
+    <img src="images/11/1-1-7.png">
+    2. String类型作为构造器的参数：
+    ```java
+    Integer i2 = new Integer("12");
+    Integer i3 = new Integer("abcdef");
+    ```
+    <img src="images/11/1-1-8.png">
+
+9. 包装类特有的机制：自动装箱  自动拆箱：
+```java
+package cn.com.dhc1;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/15 - 下午9:35
+ * @Description: cn.com.dhc1
+ * @version: 1.0
+ */
+public class Test03 {
+    public static void main(String[] args) {
+        // 自动装箱
+        // int --> Integer
+        Integer integer1 = 12;
+        System.out.println(integer1);
+
+        // 自动拆箱
+        Integer integer2 = new Integer(12);
+        int num = integer2;
+        System.out.println(num);
+    }
+}
+```
+  1. 自动装箱  自动拆箱 是从JDK1.5以后新出的特性
+  2. 自动装箱  自动拆箱 ：将基本数据类型和包装类进行快速的类型转换。
+  验证：
+  <img src="images/11/1-1-9.png">
+  可以自定打断点测试是否走入valueOf方法中：
+  <img src="images/11/1-1-10.png">
+
+  
+10. 常用方法：
+
+valueOf方法的底层：
+  <img src="images/11/1-1-11.png">
+  
+```java
+package cn.com.dhc1;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/15 - 下午9:39
+ * @Description: cn.com.dhc1
+ * @version: 1.0
+ */
+public class Test04 {
+    public static void main(String[] args) {
+        // compareTo: 只返回三个值: 0, 1, -1
+        Integer integer1 = new Integer(55);
+        Integer integer2 = new Integer(12);
+        System.out.println(integer1.compareTo(integer2)); // return (x < y) ? -1 : ((x == y) ? 0 : 1);
+
+        // equals: Integer对Object中的equals方法进行了重写, 比较的是底层封装的value的值
+        // Integer对象是通过new关键字创建的对象:
+        Integer integer3 = new Integer(1);
+        Integer integer4 = new Integer(12);
+        System.out.println(integer3 == integer4); // false 因为==比较的是两个对象的地址
+        System.out.println(integer3.equals(integer4));
+
+        // Integer对象通过自动装箱来完成:
+        Integer integer5 = 130;
+        Integer integer6 = 130;
+        System.out.println(integer5.equals(integer6)); // true
+        System.out.println(integer5 == integer6);
+        /**
+         * 如果自动装箱值在-128~127之间, 那么比较的就是具体的数值
+         * 否则比较的就是对象的地址
+         */
+
+        // intValue(): 作用将Integer --> int
+        Integer integer7 = 130;
+        int i = integer7.intValue();
+        System.out.println(i);
+
+        // parseInt(String s): String --> int
+        System.out.println(Integer.parseInt("12"));
+
+        // toString(): Integer --> String
+        Integer integer8 = 130;
+        System.out.println(integer8.toString());
+    }
+}
+```  
+
+## 日期相关的类
+
+### java.util.Date
+
+```java
+```
+
+### java.sql.Date
+
+```java
+```
+
+### SimpleDateFormat

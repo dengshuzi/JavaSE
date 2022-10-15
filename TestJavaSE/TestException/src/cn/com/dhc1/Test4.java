@@ -1,5 +1,6 @@
 package cn.com.dhc1;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /**
@@ -8,7 +9,7 @@ import java.util.Scanner;
  * @Description: cn.com.dhc1
  * @version: 1.0
  */
-public class Test3 {
+public class Test4 {
     public static void main(String[] args) {
         // 实现一个功能: 键盘录入两个数, 求商:
         try {
@@ -18,10 +19,12 @@ public class Test3 {
             System.out.println("请录入第二个数:");
             int num2 = sc.nextInt();
             System.out.println("商:" + num1 / num2);
-            System.exit(0); // 终止当前的虚拟机执行
-            return;
-        } catch (Exception e) {
-            throw e;
+        } catch (InputMismatchException e) {
+            System.out.println("对不起, 你录入的数据不是int类型的数据");
+        }  catch (ArithmeticException e) {
+            System.out.println("对不起, 除数不可以为0");
+        }   catch (Exception e) {
+            System.out.println("对不起, 你的程序出现异常");
         } finally {
             System.out.println("感谢使用");
         }
