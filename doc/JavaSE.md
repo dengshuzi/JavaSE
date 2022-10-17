@@ -7623,11 +7623,703 @@ public class Test04 {
 ### java.util.Date
 
 ```java
+package cn.com.dhc2;
+
+import java.util.Date;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/16 - 下午12:37
+ * @Description: cn.com.dhc2
+ * @version: 1.0
+ */
+public class Test {
+    public static void main(String[] args) {
+        // java.util.Date:
+        Date date = new Date();
+        System.out.println(date);
+        System.out.println(date.toGMTString()); // 过期方法, 过时方法, 废弃方法
+        System.out.println(date.toLocaleString());
+        System.out.println(date.getYear()); // 122 + 1900
+        System.out.println(date.getMonth()); // 9: 返回的值在0和11之间, 值0表示1月
+        // 返回自1970年1月1日00:00:00 GMT以来此Date对象表示的毫秒数
+        System.out.println(date.getTime()); // 1665895248843
+        System.out.println(System.currentTimeMillis());
+        /**
+         * (1)疑问: 以后获取时间差用: getTime还是currentTimeMillis()
+         * 答案: currentTimeMillis() --> 因为这个方法是静态的, 可以类名.方法名直接调用
+         * (2)public static native long currentTimeMillis();
+         * 本地方法
+         * 为什么没有方法体？因为这个方法的具体实现不是通过java写的
+         * (3)方法的作用:
+         * 一般回去衡量一些算法所用的时间
+         */
+        long startTime = System.currentTimeMillis();
+        for (int i = 0; i < 10000; i++) {
+            System.out.println(i);
+        }
+        long entTime = System.currentTimeMillis();
+        System.out.println(entTime - startTime);
+    }
+}
 ```
 
 ### java.sql.Date
 
 ```java
+package cn.com.dhc2;
+
+import java.sql.Date;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/16 - 下午12:51
+ * @Description: cn.com.dhc2
+ * @version: 1.0
+ */
+public class Test02 {
+    public static void main(String[] args) {
+        // java.sql.Date:
+        Date date1 = new Date(1665895806420L);
+        System.out.println(date1);
+        /**
+         * (1)java.sql.Date和java.util.Date的区别:
+         * java.util.Date: 年月日 时分秒
+         * java.sql.Date: 年月日
+         * (2)java.sql.Date和java.util.Date的联系:
+         * java.sql.Date(子类) extends java.util.Date(父类)
+         */
+
+        // java.sql.Date和java.util.Date相互转换:
+        // util --> sql:
+        java.util.Date date2 = new Date(1665895806420L); // 创建util.Date的对象
+        // 方式1: 向下转型
+//        Date date3 = (Date) date2;
+        Date date3 = (Date) date2;
+        /**
+         * 父类: Animal 子类: Dog
+         * Animal an = new Dog();
+         * Dog d = (Dog)an;
+         */
+        // 方式2: 利用构造器
+        Date date4 = new Date(date2.getTime());
+
+        // sql --> util
+        java.util.Date date5 = date1;
+
+        // String --> sql.Date:
+        Date date6 = Date.valueOf("2022-10-16");
+    }
+}
 ```
 
 ### SimpleDateFormat
+
+1. String--->java.util.Date 类型转换：
+分解：
+  1. String--->java.sql.Date
+  2. java.sql.Date--->java.util.Date
+```java
+package cn.com.dhc2;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/16 - 下午1:17
+ * @Description: cn.com.dhc2
+ * @version: 1.0
+ */
+public class Test03 {
+    public static void main(String[] args) {
+         // (1)String--->java.sql.Date
+        java.sql.Date date = java.sql.Date.valueOf("2020-10-16");
+         // (2)java.sql.Date--->java.util.Date
+        java.util.Date date1 = date;
+        System.out.println(date1);
+    }
+}
+```
+上面的代码有局限性，字符串的格式只能是年-月-日拼接的形式，换成其它类型，就会出现异常：
+<img src="images/11/1-2-1.png">
+
+2. 引入新的类：SimpleDateFormat
+```java
+package cn.com.dhc2;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/16 - 下午1:20
+ * @Description: cn.com.dhc2
+ * @version: 1.0
+ */
+public class Test04 {
+    public static void main(String[] args) {
+        // 日期转换
+        // SimpleDateFormat(子类) extends DateFormat(父类是一个抽象类)
+        // 格式化的标准已经定义好了
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        // String --> Date
+        try {
+            System.out.println(dateFormat.parse("2020-10-16 13:26:22"));
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        // Date --> String
+        System.out.println(dateFormat.format(new Date()));
+
+        Date date2 = new Date();
+        System.out.println(date2.toString());
+        System.out.println(date2.toGMTString());
+        System.out.println(date2.toLocaleString());
+    }
+}
+```
+3. 日期格式：
+<img src="images/11/1-2-2.png">
+
+### Calendar
+
+```java
+package cn.com.dhc2;
+
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/16 - 下午1:40
+ * @Description: cn.com.dhc2
+ * @version: 1.0
+ */
+public class Test06 {
+    public static void main(String[] args) {
+        // Calendar是一个抽象类, 不可以直接创建对象
+        // GregorianCalendar(子类) extends Calendar（父类是一个抽象类）
+        Calendar calendar1 = new GregorianCalendar();
+        Calendar calendar2 = Calendar.getInstance();
+        System.out.println(calendar1);
+
+        // 常用方法:
+        // get方法: 传入参数: Calendar中定义的常量
+        System.out.println(calendar1.get(Calendar.YEAR));
+        System.out.println(calendar1.get(Calendar.MONTH));
+        System.out.println(calendar1.get(Calendar.DATE));
+        System.out.println(calendar1.get(Calendar.DAY_OF_WEEK));
+        System.out.println(calendar1.getMaximum(Calendar.DATE)); // 获取当月日期的最大天数
+        System.out.println(calendar1.getMinimum(Calendar.DATE)); // 获取当月日期的最小天数
+
+        // set方法: 可以改变Calendar中的内容
+        calendar1.set(Calendar.YEAR, 1996);
+        calendar1.set(Calendar.MONTH, 2);
+        calendar1.set(Calendar.DATE, 17);
+        System.out.println(calendar1);
+
+        // String --> Calendar:
+        // 分解:
+        // String --> Date:
+        java.sql.Date date = java.sql.Date.valueOf("2020-10-16");
+        // java.sql.Date --> Calendar:
+        calendar1.setTime(date);
+        System.out.println(calendar1);
+    }
+}
+```
+
+#### 练习
+
+需求：
+<img src="images/11/1-2-3.png">
+
+```java
+package cn.com.dhc2;
+
+import java.util.Calendar;
+import java.util.Scanner;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/16 - 下午3:00
+ * @Description: cn.com.dhc2
+ * @version: 1.0
+ */
+public class Test08 {
+    public static void main(String[] args) {
+        // 录入日期的String:
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("请输入你想要查看的日期(提示: 请按照例如2012-5-6的格式书写): ");
+        String strDate = scanner.next();
+        // String --> Calender:
+        // String --> Date:
+        java.sql.Date date = java.sql.Date.valueOf(strDate);
+        // Date --> Calender:
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        System.out.println(calendar);
+
+        // 后续操作:
+        // 星期提示：
+        System.out.println("日\t一\t二\t三\t四\t五\t六");
+
+        // 获取本月的最大天数
+        int maxDay = calendar.getActualMaximum(Calendar.DATE);
+        // 获取当前日期中的日:
+        int nowDay = calendar.get(Calendar.DATE);
+
+        // 将日期调为本月的1号:
+        calendar.set(Calendar.DATE, 1);
+        // 获取这个一号是本月的第几天
+        int num = calendar.get(Calendar.DAY_OF_WEEK);
+        // 前面空出来的天数为:
+        int day = num - 1;
+        // 引入一个计数器:
+        int count = 0;
+        // 在日期前将空格打印出来:
+        for (int i = 1; i <= day; i++) {
+            System.out.print("\t");
+        }
+        // 空出来的日子也要放入计数器:
+        count += day;
+        // 遍历: 从1号开始到maxDay号进行遍历:
+        for (int i = 1; i <= maxDay; i++) {
+            if (i == nowDay) {
+                System.out.print(i + "*" + "\t");
+            } else {
+                System.out.print(i + "\t");
+            }
+            count++;
+            if (count % 7 == 0)
+                System.out.println();
+        }
+    }
+}
+ ```
+
+### JDK1.8新增日期时间API
+
+#### 引入
+
+JDK1.0中使用java.util.Date类  --》第一批日期时间API
+JDK1.1引入Calendar类   --》第二批日期时间API
+缺陷：
+可变性 : 像日期和时间这样的类应该是不可变的。
+偏移性 : Date中 的年份是从1900开始的，而月份都从0开始。
+格式化 : 格式化只对Date有用，Calendar则不行。
+JDK1.8新增日期时间API --》第三批日期时间API
+
+#### LocalDate/LocalTime/LocalDateTime
+
+```java
+package cn.com.dhc2;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/16 - 下午3:43
+ * @Description: cn.com.dhc2
+ * @version: 1.0
+ */
+public class Test08 {
+    public static void main(String[] args) {
+        // 1. 完成实例化
+        // 方法1： now() -- 获取当前的日期, 时间, 日期 + 时间
+        LocalDate localDate1 = LocalDate.now();
+        System.out.println(localDate1);
+        LocalTime localTime1 = LocalTime.now();
+        System.out.println(localTime1);
+        LocalDateTime localDateTime1 = LocalDateTime.now();
+        System.out.println(localDateTime1);
+
+        // 方法2: of() --制定日期, 时间, 日期 + 时间
+        LocalDate localDate2 = LocalDate.of(2021, 10, 16);
+        System.out.println(localDate2);
+        LocalTime localTime2 = LocalTime.of(12, 35, 56);
+        System.out.println(localTime2);
+        LocalDateTime localDateTime2 = LocalDateTime.of(2022, 10, 16, 16, 17, 19);
+        System.out.println(localDateTime2);
+
+        // LocalDate, LocalTime用的不如LocalDateTime多
+        // 下面讲解用LocalDateTime:
+        // 一系列常用的get***
+        System.out.println(localDateTime2.getYear());
+        System.out.println(localDateTime2.getMonth());
+        System.out.println(localDateTime2.getMonthValue());
+        System.out.println(localDateTime2.getDayOfMonth());
+        System.out.println(localDateTime2.getDayOfWeek());
+        System.out.println(localDateTime2.getHour());
+        System.out.println(localDateTime2.getMinute());
+        System.out.println(localDateTime2.getSecond());
+
+        // 不是set方法, 叫with
+        // 体会: 不可变性
+        LocalDateTime localDateTime3 = localDateTime2.withMonth(8);
+        System.out.println(localDateTime1);
+        System.out.println(localDateTime3);
+
+        // 提供了加减的操作:
+        // 加:
+        LocalDateTime localDateTime5 = localDateTime1.plusMonths(4);
+        System.out.println(localDateTime1);
+        System.out.println(localDateTime5);
+        // 减:
+        LocalDateTime localDateTime6 = localDateTime1.minusMonths(5);
+        System.out.println(localDateTime1);
+        System.out.println(localDateTime6);
+    }
+}
+```
+
+#### DateTimeFormatter
+
+```java
+package cn.com.dhc2;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.time.temporal.TemporalAccessor;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/16 - 下午5:11
+ * @Description: cn.com.dhc2
+ * @version: 1.0
+ */
+public class Test09 {
+    public static void main(String[] args) {
+        // 格式化类: DateTimeFormatter
+
+        // 方式一: 预定义的标准格式: 如: ISO_LOCAL_DATE_TIME; ISO_LOCAL_DATE; ISO_LOCAL_TIME;
+        DateTimeFormatter dateTimeFormatter1 = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+        // isoLocalDateTime1就可以帮我们完成LocalDateTIme和String之间的相互转换:
+        // LocalDateTime --> String:
+        LocalDateTime localDateTime1 = LocalDateTime.now();
+        String str1 = dateTimeFormatter1.format(localDateTime1);
+        System.out.println(str1);
+
+        // String --> LocalDateTime
+        TemporalAccessor temporalAccessor1 = dateTimeFormatter1.parse("2022-10-16T17:23:24.556");
+        System.out.println(temporalAccessor1);
+
+        // 方式二: 本地化相关的格式: 如: ofLocalizedDateTime()
+        // 参数: FormatStyle.LONG / FormatStyle.MEDIUM / FormatStyle.SHORT
+        // FormatStyle.LONG: October 16, 2022 5:35:47 PM CT
+        // FormatStyle.MEDIUM: Oct 16, 2022 5:34:28 PM
+        // FormatStyle.SHORT: 10/16/22 5:33 PM
+        DateTimeFormatter dateTimeFormatter2 = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.LONG).withZone(ZoneId.systemDefault());
+        // LocalDateTime --> String:
+        LocalDateTime localDateTime2 = LocalDateTime.now();
+        String str2 = dateTimeFormatter2.format(localDateTime2);
+        System.out.println(str2);
+
+        // String --> LocalDateTime
+        TemporalAccessor temporalAccessor2 = dateTimeFormatter2.parse("October 16, 2022 5:35:47 PM CT");
+        System.out.println(temporalAccessor2);
+
+        // 方式三: 自定义的格式: 如: ofPattern("yyyy-MM-dd hh:mm:ss") --> 重点, 以后常用
+        DateTimeFormatter dateTimeFormatter3 = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss");
+        LocalDateTime localDateTime3 = LocalDateTime.now();
+        String str3 = dateTimeFormatter3.format(localDateTime3);
+        System.out.println(str3);
+        // String --> LocalDateTime
+        TemporalAccessor temporalAccessor3 = dateTimeFormatter3.parse("2022-10-16 05:40:09");
+        System.out.println(temporalAccessor3);
+    }
+}
+```
+
+## Math类
+
+1. 直接使用，无需导包：
+<img src="images/11/1-3-1.png">
+
+2. final修饰类，这个类不能被继承：
+<img src="images/11/1-3-2.png">
+
+3. 构造器私有化，不能创建Math类的对象：
+<img src="images/11/1-3-3.png">
+不能：
+<img src="images/11/1-3-4.png">
+
+4. Math内部的所有的属性，方法都被static修饰：类名.直接调用，无需创建对象：
+<img src="images/11/1-3-5.png">
+
+5. 常用方法：
+```java
+package cn.com.dhc3;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/16 - 下午7:07
+ * @Description: cn.com.dhc3
+ * @version: 1.0
+ */
+public class Test01 {
+    public static void main(String[] args) {
+        // 常用属性:
+        System.out.println(Math.PI);
+        // 常用方法:
+        System.out.println("随机数: " + Math.random()); // [0.0, 1.0)
+        System.out.println("绝对值: " + Math.abs(-80)); // 80
+        System.out.println("向上取值: " + Math.ceil(9.1)); // 10
+        System.out.println("向下取值: " + Math.floor(9.9)); // 9
+        System.out.println("四舍五入: " + Math.round(3.3)); // 3
+        System.out.println("四舍五入: " + Math.round(3.5)); // 4
+        System.out.println("取最大值: " + Math.max(3, 6)); // 6
+        System.out.println("取最小值: " + Math.min(3, 6)); // 3
+    }
+}
+```
+
+6. 静态导入：
+```java
+package cn.com.dhc3;
+import static java.lang.Math.*;
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/16 - 下午7:07
+ * @Description: cn.com.dhc3
+ * @version: 1.0
+ */
+public class Test01 {
+    public static void main(String[] args) {
+        // 常用属性:
+        System.out.println(PI);
+        // 常用方法:
+        System.out.println("随机数: " + random()); // [0.0, 1.0)
+        System.out.println("绝对值: " + abs(-80)); // 80
+        System.out.println("向上取值: " + ceil(9.1)); // 10
+        System.out.println("向下取值: " + floor(9.9)); // 9
+        System.out.println("四舍五入: " + round(3.3)); // 3
+        System.out.println("四舍五入: " + round(3.5)); // 4
+        System.out.println("取最大值: " + max(3, 6)); // 6
+        System.out.println("取最小值: " + min(3, 6)); // 3
+    }
+    // 如果Math中方法重复了, 那么会优先调用本类中的方法(就近原则)
+    public static int random() {
+        return 100;
+    }
+}
+```
+
+## Random类
+
+```java
+package cn.com.dhc3;
+
+import java.util.Random;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/17 - 下午6:29
+ * @Description: cn.com.dhc3
+ * @version: 1.0
+ */
+public class Test02 {
+    public static void main(String[] args) {
+        // 返回带正号的 double 值, 该值大于等于 0.0 且小于 1.0
+        System.out.println("随机数: " + Math.random());
+
+        // 学习Random类
+        // 1. 利用带参数的构造器创建对象:
+        Random random1 = new Random(System.currentTimeMillis());
+        System.out.println(random1.nextInt());
+
+        // 2. 利用空参构造器创建对象:
+        Random random2 = new Random(); // 表面实在调用无参构造器, 实际底层还是调用了带参构造器
+        System.out.println(random2.nextInt(10)); // 在 0 (包括) 和指定值 (不包括) 之间均匀分布的 int 值
+        System.out.println(random2.nextDouble());
+    }
+}
+```
+<img src="images/11/1-4-1.png">
+
+## String类
+
+1. 直接使用，无需导包：
+<img src="images/11/1-5-1.png">
+
+2. 形象说一下字符串：
+<img src="images/11/1-5-2.png">
+<img src="images/11/1-5-3.png">
+
+3. 
+<img src="images/11/1-5-4.png">
+
+String str = “abc”;
+"abc"就是String类下的一个具体的对象
+4. 字符串是不可变的：？？？？
+<img src="images/11/1-5-5.png">
+
+5. 这个String类不可以被继承，不能有子类：
+<img src="images/11/1-5-6.png">
+
+6. String底层是一个char类型的数组
+<img src="images/11/1-5-7.png">
+验证：
+<img src="images/11/1-5-8.png">
+
+### 常用方法
+
+1. 构造器：底层就是给对象底层的value数组进行赋值操作。
+```java
+  String str1 = new String();
+  String str2 = new String("abc");
+  String str3 = new String(new char[]{'a', 'b', 'c'});
+```
+2. 常用方法：
+```java
+  String str4 = "abc";
+  System.out.println("字符串的长度: " + str4.length());
+  String str5 = new String("abc");
+  System.out.println("字符串是否为空: " + str5.isEmpty());
+  System.out.println("获取字符串的下表对应的字符为:" + str5.charAt(1));
+```
+3. equals:
+```java
+  String s6 = new String("abc");
+  String s7 = new String("abc");
+  System.out.println(s6.equals(s7));
+```
+<img src="images/11/1-5-9.png">
+
+4. String类实现了Comparable，里面有一个抽象方法叫compareTo，所以String中一定要对这个方法进行重写：
+```java
+  String s8 = new String("abc");
+  String s9 = new String("abc");
+  System.out.println(s8.compareTo(s9));
+```
+<img src="images/11/1-5-10.png">
+
+5. 常用方法：
+```java
+  // 字符串的截取
+  String str10 = "abcdefhijk";
+  System.out.println(str10.substring(3));
+  System.out.println(str10.substring(3, 6));
+
+  // 字符串的合并/拼接操作
+  System.out.println(str10.concat("pppp"));
+
+  // 字符串中的字符的 替换
+  String str11 = "abcdeahija";
+  System.out.println(str11.replace('a', 'u'));
+
+  // 按照指定的字符串进行分裂为数组的形式:
+  String str12 = "a-b-c-d-e-f";
+  String[] strs = str12.split("-");
+  System.out.println(Arrays.toString(strs));
+
+  // 转大小写的方法:
+  String str13 = "abc";
+  System.out.println(str13.toUpperCase());
+  System.out.println(str13.toUpperCase().toLowerCase());
+
+  // 去除首尾空格
+  String str14 = " a  b  c  ";
+  System.out.println(str14.trim());
+
+  // toString()
+  String str15 = "abc";
+  System.out.println(str15.toString());
+
+  // 转换为String类型
+  System.out.println(String.valueOf(false));
+```
+
+### String的内存分析
+
+1. 字符串拼接：
+```java
+public class Test02 {
+    public static void main(String[] args) {
+        String str1 = "a" + "b" + "c";
+        String str2 = "ab" + "c";
+        String str3 = "a" + "bc";
+        String str4 = "abc";
+        String str5 = "abc" + "";
+    }
+}
+```
+上面的字符串，会进行编译器优化，直接合并成为完整的字符串，我们可以反编译验证：
+<img src="images/11/1-5-11.png">
+然后在常量池中，常量池的特点是第一次如果没有这个字符串，就放进去，如果有这个字符串，就直接从常量池中取：
+内存：
+<img src="images/11/1-5-12.png">
+
+2. new关键字创建对象：
+```java
+String s6 = new String("abc");
+```
+内存：开辟两个空间（1.栈中的开辟的空间 2.字符串常量池中的字符串 3.堆中的开辟的空间）
+<img src="images/11/1-5-13.png">
+
+3. 有变量参与的字符串拼接：
+```java
+public class Test03 {
+    public static void main(String[] args) {
+        String a = "abc";
+        String b = a + "def";
+    }
+}
+```
+a变量在编译的时候不知道a是“abc”字符串，所以不会进行编译期优化，不会直接合并为“abcdef”
+反汇编过程：为了更好的帮我分析字节码文件是如何进行解析的：
+利用IDEA中的控制台：
+<img src="images/11/1-5-14.png">
+<img src="images/11/1-5-15.png">
+
+## StringBuilder类
+
+1. 字符串的分类：
+    1. 不可变字符串：String
+    2. 可变字符串：StringBuilder，StringBuffer
+疑问：
+    1. 可变不可变？？
+    2. 本节课重点：StringBuilder   -----》√
+    3. StringBuilder和StringBuffer区别  ？？
+2. StringBuilder底层：非常重要的两个属性：
+<img src="images/11/1-6-1.png">
+
+3. 对应内存分析：
+```java
+```
+<img src="images/11/1-6-2.png">
+
+### 解释可变和不可变字符串
+
+1. String---》不可变
+<img src="images/11/1-6-3.png">
+
+2. StringBuilder---》可变
+可变，在StringBuilder这个对象的地址不变的情况下，想把“abc”变成“abcdef”是可能的，直接追加即可
+```java
+```
+
+### 常用方法
+
+1. StringBuilder常用方法：
+```java
+```
+
+2. StringBuffer常用方法：
+```java
+```
+
+### 面试题：String，StringBuilder，StringBuffer区别和联系
+
+String、StringBuffer、StringBuilder区别与联系
+
+1. String类是不可变类，即一旦一个String对象被创建后，包含在这个对象中的字符序列是不可改变的，直至这个对象销毁。
+2. StringBuffer类则代表一个字符序列可变的字符串，可以通过append、insert、reverse、setChartAt、setLength等方法改变其内容。一旦生成了最终的字符串，调用toString方法将其转变为String
+3. JDK1.5新增了一个StringBuilder类，与StringBuffer相似，构造方法和方法基本相同。不同是StringBuffer是线程安全的，而StringBuilder是线程不安全的，所以性能略高。通常情况下，创建一个内容可变的字符串，应该优先考虑使用StringBuilder
+
+    StringBuilder:JDK1.5开始  效率高   线程不安全
+    StringBuffer:JDK1.0开始   效率低    线程安全

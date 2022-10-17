@@ -1,0 +1,17 @@
+
+W
+java:S4973"<Strings and Boxed types should be compared using "equals()".(Ñ’«”úÿÿÿÿ
+W
+java:S4973"<Strings and Boxed types should be compared using "equals()".(²÷½µüÿÿÿÿ
+Z
+java:S1854"8Remove this useless assignment to local variable "str6".(ËªÆ¾ûÿÿÿÿ8ó‰¥°¾0
+N
+java:S1854"8Remove this useless assignment to local variable "str3".(Ü•Ä
+?
+java:S1481")Remove this unused "str3" local variable.(Ü•Ä
+S	java:S106"9Replace this use of System.out or System.err by a logger.(Ñ’«”úÿÿÿÿ
+S	java:S106"9Replace this use of System.out or System.err by a logger.(²÷½µüÿÿÿÿ
+B
+java:S2129" Remove this "String" constructor(ËªÆ¾ûÿÿÿÿ8õ‰¥°¾0
+K
+java:S1481")Remove this unused "str6" local variable.(ËªÆ¾ûÿÿÿÿ8õ‰¥°¾0
