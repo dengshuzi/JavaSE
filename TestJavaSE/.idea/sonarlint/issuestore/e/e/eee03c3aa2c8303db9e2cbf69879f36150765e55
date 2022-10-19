@@ -1,19 +1,16 @@
 
-
-java:S1149"_Replace the synchronized class "StringBuffer" by an unsynchronized one such as "StringBuilder".(…Âµûÿÿÿÿ8Üü°¾0
-
-java:S1149"_Replace the synchronized class "StringBuffer" by an unsynchronized one such as "StringBuilder".(¦®óÿÿÿÿÿ8Üü°¾0
-
-java:S1149"_Replace the synchronized class "StringBuffer" by an unsynchronized one such as "StringBuilder".(´ÇŒ„ıÿÿÿÿ8Àı°¾0
-c
-java:S1854"ARemove this useless assignment to local variable "stringBuffer1".(´ÇŒ„ıÿÿÿÿ8Àı°¾0
-c
-java:S1854"ARemove this useless assignment to local variable "stringBuffer3".(¦®óÿÿÿÿÿ8Üü°¾0
-c
-java:S1854"ARemove this useless assignment to local variable "stringBuffer2".(…Âµûÿÿÿÿ8Üü°¾0
-T
-java:S1481"2Remove this unused "stringBuffer2" local variable.(…Âµûÿÿÿÿ8Üü°¾0
-T
-java:S1481"2Remove this unused "stringBuffer3" local variable.(¦®óÿÿÿÿÿ8”œı°¾0
-T
-java:S1481"2Remove this unused "stringBuffer1" local variable.(´ÇŒ„ıÿÿÿÿ8±ßı°¾0
+z
+java:S1149"_Replace the synchronized class "StringBuffer" by an unsynchronized one such as "StringBuilder".(…Âµûÿÿÿÿ
+z
+java:S1149"_Replace the synchronized class "StringBuffer" by an unsynchronized one such as "StringBuilder".(¦®óÿÿÿÿÿ
+z
+java:S1149"_Replace the synchronized class "StringBuffer" by an unsynchronized one such as "StringBuilder".(´ÇŒ„ıÿÿÿÿ
+\
+java:S1854"ARemove this useless assignment to local variable "stringBuffer3".(¦®óÿÿÿÿÿ
+\
+java:S1854"ARemove this useless assignment to local variable "stringBuffer2".(…Âµûÿÿÿÿ
+M
+java:S1481"2Remove this unused "stringBuffer2" local variable.(…Âµûÿÿÿÿ
+M
+java:S1481"2Remove this unused "stringBuffer3" local variable.(¦®óÿÿÿÿÿ
+U	java:S106"9Replace this use of System.out or System.err by a logger.(µü½Â8è¸´‚¿0

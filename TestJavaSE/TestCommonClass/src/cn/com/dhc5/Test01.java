@@ -14,5 +14,6 @@ public class Test01 {
         // 表面上调用StringBuilder的有参构造器, 实际底层是对value数组进行初始化, 长度为你传入的数字
         StringBuffer stringBuffer3 = new StringBuffer(3);
         StringBuffer stringBuffer1 = new StringBuffer("abc");
+        System.out.println(stringBuffer1.append("def").append("aaaaaa").append("bbb").append("oooooo")); // 链式调用方式: return this
     }
 }

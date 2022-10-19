@@ -1,0 +1,19 @@
+
+z
+java:S1149"_Replace the synchronized class "StringBuffer" by an unsynchronized one such as "StringBuilder".(¼âäÂùÿÿÿÿ
+u
+java:S1149"_Replace the synchronized class "StringBuffer" by an unsynchronized one such as "StringBuilder".(÷¬­ç
+z
+java:S1149"_Replace the synchronized class "StringBuffer" by an unsynchronized one such as "StringBuilder".(»Ò­Ëÿÿÿÿÿ
+z
+java:S1149""_Replace the synchronized class "StringBuffer" by an unsynchronized one such as "StringBuilder".(‹ËµÍùÿÿÿÿ
+S	java:S106"9Replace this use of System.out or System.err by a logger.(ì´§Æüÿÿÿÿ
+S	java:S106"9Replace this use of System.out or System.err by a logger.(¿ÃÅ÷üÿÿÿÿ
+N	java:S106"9Replace this use of System.out or System.err by a logger.( «éÀ
+S	java:S106"9Replace this use of System.out or System.err by a logger.(É‘§£þÿÿÿÿ
+S	java:S106"9Replace this use of System.out or System.err by a logger.(æ¥ÊÐûÿÿÿÿ
+S	java:S106"9Replace this use of System.out or System.err by a logger.(ÂÞž…ùÿÿÿÿ
+N	java:S106$"9Replace this use of System.out or System.err by a logger.(Ä‰—Š
+S	java:S106&"9Replace this use of System.out or System.err by a logger.(ªÓ¼áþÿÿÿÿ
+M	java:S106*"9Replace this use of System.out or System.err by a logger.(ƒÚáB
+M	java:S106+"9Replace this use of System.out or System.err by a logger.(¿¹‚V

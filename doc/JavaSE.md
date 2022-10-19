@@ -8290,6 +8290,25 @@ a变量在编译的时候不知道a是“abc”字符串，所以不会进行编
 
 3. 对应内存分析：
 ```java
+package cn.com.dhc5;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/17 - 下午9:16
+ * @Description: cn.com.dhc5
+ * @version: 1.0
+ */
+public class Test01 {
+    public static void main(String[] args) {
+        // 创建StringBuilder对象
+        // 表面上调用StringBuilder的空构造器, 实际底层是对value数组进行初始化, 长度为16
+        StringBuffer stringBuffer2 = new StringBuffer();
+        // 表面上调用StringBuilder的有参构造器, 实际底层是对value数组进行初始化, 长度为你传入的数字
+        StringBuffer stringBuffer3 = new StringBuffer(3);
+        StringBuffer stringBuffer1 = new StringBuffer("abc");
+        System.out.println(stringBuffer1.append("def").append("aaaaaa").append("bbb").append("oooooo")); // 链式调用方式: return this
+    }
+}
 ```
 <img src="images/11/1-6-2.png">
 
@@ -8301,16 +8320,120 @@ a变量在编译的时候不知道a是“abc”字符串，所以不会进行编
 2. StringBuilder---》可变
 可变，在StringBuilder这个对象的地址不变的情况下，想把“abc”变成“abcdef”是可能的，直接追加即可
 ```java
+package cn.com.dhc5;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/19 - 下午8:55
+ * @Description: cn.com.dhc5
+ * @version: 1.0
+ */
+public class Test02 {
+    public static void main(String[] args) {
+        StringBuffer stringBuffer = new StringBuffer();
+        System.out.println(stringBuffer.append("abc") == stringBuffer.append("def"));
+    }
+}
 ```
 
 ### 常用方法
 
 1. StringBuilder常用方法：
 ```java
+package cn.com.dhc5;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/19 - 下午9:00
+ * @Description: cn.com.dhc5
+ * @version: 1.0
+ */
+public class Test03 {
+    public static void main(String[] args) {
+        StringBuilder stringBuilder1 = new StringBuilder("nihaojavawodeshijie");
+        // 增
+        stringBuilder1.append("这是梦想"); // nihaojavawodeshijie这是梦想
+        System.out.println(stringBuilder1);
+        // 删
+        stringBuilder1.delete(3, 6); // 删除位置在[3, 6)上的字符
+        System.out.println(stringBuilder1); // nihavawodeshijie这是梦想
+
+        stringBuilder1.deleteCharAt(16); // 删除位置在16上的字符
+        System.out.println(stringBuilder1); // nihavawodeshijie是梦想
+
+        // 改 --> 插入
+        StringBuilder stringBuilder2 = new StringBuilder("$23445980947");
+        stringBuilder2.insert(3, ","); // 在下表3的位置上插入
+        System.out.println(stringBuilder2); // $23,445980947
+        StringBuilder stringBuilder3 = new StringBuilder("$2你好吗5980947");
+        // 改 --> 替换
+        stringBuilder3.replace(3, 5, "我好累"); // 在下标[3,5)位置上插入字符串
+        System.out.println(stringBuilder3); // $2你我好累5980947
+        stringBuilder1.setCharAt(3, '!');
+        System.out.println(stringBuilder1); // nih!vawodeshijie是梦想
+
+        // 查
+        StringBuilder stringBuilder4 = new StringBuilder("asdfa");
+        for (int i = 0; i < stringBuilder4.length(); i++) {
+            System.out.print(stringBuilder4.charAt(i) + "\t");
+        }
+        System.out.println();
+
+        // 截取
+        String str = stringBuilder4.substring(2, 4); // 截取[2,4)返回的是一个新的String, 对StringBuilder没有影响
+        System.out.println(str);
+        System.out.println(stringBuilder4);
+    }
+}
 ```
 
 2. StringBuffer常用方法：
 ```java
+package cn.com.dhc5;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/19 - 下午9:00
+ * @Description: cn.com.dhc5
+ * @version: 1.0
+ */
+public class Test03 {
+    public static void main(String[] args) {
+        StringBuffer stringBuffer1 = new StringBuffer("nihaojavawodeshijie");
+        // 增
+        stringBuffer1.append("这是梦想"); // nihaojavawodeshijie这是梦想
+        System.out.println(stringBuffer1);
+        // 删
+        stringBuffer1.delete(3, 6); // 删除位置在[3, 6)上的字符
+        System.out.println(stringBuffer1); // nihavawodeshijie这是梦想
+
+        stringBuffer1.deleteCharAt(16); // 删除位置在16上的字符
+        System.out.println(stringBuffer1); // nihavawodeshijie是梦想
+
+        // 改 --> 插入
+        StringBuffer stringBuffer2 = new StringBuffer("$23445980947");
+        stringBuffer2.insert(3, ","); // 在下表3的位置上插入
+        System.out.println(stringBuffer2); // $23,445980947
+        StringBuffer stringBuffer3 = new StringBuffer("$2你好吗5980947");
+        // 改 --> 替换
+        stringBuffer3.replace(3, 5, "我好累"); // 在下标[3,5)位置上插入字符串
+        System.out.println(stringBuffer3); // $2你我好累5980947
+        stringBuffer1.setCharAt(3, '!');
+        System.out.println(stringBuffer1); // nih!vawodeshijie是梦想
+
+        // 查
+        StringBuffer stringBuffer4 = new StringBuffer("asdfa");
+        for (int i = 0; i < stringBuffer4.length(); i++) {
+            System.out.print(stringBuffer4.charAt(i) + "\t");
+        }
+        System.out.println();
+
+        // 截取
+        String str = stringBuffer4.substring(2, 4); // 截取[2,4)返回的是一个新的String, 对StringBuffer没有影响
+        System.out.println(str);
+        System.out.println(stringBuffer4);
+    }
+}
 ```
 
 ### 面试题：String，StringBuilder，StringBuffer区别和联系
@@ -8323,3 +8446,57 @@ String、StringBuffer、StringBuilder区别与联系
 
     StringBuilder:JDK1.5开始  效率高   线程不安全
     StringBuffer:JDK1.0开始   效率低    线程安全
+
+# 第11章_集合
+
+## 什么是算法和数据结构
+
+1. 算法：
+    1. 可以解决具体问题 :例如   1+2+3+4+。。。+99+100
+    解题流程=算法
+    2. 有设计解决的具体的流程
+    算法1： 1+2=3  3+3=6 6+4=10.....加到100  --》5050
+    算法2：(1+100)*50=101*50=5050-->高斯算法
+    3. 有评价这个算法的具体的指标 --》时间复杂度  空间复杂度（从数学角度考虑）
+2. 数据结构：就是在计算机的缓存，内存，硬盘  如何组织管理数据的。重点在结构上，是按照什么结构来组织管理我们的数据。
+<img src="images/12/1-1-1.png">
+
+- 数据结构分为：
+    1. 逻辑结构 ：--》思想上的结构--》卧室，厨房，卫生间 ---》线性表（数组，链表），图，树，栈，队列
+    2. 物理结构 ：--》真实结构--》钢筋混凝土+牛顿力学------》紧密结构（顺序结构），跳转结构（链式结构）
+
+3. 紧密结构（顺序结构），跳转结构（链式结构） 
+以线性表为例：
+线性表的逻辑结构如图所示：
+<img src="images/12/1-1-2.png">
+
+- 线性表特点：
+  线性表是n个类型相同数据元素的有限序列，通常记作a0,a1,,,ai-1,ai,ai+1,,,,,an-1)。
+  1. 相同数据类型
+    在线性表的定义中,我们看到从a0到an-1的n个数据元素是具有相同属件的亓素。
+    比如说可以都是数字,例如(12,23,45,56,45);
+    也可以是宇符,例如(A,B,....Z)
+    当然也可以是具有更复杂结构的数据元素,例如学生、商品、装备等。
+    相同数据类型意味着在内存中存储时,每个元素会占用相同的内存空间,便于后续的查询定位。
+  2. 序列(顺序性)
+    在线性表的相邻数据元素之间存在若序偶关系，
+    即ai-1是ai的直接前驱,则ai是ai-1的直接后续,
+    同时ai又是ai+1的直接前驱，ai+1是ai的直接后续。
+    唯一没有直接前驱的元素a0 一端称为表头,唯一没有后续的元素an-1一端称为表尾。
+    除了表头和表尾元素外,任何一个元素都有且仅有一个直接前驱和直接后继。
+  3. 有限
+    线件表中数据元素的个数n定义为线性表的长度, n是个有限值。
+    当n=0时线性表为空表，
+    在非空的线性表中每个数据元索在线性表中都有唯一确定的序号，
+    例如a0的序号是0 ,ai的序号是i。
+    在一个具有n>0个数据元素的线性表中,数据元素序号的范围是[O, n-1]。
+  逻辑结构和物理结构的关系：
+  线性表逻辑结构，对应的真实结构如果是紧密结构---》典型就是  数组：
+  <img src="images/12/1-1-3.png">
+  线性表逻辑结构，对应的真实结构如果是跳转结构---》典型就是  链表：
+  优点：删除元素，插入元素效率高
+  缺点：查询元素效率低
+  <img src="images/12/1-1-4.png">
+  <img src="images/12/1-1-5.png">
+  <img src="images/12/1-1-6.png">
+
