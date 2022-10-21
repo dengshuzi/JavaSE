@@ -1,16 +1,0 @@
-
-z
-java:S1149"_Replace the synchronized class "StringBuffer" by an unsynchronized one such as "StringBuilder".(…Âµûÿÿÿÿ
-z
-java:S1149"_Replace the synchronized class "StringBuffer" by an unsynchronized one such as "StringBuilder".(¦®óÿÿÿÿÿ
-z
-java:S1149"_Replace the synchronized class "StringBuffer" by an unsynchronized one such as "StringBuilder".(´ÇŒ„ıÿÿÿÿ
-\
-java:S1854"ARemove this useless assignment to local variable "stringBuffer3".(¦®óÿÿÿÿÿ
-\
-java:S1854"ARemove this useless assignment to local variable "stringBuffer2".(…Âµûÿÿÿÿ
-M
-java:S1481"2Remove this unused "stringBuffer2" local variable.(…Âµûÿÿÿÿ
-M
-java:S1481"2Remove this unused "stringBuffer3" local variable.(¦®óÿÿÿÿÿ
-U	java:S106"9Replace this use of System.out or System.err by a logger.(µü½Â8è¸´‚¿0

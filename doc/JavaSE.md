@@ -8500,3 +8500,253 @@ String、StringBuffer、StringBuilder区别与联系
   <img src="images/12/1-1-5.png">
   <img src="images/12/1-1-6.png">
 
+## 集合的引入
+
+ 1. 数组，集合都是对多个数据进行存储操作的，简称为容器。
+>PS:这里的存储指的是内存层面的存储，而不是持久化存储（.txt,.avi,.jpg,数据库）。
+2. 数组：特点：
+    1. 数组一旦指定了长度，那么长度就被确定了，不可以更改。
+    ```java
+    int[] arr = new int[6];
+    ```
+    2. 数组一旦声明了类型以后，数组中只能存放这个类型的数据。数组中只能存放同一种类型的数据。
+    ```java
+    int[] arr,String[] s,double[] d.....
+    ```
+3. 数组：缺点：
+    1. 数组一旦指定了长度，那么长度就被确定了，不可以更改。
+    2. 删除，增加元素  效率低。
+    3. 数组中实际元素的数量是没有办法获取的，没有提供对应的方法或者属性来获取
+    4. 数组存储：有序，可重复 ，对于无序的，不可重复的数组不能满足要求。
+4. 正因为上面的缺点，引入了一个新的存储数据的结构---》集合
+5. 集合一章我们会学习很多集合，为什么要学习这么多集合呢？
+因为不同集合底层数据结构不一样。集合不一样，特点也不一样
+
+## 简要集合结构图
+
+<img src="images/12/1-1-7.png">
+
+## 集合应用场合
+
+前端后端数据库交互：
+<img src="images/12/1-1-8.png">
+当需要将相同结构的个体整合到一起的时候，需要集合。
+实际应用场合：
+<img src="images/12/1-1-9.png">
+<img src="images/12/1-1-10.png">
+<img src="images/12/1-1-11.png">
+
+## Colletion接口
+
+### Colletion接口常用方法
+
+```java
+package cn.com.dhc1;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/21 - 下午9:27
+ * @Description: cn.com.dhc1
+ * @version: 1.0
+ */
+public class Test01 {
+    public static void main(String[] args) {
+        /**
+         * Collection接口的常用方法:
+         * 增加: add(E e), addAll(Collection<? extends E> c)
+         * 删除: clear(), remove()
+         * 修改:
+         * 查看: iterator(), size()
+         * 判断: contains(Object o), equals(Object o), isEmpty()
+         */
+        // 创建对象: 接口不能创建对象, 利用实现类创建对象:
+        Collection col1 = new ArrayList();
+        // 调用方法:
+        // 集合有一个特点: 只能存放引用数据类型的数据, 不能是基本数据类型
+        // 基本数据类型自动装箱, 对应包装类 int --> Integer
+        col1.add(18);
+        col1.add(12);
+        col1.add(11);
+        col1.add(17);
+        System.out.println(col1);
+
+        List list = Arrays.asList(new Integer[]{11, 15, 3, 7, 1});
+        col1.addAll(list); // 将另一个集合添加入col中
+        System.out.println(col1);
+
+        // 清空集合
+//        col.clear();
+        System.out.println(col1);
+        System.out.println("集合中元素的数量为: " + col1.size());
+        System.out.println("集合是否为空： " + col1.isEmpty());
+
+        boolean isRemove = col1.remove(15);
+        System.out.println(col1);
+        System.out.println("集合中元素是否被删除: " + isRemove);
+
+        Collection col2 = new ArrayList();
+        col2.add(18);
+        col2.add(12);
+        col2.add(11);
+        col2.add(17);
+
+        Collection col3 = new ArrayList();
+        col3.add(18);
+        col3.add(12);
+        col3.add(11);
+        col3.add(17);
+
+        System.out.println(col2.equals(col3));
+        System.out.println(col2 == col3); // 地址一定不相等 false
+
+        System.out.println("是否包含元素: " + col3.contains(17));
+        System.out.println("是否包含元素: " + col3.contains(117));
+    }
+}
+```
+
+### Collection集合的遍历
+
+迭代器简要原理图：
+<img src="images/12/1-2-1.png">
+
+```java
+package cn.com.dhc1;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/21 - 下午9:41
+ * @Description: cn.com.dhc1
+ * @version: 1.0
+ */
+public class Test02 {
+    public static void main(String[] args) {
+        Collection col1 = new ArrayList();
+        col1.add(18);
+        col1.add(12);
+        col1.add(11);
+        col1.add(17);
+
+        // 对集合遍历 (对集合中元素进行查看)
+        // 方式1: 普通for循环
+        /*for (int i = 0; i < col1.size(); i++) {
+            col1.
+        }*/
+
+        // 方式2: 增强for循环
+        for (Object o: col1) {
+            System.out.println(o);
+        }
+        System.out.println("==================");
+        // 方式3:
+        Iterator it = col1.iterator();
+        while (it.hasNext()) {
+            System.out.println(it.next());
+        }
+    }
+}
+```
+
+### List接口
+
+#### List接口的常用方法和遍历方式
+
+```java
+package cn.com.dhc1;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/21 - 下午9:55
+ * @Description: cn.com.dhc1
+ * @version: 1.0
+ */
+public class Test03 {
+    public static void main(String[] args) {
+        /**
+         * List接口中常用方法:
+         * 增加: add(int index, E element)
+         * 删除: remove(int index), remove(Object o)
+         * 修改: set(int index, E element)
+         * 查看: get(int index)
+         * 判断:
+         */
+        List list = new ArrayList<>();
+        list.add(13);
+        list.add(17);
+        list.add(6);
+        list.add(-1);
+        list.add(2);
+        list.add("abc");
+        System.out.println(list);
+        list.add(3, 66);
+        System.out.println(list);
+        list.set(3, 77);
+        System.out.println(list);
+        list.remove(2);
+        System.out.println(list); // 在集合中存入的是Integer类型数据的时候, 调用remove方法调用的是: remove(int index)
+        list.remove("abc");
+        System.out.println(list);
+        Object o = list.get(0);
+        System.out.println(o);
+
+        // List集合遍历:
+        // 方式1: 普通for循环
+        for (int i = 0; i < list.size(); i++) {
+            System.out.println(list.get(i));
+        }
+        System.out.println("======================");
+        // 方式2: 增强for循环
+        for (Object obj : list) {
+            System.out.println(obj);
+        }
+        System.out.println("======================");
+        // 方式3: 迭代器
+        Iterator it = list.iterator();
+        while (it.hasNext()) {
+            System.out.println(it.next());
+        }
+    }
+}
+```
+
+#### ArrayList实现类（JDK1.7）
+
+1. 在idea中切换JDK的方法：
+<img src="images/12/1-2-2.png">
+
+2. ArrayList实现List接口的失误：
+集合创始人 承认了这个失误，但是在后续的版本中没有删除，觉得没必要：
+
+<img src="images/12/1-2-3.png">
+
+3. 底层重要属性：
+<img src="images/12/1-2-4.png">
+在JDK1.7中：在调用构造器的时候给底层数组elementData初始化，数组初始化长度为10：
+<img src="images/12/1-2-5.png">
+对应内存：
+<img src="images/12/1-2-6.png">
+
+调用add方法：
+```java
+  ArrayList al = new ArrayList();
+  System.out.println(al.add("abc"));
+  System.out.println(al.add("def"));
+```
+<img src="images/12/1-2-7.png">
+当数组中的10个位置都满了的时候就开始进行数组的扩容，扩容长度为 原数组的1.5倍：
+<img src="images/12/1-2-8.png">
+<img src="images/12/1-2-9.png">
+<img src="images/12/1-2-10.png">
