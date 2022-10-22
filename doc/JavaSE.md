@@ -8447,7 +8447,7 @@ String、StringBuffer、StringBuilder区别与联系
     StringBuilder:JDK1.5开始  效率高   线程不安全
     StringBuffer:JDK1.0开始   效率低    线程安全
 
-# 第11章_集合
+# 第十一章_集合
 
 ## 什么是算法和数据结构
 
@@ -8750,3 +8750,400 @@ public class Test03 {
 <img src="images/12/1-2-8.png">
 <img src="images/12/1-2-9.png">
 <img src="images/12/1-2-10.png">
+
+#### ArrayList实现类（JDK1.8）
+
+1. JDK1.8底层依旧是Object类型的数组，size:数组中有效长度：
+<img src="images/12/1-2-11.png">
+
+2. ArrayList al = new ArrayList();调用空构造器：
+<img src="images/12/1-2-12.png">
+
+3. add方法：
+<img src="images/12/1-2-13.png">
+<img src="images/12/1-2-14.png">
+<img src="images/12/1-2-15.png">
+<img src="images/12/1-2-16.png">
+
+#### Vector实现类
+
+1. 底层Object数组，int类型属性表示数组中有效长度：
+<img src="images/12/1-2-17.png">
+
+2. Vector v=new Vector();调用构造器：
+<img src="images/12/1-2-18.png">
+
+3. add方法：
+<img src="images/12/1-2-19.png">
+
+#### 泛型
+
+##### 引入
+
+1. 什么是泛型（Generic）：
+泛型就相当于标签
+形式：<>  
+集合容器类在设计阶段/声明阶段不能确定这个容器到底实际存的是什么类型的对象，所以在JDK1.5之前只能把元素类型设计为Object，
+JDK1.5之 后使用泛型来解决。因为这个时候除了元素的类型不确定，其他的部分是确定的，例如关于这个元素如何保存，如何管理等是确定的，因此此时把元素的类型设计成一个参数，这个类型参数叫做泛型。
+Collection<E>, List<E>， ArrayList<E> 这个<E>就是类型参数，即泛型。
+2. 没有泛型的时候使用集合：
+```java
+package cn.com.dhc1;
+
+import java.util.ArrayList;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/22 - 下午8:03
+ * @Description: cn.com.dhc1
+ * @version: 1.0
+ */
+public class Test01 {
+    public static void main(String[] args) {
+        // 创建一个ArrayList集合, 想这个集合中存入学生的成绩:
+        ArrayList arrayList = new ArrayList();
+        arrayList.add(98);
+        arrayList.add(18);
+        arrayList.add(39);
+        arrayList.add(60);
+        arrayList.add(83);
+        arrayList.add("张三");
+
+        // 对集合遍历查看:
+        for (Object al: arrayList) {
+            System.out.println(al);
+        }
+    }
+}
+```
+如果不使用泛型的话，有缺点：
+一般我们在使用的时候基本上往集合中存入的都是相同类型的数据--》便于管理，所以现在什么引用数据类型都可以存入集合，不方便！
+3. JDK1.5以后开始使用泛型，集合中使用泛型：
+```java
+package cn.com.dhc1;
+
+import java.util.ArrayList;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/22 - 下午8:03
+ * @Description: cn.com.dhc1
+ * @version: 1.0
+ */
+public class Test01 {
+    public static void main(String[] args) {
+        // 创建一个ArrayList集合, 想这个集合中存入学生的成绩:
+        // 加入泛型的优点: 在编译时期就会对类型进行检查, 不是泛型对应的类型就不可以加入这个集合
+        ArrayList<Integer> arrayList = new ArrayList<Integer>();
+        arrayList.add(98);
+        arrayList.add(18);
+        arrayList.add(39);
+        arrayList.add(60);
+        arrayList.add(83);
+        /*arrayList.add("张三");
+        arrayList.add(9.8);*/
+
+        // 对集合遍历查看:
+        /*for (Object al: arrayList) {
+            System.out.println(al);
+        }*/
+        for (Integer i: arrayList) {
+            System.out.println(i);
+        }
+    }
+}
+```
+4. 泛型总结：
+      1. JDK1.5以后
+      2. 泛型实际就是 一个<>引起来的 参数类型，这个参数类型  具体在使用的时候才会确定具体的类型。
+      <img src="images/12/1-2-20.png">
+      <img src="images/12/1-2-21.png">
+      3. 使用了泛型以后，可以确定集合中存放数据的类型，在编译时期就可以检查出来。
+      4. 使用泛型你可能觉得麻烦，实际使用了泛型才会简单，后续的遍历等操作简单。
+      5. 泛型的类型：都是引用数据类型，不能是基本数据类型。
+      6. ArrayList<Integer> al = new ArrayList<Integer>();在JDK1.7以后可以写为：
+      ArrayList<Integer> al = new ArrayList<>();  --<>  ---钻石运算符
+
+##### 自定义泛型结构
+
+- 泛型类，泛型接口
+1. 泛型类的定义和实例化：
+```java
+package cn.com.dhc2;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/22 - 下午8:26
+ * @Description: cn.com.dhc2
+ * GenericTest就是一个普通类
+ * GenericTest<A> 就是一个泛型类
+ * <>里面就是一个参数类型, 但是这个类型是什么呢? 这个类型现在是不确定的, 相当一个站位
+ * 但是现在确定的事这个类型一定是一个引用数据类型, 而不是基本数据类型
+ * @version: 1.0
+ */
+public class GenericTest<E> {
+    int age;
+    String name;
+    E sex;
+    public void a(E n) {
+
+    }
+    public void b(E[] m) {
+
+    }
+}
+class Test {
+    public static void main(String[] args) {
+        // GenericTest进行实例化:
+        // 1. 实例化的时候不指定泛型: 如果实例化的时候不明确的指定类的泛型, 那么认为此泛型为Object类型
+        GenericTest gt1 = new GenericTest();
+        gt1.a("abc");
+        gt1.a(17);
+        gt1.a(9.8);
+        gt1.b(new String[]{"a", "b", "c"});
+
+        // 2. 实例化的时候指定泛型: --> 推荐方式
+        GenericTest<String> gt2 = new GenericTest<>();
+        gt2.sex = "男";
+        gt2.a("abc");
+        gt2.b(new String[]{"a", "b", "c"});
+    }
+}
+```
+
+2. 继承情况：
+    1. 父类指定泛型：
+    ```java
+    class Demo {
+      public static void main(String[] args) {
+          // 指定父类泛型, 那么子类就不需要再指定泛型了, 可以直接使用
+          SubGenericTest1 sgt = new SubGenericTest1();
+          sgt.a(19);
+      }
+    }
+    ```
+    2. 父类不指定泛型：
+    如果父类不指定泛型，那么子类也会变成一个泛型类，那这个E的类型可以在创建子类对象的时候确定：
+    ```java
+    class SubGenericTest2<E> extends GenericTest<E> {
+    }
+    ```
+    ```java
+    class Demo2 {
+      public static void main(String[] args) {
+          SubGenericTest2<String> sgt = new SubGenericTest2<>();
+          sgt.a("abc");
+          sgt.sex = "男";
+      }
+    }
+    ```
+    3. 应用场合：
+    <img src="images/12/1-2-22.png">
+
+    4. 细节：
+        1. 泛型类可以定义多个参数类型
+        <img src="images/12/1-2-23.png">
+        2. 泛型类的构造器的写法：
+        <img src="images/12/1-2-24.png">
+        3. 不同的泛型的引用类型不可以相互赋值：
+        <img src="images/12/1-2-25.png">
+        4. 泛型如果不指定，那么就会被擦除，泛型对应的类型为Object类型：
+        <img src="images/12/1-2-26.png">
+        5. 反省类中的静态方法不能使用类的泛型：
+        <img src="images/12/1-2-27.png">
+        6. 不能直接使用E[]的创建：
+        <img src="images/12/1-2-28.png">
+- 泛型方法
+```java
+package cn.com.dhc4;
+
+/**
+ * @Auther: Evin_D
+ * 1. 什么是泛型方法:
+ * 不是带泛型的方法就是泛型方法
+ * 泛型方法有要求: 这个方法的泛型的参数类型要和当前的类的泛型无关
+ * 换个角度:
+ * 泛型方法对应的那个泛型参数和当前所在的这个类是否是泛型类, 泛型是啥无关
+ * 2. 泛型方法定义的时候, 前面要加上<T>
+ *     原因: 如果不加的话, 会把T当做一种数据类型, 然而代码中没有T类型那么就会报错
+ * 3. T的类型是在调用方法的时候确定的
+ * 4. 泛型方法可否是静态方法? 可以是静态方法
+ * @Date: 2022/10/22 - 下午8:48
+ * @Description: cn.com.dhc4
+ * @version: 1.0
+ */
+public class TestGeneric<E> {
+    // 不是泛型方法(不能是静态方法)
+    public void a(E e) {
+
+    }
+    // 泛型方法
+    public static <T> void b(T t) {
+
+    }
+}
+class Demo {
+    public static void main(String[] args) {
+        TestGeneric<String> tg = new TestGeneric<>();
+        tg.a("abc");
+        tg.b("abc");
+        tg.b(19);
+        tg.b(true);
+    }
+}
+```
+- 泛型参数存在继承关系的情况
+<img src="images/12/1-2-29.png">
+
+- 通配符
+1. 在没有通配符的时候：
+下面的a方法，相当于方法的重复定义，报错
+```java
+public class Test {
+    /*public void a(List<Object> list) {
+
+    }
+    public void a(List<String> list) {
+
+    }
+    public void a(List<Integer> list) {
+
+    }*/
+}
+```
+2. 引入通配符：
+```java
+public class Demo {
+    public static void main(String[] args) {
+        List<Object> list1 = new ArrayList<>();
+        List<String> list2 = new ArrayList<>();
+        List<Integer> list3 = new ArrayList<>();
+
+        List<?> list = null;
+        list = list1;
+        list = list2;
+        list = list3;
+    }
+}
+```
+发现： A 和 B是子类父类的关系，G<A>和G<B>不存在子类父类关系，是并列的
+加入通配符？后，G<?>就变成了 G<A>和G<B>的父类
+3. 使用通配符：
+```java
+package cn.com.dhc6;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/22 - 下午9:54
+ * @Description: cn.com.dhc6
+ * @version: 1.0
+ */
+public class Test {
+    /*public void a(List<Object> list) {
+
+    }
+    public void a(List<String> list) {
+
+    }
+    public void a(List<Integer> list) {
+
+    }*/
+    public void a(List<?> list) {
+        for (Object obj : list) {
+            System.out.println(obj);
+        }
+    }
+}
+class T {
+    public static void main(String[] args) {
+        Test test = new Test();
+        test.a(new ArrayList<Integer>());
+        test.a(new ArrayList<String>());
+        test.a(new ArrayList<Object>());
+    }
+}
+```
+4. 查看API中应用位置：
+<img src="images/12/1-2-30.png">
+
+- 使用通配符后的细节
+```java
+package cn.com.dhc6;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/22 - 下午9:54
+ * @Description: cn.com.dhc6
+ * @version: 1.0
+ */
+public class Test {
+    public void a(List<?> list) {
+        // 1. 遍历:
+        for (Object obj : list) {
+            System.out.println(obj);
+        }
+        // 2.数据的写入操作:
+        // list.add("abc"); --> 出错, 不能随意的添加数据
+        list.add(null);
+
+        // 3. 数据的读取操作:
+        Object s = list.get(0);
+    }
+}
+class T {
+    public static void main(String[] args) {
+        Test test = new Test();
+        test.a(new ArrayList<Integer>());
+        test.a(new ArrayList<String>());
+        test.a(new ArrayList<Object>());
+    }
+}
+```
+- 泛型受限
+```java
+package cn.com.dhc7;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/22 - 下午10:09
+ * @Description: cn.com.dhc7
+ * @version: 1.0
+ */
+public class Test {
+    public static void main(String[] args) {
+        // a, b, c三个集合是并列的关系:
+        List<Object> a = new ArrayList<>();
+        List<Person> b = new ArrayList<>();
+        List<Student> c = new ArrayList<>();
+        /**
+         * 开始使用泛型受限: 泛型的上限
+         * List<? extends Person>:
+         * 就相当于:
+         * List<? extends Person>是List<Person>的父类, 是List<Person的子类>的父类
+         */
+        List<? extends Person> list1 = null;
+        /*list1 = a;
+        list1 = b;
+        list1 = c;*/
+        /**
+         * 开始使用泛型受限: 泛型的下限
+         * List<? super Person>:
+         * 就相当于:
+         * List<? super Person>是List<Person>的父类, 是List<Person的父类>的父类
+         */
+        List<? super Person> list2 = null;
+        /*list2 = a;
+        list2 = b;
+        list2 = c;*/
+    }
+}
+```

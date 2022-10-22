@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/TestCollection/TestCollection.iml" filepath="$PROJECT_DIR$/TestCollection/TestCollection.iml" />
       <module fileurl="file://$PROJECT_DIR$/TestCommonClass/TestCommonClass.iml" filepath="$PROJECT_DIR$/TestCommonClass/TestCommonClass.iml" />
       <module fileurl="file://$PROJECT_DIR$/TestException/TestException.iml" filepath="$PROJECT_DIR$/TestException/TestException.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TestGeneric/TestGeneric.iml" filepath="$PROJECT_DIR$/TestGeneric/TestGeneric.iml" />
       <module fileurl="file://$PROJECT_DIR$/TestOOP/TestOOP.iml" filepath="$PROJECT_DIR$/TestOOP/TestOOP.iml" />
       <module fileurl="file://$PROJECT_DIR$/TestOOP2/TestOOP2.iml" filepath="$PROJECT_DIR$/TestOOP2/TestOOP2.iml" />
       <module fileurl="file://$PROJECT_DIR$/TestOOP3/TestOOP3.iml" filepath="$PROJECT_DIR$/TestOOP3/TestOOP3.iml" />
