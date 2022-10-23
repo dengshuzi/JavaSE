@@ -9147,3 +9147,1254 @@ public class Test {
     }
 }
 ```
+
+#### LinkedList实现类的使用
+
+```java
+package cn.com.dhc3;
+
+import java.util.Iterator;
+import java.util.LinkedList;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/23 - 上午9:56
+ * @Description: cn.com.dhc3
+ * @version: 1.0
+ */
+public class Test {
+    public static void main(String[] args) {
+        /*
+        LinkedList常用方法:
+        增加: addFirst(E e), addLast(E e), offer(E e), offerFirst(E e), offerLast(E e)
+        删除: poll(), pollFirst(), pollLast() --> JDK1.6以后新出的方法, 提高了代码的健壮性
+             removeFirst(), removeLast()
+        修改
+        查看: element(), getFirst(), getLast(),
+             indexOf(Object o), lastIndexOf(Object o),
+             peek(), peekFirst(), peekLast()
+        判断
+         */
+        // 创建一个LinkedList集合对象:
+        LinkedList<String> list = new LinkedList<>();
+        list.add("aaaa");
+        list.add("bbbb");
+        list.add("cccc");
+        list.add("eeee");
+        list.add("bbbb");
+        list.add("ffff");
+
+        list.addFirst("jj");
+        list.addLast("hh");
+
+        list.offer("kk"); //添加元素在尾端
+        list.offerFirst("pp");
+        list.offerLast("rr");
+
+        System.out.println(list.poll()); // 删除头上的元素
+        System.out.println(list.pollFirst());
+        System.out.println(list.pollLast());
+        System.out.println(list.removeFirst());
+        System.out.println(list.removeLast());
+
+        System.out.println(list); // LinkedList可以添加重复数据
+
+        /*list.clear(); // 清空集合
+        System.out.println(list);
+        System.out.println(list.pollFirst());
+        System.out.println(list.removeFirst()); // Error: Exception in thread "main" java.util.NoSuchElementException*/
+
+        // 集合遍历:
+        System.out.println("=================");
+        // 普通for循环:
+        for (int i = 0; i < list.size(); i++) {
+            System.out.println(list.get(i));
+        }
+        System.out.println("=================");
+        // 增强for循环:
+        for (String str : list) {
+            System.out.println(str);
+        }
+        System.out.println("=================");
+        // 迭代器:
+        /*Iterator<String> iterator = list.iterator();
+        while (iterator.hasNext()) {
+            System.out.println(iterator.next());
+        }*/
+        // 下面这种方式好, 节省内存
+        for (Iterator<String> iterator = list.iterator(); iterator.hasNext();) {
+            System.out.println(iterator.next());
+        }
+    }
+}
+```
+##### LinkedList简要底层原理图
+
+<img src="images/12/1-2-31.png">
+
+##### 模拟LinkedList源码
+
+```java
+package cn.com.dhc4;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/23 - 上午10:43
+ * @Description: cn.com.dhc4
+ * @version: 1.0
+ */
+public class MyLinkedList {
+    // 链中一定有一个首节点:
+    Node first;
+    // 链中一定有一个尾节点:
+    Node last;
+    // 计数器:
+    int count = 0;
+    // 提供一个构造器
+    public MyLinkedList() {}
+    // 添加元素的方法:
+    public void add(Object o) {
+        if (first == null) { // 证明你添加的元素是第一个节点:
+            // 将添加的元素封装为一个Node对象:
+            Node n = new Node();
+            n.setPre(null);
+            n.setObj(o);
+            n.setNext(null);
+            // 当前链中第一个节点变为n
+            first = n;
+            // 当前链中最后一个节点变为n
+            last = n;
+        } else { // 已经不是链中第一个节点了
+            Node n = new Node();
+            n.setPre(last); // n的上一个节点一定是当前链中的最后一个节点last
+            n.setObj(o);
+            n.setNext(null);
+            //当链中的最后一个节点的下一个元素 要指向n
+            last.setNext(n);
+            // 将最后一个节点变为n
+            last = n;
+        }
+        count++;
+    }
+    public int getSize() {
+        return count;
+    }
+    // 通过下标得到元素:
+    public Object get(int index) {
+        // 获取链表的头元素:
+        Node n = first;
+        for (int i = 0; i < index; i++) {
+            n = n.getNext();
+        }
+        return n.getObj();
+    }
+}
+class Test {
+    public static void main(String[] args) {
+        // 创建一个MyLinkedList集合对象:
+        MyLinkedList ml = new MyLinkedList();
+        ml.add("aa");
+        ml.add("bb");
+        ml.add("cc");
+        System.out.println(ml.getSize());
+        System.out.println(ml.get(2));
+    }
+}
+```
+debug验证数据添加成功：
+<img src="images/12/1-2-32.png">
+
+##### LinkedList源码解析
+
+1. JDK1.7和JDK1.8的LinkedList的源码是一致的
+2. 源码：
+```java
+public class LinkedList<E>{//E是一个泛型，具体的类型要在实例化的时候才会最终确定
+        transient int size = 0;//集合中元素的数量
+        //Node的内部类
+        private static class Node<E> {
+        E item;//当前元素
+        Node<E> next;//指向下一个元素地址
+        Node<E> prev;//上一个元素地址
+        Node(Node<E> prev, E element, Node<E> next) {
+            this.item = element;
+            this.next = next;
+            this.prev = prev;
+        }
+    }
+        transient Node<E> first;//链表的首节点
+        transient Node<E> last;//链表的尾节点
+        //空构造器：
+        public LinkedList() {
+    }
+        //添加元素操作：
+        public boolean add(E e) {
+        linkLast(e);
+        return true;
+    }
+        void linkLast(E e) {//添加的元素e
+        final Node<E> l = last;//将链表中的last节点给l 如果是第一个元素的话 l为null
+                //将元素封装为一个Node具体的对象：
+        final Node<E> newNode = new Node<>(l, e, null);
+                //将链表的last节点指向新的创建的对象：
+        last = newNode;
+                
+        if (l == null)//如果添加的是第一个节点
+            first = newNode;//将链表的first节点指向为新节点
+        else//如果添加的不是第一个节点 
+            l.next = newNode;//将l的下一个指向为新的节点
+        size++;//集合中元素数量加1操作
+        modCount++;
+    }
+        //获取集合中元素数量
+        public int size() {
+        return size;
+    }
+        //通过索引得到元素：
+        public E get(int index) {
+        checkElementIndex(index);//健壮性考虑
+        return node(index).item;
+    }
+        
+    Node<E> node(int index) {
+        //如果index在链表的前半段，那么从前往后找
+        if (index < (size >> 1)) {
+            Node<E> x = first;
+            for (int i = 0; i < index; i++)
+                x = x.next;
+            return x;
+        } else {//如果index在链表的后半段，那么从后往前找
+            Node<E> x = last;
+            for (int i = size - 1; i > index; i--)
+                x = x.prev;
+            return x;
+        }
+    }
+}
+```
+
+#### 面试题：iterator(),Iterator,Iterable关系
+
+1. 面试题：对应的关系：
+<img src="images/12/1-2-33.png">
+
+2. hasNext(),next()的具体实现：
+<img src="images/12/1-2-34.png">
+
+3. 增强for循环  底层也是通过迭代器实现的：
+<img src="images/12/1-2-35.png">
+<img src="images/12/1-2-36.png">
+
+#### ListIterator迭代器
+
+1. 加入字符串：
+```java
+package cn.com.dhc5;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/23 - 下午2:08
+ * @Description: cn.com.dhc5
+ * @version: 1.0
+ */
+public class Test02 {
+    public static void main(String[] args) {
+        ArrayList<String> list = new ArrayList<>();
+        list.add("aa");
+        list.add("bb");
+        list.add("cc");
+        list.add("dd");
+        list.add("ee");
+        // 在"cc"之后添加一个字符串"kk"
+        Iterator it = list.iterator();
+        /*while (it.hasNext()) {
+            System.out.println(it.next());
+        }*/
+        for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+            if ("cc".equals(iterator.next())) {
+                list.add("kk");
+            }
+        }
+        System.out.println(list);
+    }
+}
+```
+发现报错：
+<img src="images/12/1-2-37.png">
+出错原因：就是迭代器和list同时对集合进行操作：
+<img src="images/12/1-2-38.png">
+
+解决办法：事情让一个“人”做 --》引入新的迭代器：ListIterator
+迭代和添加操作都是靠ListIterator来完成的：
+```java
+package cn.com.dhc5;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.ListIterator;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/23 - 下午2:08
+ * @Description: cn.com.dhc5
+ * @version: 1.0
+ */
+public class Test02 {
+    public static void main(String[] args) {
+        ArrayList<String> list = new ArrayList<>();
+        list.add("aa");
+        list.add("bb");
+        list.add("cc");
+        list.add("dd");
+        list.add("ee");
+        // 在"cc"之后添加一个字符串"kk"
+        ListIterator it = list.listIterator();
+        while (it.hasNext()) {
+            if ("cc".equals(it.next())) {
+                it.add("kk");
+            }
+        }
+        System.out.println(it.hasNext());
+        System.out.println(it.hasPrevious());
+        // 逆向遍历:
+        while (it.hasPrevious()) {
+            System.out.println(it.previous());
+        }
+        System.out.println(it.hasNext());
+        System.out.println(it.hasPrevious());
+        System.out.println(list);
+    }
+}
+
+```
+
+### Set接口
+
+#### HashSet实现类的使用
+
+1. 放入Integer类型数据：
+```java
+package cn.com.dhc6;
+
+import java.util.HashSet;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/23 - 下午2:40
+ * @Description: cn.com.dhc5
+ * @version: 1.0
+ */
+public class TestInteger {
+    public static void main(String[] args) {
+        // 创建一个HashSet集合:
+        HashSet<Integer> hs = new HashSet<>();
+        System.out.println(hs.add(19)); // true
+        hs.add(5);
+        hs.add(20);
+        System.out.println(hs.add(19)); // false 这个19没有放入到集合中
+        hs.add(41);
+        hs.add(0);
+        System.out.println(hs.size()); // 唯一, 无序
+        System.out.println(hs);
+    }
+}
+```
+2. 放入String类型数据：
+```java
+package cn.com.dhc6;
+
+import java.util.HashSet;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/23 - 下午2:42
+ * @Description: cn.com.dhc6
+ * @version: 1.0
+ */
+public class TestString {
+    public static void main(String[] args) {
+        // 创建一个HashSet集合:
+        HashSet<String> hs = new HashSet<>();
+        hs.add("hello");
+        hs.add("apple");
+        hs.add("banana");
+        hs.add("html");
+        hs.add("apple");
+        hs.add("css");
+        System.out.println(hs.size());
+        System.out.println(hs);
+    }
+}
+```
+3. 放入自定义的引用数据类型的数据：
+```java
+package cn.com.dhc6;
+
+import java.util.HashSet;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/23 - 下午2:46
+ * @Description: cn.com.dhc6
+ * @version: 1.0
+ */
+public class TestStudent {
+    public static void main(String[] args) {
+        // 创建一个HashSet集合:
+        HashSet<Student> hs = new HashSet<>();
+        hs.add(new Student(19, "张三"));
+        hs.add(new Student(19, "李四"));
+        hs.add(new Student(19, "王五"));
+        hs.add(new Student(19, "张三"));
+        hs.add(new Student(19, "赵六"));
+        System.out.println(hs.size());
+        System.out.println(hs);
+    }
+}
+```
+上面自定义的类型不满足 唯一，无序的特点。为什么呢？
+4. HashSet原理图：（简要原理图）
+<img src="images/12/1-2-39.png">
+
+5. 疑问：
+    1. 数组的长度是多少。
+    2. 数组的类型是什么？
+    3. hashCode，equals方法真的调用了吗？验证
+    4. 底层表达式是什么？
+    5. 同一个位置的数据 向前放  还是 向后放？
+    6. 放入数组中的数据，是直接放的吗？是否封装为对象了？
+
+#### LinkedHashSet使用
+
+其实就是在HashSet的基础上，多了一个总的链表，这个总链表将放入的元素串在一起，方便有序的遍历：
+（可以看到LinkedHashMap.Entry 继承自HashMap.Node 除了Node 本身有的几个属性外，额外增加了before after 用于指向前一个Entry 后一个Entry。也就是说，元素之间维持着一条总的链表数据结构。）
+<img src="images/12/1-2-40.png">
+
+代码:
+```java
+package cn.com.dhc6;
+
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/23 - 下午2:40
+ * @Description: cn.com.dhc5
+ * @version: 1.0
+ */
+public class TestInteger {
+    public static void main(String[] args) {
+        // 创建一个HashSet集合:
+        LinkedHashSet<Integer> hs = new LinkedHashSet<>();
+        System.out.println(hs.add(19)); // true
+        hs.add(5);
+        hs.add(20);
+        System.out.println(hs.add(19)); // false 这个19没有放入到集合中
+        hs.add(41);
+        hs.add(0);
+        System.out.println(hs.size()); // 唯一, 无序
+        System.out.println(hs);
+    }
+}
+```
+
+#### 比较器的使用
+
+1. 以int类型为案例：
+比较的思路：将比较的数据做差，然后返回一个int类型的数据，将这个int类型的数值  按照 =0  >0  <0
+```java
+  int a = 10;
+  int b = 20;
+  System.out.println(a - b); // =0, >0, <0
+```
+2. 比较String类型数据：
+String类实现了Comparable接口，这个接口中有一个抽象方法compareTo，String类中重写这个方法即可
+```java
+  String a = "A";
+  String b = "B";
+  System.out.println(a.compareTo(b));
+```
+3. 比较double类型数据：
+```java
+  double a = 9.6;
+  double b = 8.3;
+  System.out.println(((Double) a).compareTo((Double) b));
+```
+4. 比较自定义的数据类型：
+    1. 内部比较器：
+    ```java
+    package cn.com.dhc7;
+
+    /**
+    * @Auther: Evin_D
+    * @Date: 2022/10/23 - 下午4:00
+    * @Description: cn.com.dhc7
+    * @version: 1.0
+    */
+    public class Student implements Comparable<Student>{
+        private int age;
+        private double height;
+        private String name;
+
+        public int getAge() {
+            return age;
+        }
+
+        public void setAge(int age) {
+            this.age = age;
+        }
+
+        public double getHeight() {
+            return height;
+        }
+
+        public void setHeight(double height) {
+            this.height = height;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Student(int age, double height, String name) {
+            this.age = age;
+            this.height = height;
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return "Student{" +
+                    "age=" + age +
+                    ", height=" + height +
+                    ", name='" + name + '\'' +
+                    '}';
+        }
+
+        @Override
+        public int compareTo(Student o) {
+            // 按照年龄进行比较
+            // return this.getAge() - o.getAge();
+            // 按照身高进行比较
+            // return ((Double) (this.getHeight())).compareTo(o.getHeight());
+            // 按照姓名进行比较
+            return this.getName().compareTo(o.getName());
+        }
+    }
+    ```
+    ```java
+    package cn.com.dhc7;
+
+    /**
+    * @Auther: Evin_D
+    * @Date: 2022/10/23 - 下午4:01
+    * @Description: cn.com.dhc7
+    * @version: 1.0
+    */
+    public class Test02 {
+        public static void main(String[] args) {
+            Student s1 = new Student(10, 160.0, "张三");
+            Student s2 = new Student(14, 170.0, "李四");
+            System.out.println(s1.compareTo(s2));
+        }
+    }
+    ```
+    2. 外部比较器：
+    ```java
+    package cn.com.dhc8;
+
+    import java.util.Comparator;
+
+    /**
+    * @Auther: Evin_D
+    * @Date: 2022/10/23 - 下午4:00
+    * @Description: cn.com.dhc7
+    * @version: 1.0
+    */
+    public class Student{
+        private int age;
+        private double height;
+        private String name;
+
+        public int getAge() {
+            return age;
+        }
+
+        public void setAge(int age) {
+            this.age = age;
+        }
+
+        public double getHeight() {
+            return height;
+        }
+
+        public void setHeight(double height) {
+            this.height = height;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Student(int age, double height, String name) {
+            this.age = age;
+            this.height = height;
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return "Student{" +
+                    "age=" + age +
+                    ", height=" + height +
+                    ", name='" + name + '\'' +
+                    '}';
+        }
+    }
+    class Bijiao01 implements Comparator<Student> {
+        @Override
+        public int compare(Student o1, Student o2) {
+            // 比较年龄
+            return o1.getAge() - o2.getAge();
+        }
+    }
+    class Bijiao02 implements Comparator<Student> {
+        @Override
+        public int compare(Student o1, Student o2) {
+            // 比较姓名
+            return o1.getName().compareTo(o2.getName());
+        }
+    }
+    class Bijiao03 implements Comparator<Student> {
+        @Override
+        public int compare(Student o1, Student o2) {
+            // 在年龄相同的情况下比较身高年龄不同比较年龄
+            if (o1.getAge() - o2.getAge() == 0) {
+                return ((Double) (o1.getHeight())).compareTo((Double) (o2.getHeight()));
+            } else {
+                return o1.getAge() - o2.getAge();
+            }
+        }
+    }
+    ```
+    ```java
+    package cn.com.dhc8;
+
+    /**
+    * @Auther: Evin_D
+    * @Date: 2022/10/23 - 下午4:01
+    * @Description: cn.com.dhc7
+    * @version: 1.0
+    */
+    public class Test02 {
+        public static void main(String[] args) {
+            Student s1 = new Student(10, 160.0, "张三");
+            Student s2 = new Student(14, 170.0, "李四");
+            // 获取比较器:
+            Bijiao01 bj1 = new Bijiao01();
+            Bijiao02 bj2 = new Bijiao02();
+            Bijiao03 bj3 = new Bijiao03();
+            System.out.println(bj1.compare(s1, s2));
+            System.out.println(bj2.compare(s1, s2));
+            System.out.println(bj3.compare(s1, s2));
+        }
+    }
+    ```
+5. 外部比较器和内部比较器 谁好呀？
+答案：外部比较器，多态，扩展性好
+
+#### TreeSet实现类的使用
+
+1. 存入Integer类型数据：（底层利用的是内部比较器）
+```java
+package cn.com.dhc9;
+
+import java.util.TreeSet;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/23 - 下午4:32
+ * @Description: cn.com.dhc9
+ * @version: 1.0
+ */
+public class Test01 {
+    public static void main(String[] args) {
+        // 创建一个TreeSet:
+        TreeSet<Integer> ts = new TreeSet<>();
+        ts.add(12);
+        ts.add(3);
+        ts.add(7);
+        ts.add(9);
+        ts.add(3);
+        ts.add(16);
+        System.out.println(ts.size());
+        System.out.println(ts);
+    }
+}
+```
+特点：唯一，无序（没有按照输入顺序进行输出）， 有序（按照升序进行遍历）
+2. 原理：底层：二叉树（数据结构中的一个逻辑结构）
+<img src="images/12/1-2-41.png">
+
+3. 放入String类型数据：（底层实现类内部比较器）
+```java
+package cn.com.dhc9;
+
+import java.util.TreeSet;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/23 - 下午4:48
+ * @Description: cn.com.dhc9
+ * @version: 1.0
+ */
+public class Test02 {
+    public static void main(String[] args) {
+        TreeSet<String> ts = new TreeSet<>();
+        ts.add("e张三");
+        ts.add("b张三");
+        ts.add("a张三");
+        ts.add("e张三");
+        ts.add("c张三");
+        ts.add("f张三");
+        ts.add("g张三");
+        System.out.println(ts.size());
+        System.out.println(ts);
+    }
+}
+```
+4. 想放入自定义的Student类型的数据：
+    1. 利用内部比较器：
+    ```java
+    package cn.com.dhc9;
+
+    import java.util.Comparator;
+
+    /**
+    * @Auther: Evin_D
+    * @Date: 2022/10/23 - 下午4:50
+    * @Description: cn.com.dhc9
+    * @version: 1.0
+    */
+    public class Student implements Comparable<Student> {
+        private int age;
+        private String name;
+
+        public int getAge() {
+            return age;
+        }
+
+        public void setAge(int age) {
+            this.age = age;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Student(int age, String name) {
+            this.age = age;
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return "Student{" +
+                    "age=" + age +
+                    ", name='" + name + '\'' +
+                    '}';
+        }
+
+        @Override
+        public int compareTo(Student o) {
+            return this.getAge() - o.getAge();
+        }
+    }
+    ```
+    ```java
+    package cn.com.dhc9;
+
+    import java.util.TreeSet;
+
+    /**
+    * @Auther: Evin_D
+    * @Date: 2022/10/23 - 下午4:54
+    * @Description: cn.com.dhc9
+    * @version: 1.0
+    */
+    public class Test03 {
+        public static void main(String[] args) {
+            TreeSet<Student> ts = new TreeSet<>();
+            ts.add(new Student(10, "e张三"));
+            ts.add(new Student(8, "b张三"));
+            ts.add(new Student(4, "a张三"));
+            ts.add(new Student(9, "c张三"));
+            ts.add(new Student(10, "e张三"));
+            ts.add(new Student(1, "d张三"));
+            System.out.println(ts.size());
+            System.out.println(ts);
+        }
+    }
+    ```
+    2. 通过外部比较器：
+    ```java
+    package cn.com.dhc9;
+
+    import java.util.Comparator;
+
+    /**
+    * @Auther: Evin_D
+    * @Date: 2022/10/23 - 下午4:50
+    * @Description: cn.com.dhc9
+    * @version: 1.0
+    */
+    public class Student {
+        private int age;
+        private String name;
+
+        public int getAge() {
+            return age;
+        }
+
+        public void setAge(int age) {
+            this.age = age;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Student(int age, String name) {
+            this.age = age;
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return "Student{" +
+                    "age=" + age +
+                    ", name='" + name + '\'' +
+                    '}';
+        }
+    }
+    class Bijiao implements Comparator<Student> {
+        @Override
+        public int compare(Student o1, Student o2) {
+            return o1.getName().compareTo(o2.getName());
+        }
+    }
+    ```
+    ```java
+    package cn.com.dhc9;
+
+    import java.util.Comparator;
+    import java.util.TreeSet;
+
+    /**
+    * @Auther: Evin_D
+    * @Date: 2022/10/23 - 下午4:54
+    * @Description: cn.com.dhc9
+    * @version: 1.0
+    */
+    public class Test03 {
+        public static void main(String[] args) {
+            // 利用外部比较器, 必须自己指定:
+            Comparator<Student> com = new Bijiao();
+            TreeSet<Student> ts = new TreeSet<>(com); // 一旦指定外部比较器, 那么就会按照外部比较器来比较
+            ts.add(new Student(10, "e张三"));
+            ts.add(new Student(8, "b张三"));
+            ts.add(new Student(4, "a张三"));
+            ts.add(new Student(9, "c张三"));
+            ts.add(new Student(10, "e张三"));
+            ts.add(new Student(1, "d张三"));
+            System.out.println(ts.size());
+            System.out.println(ts);
+        }
+    }
+    ```
+    实际开发中利用外部比较器多，因为扩展性好（多态）
+    换一种写法：
+
+    ```java
+    package cn.com.dhc9;
+
+    import java.util.Comparator;
+    import java.util.TreeSet;
+
+    /**
+    * @Auther: Evin_D
+    * @Date: 2022/10/23 - 下午4:54
+    * @Description: cn.com.dhc9
+    * @version: 1.0
+    */
+    public class Test03 {
+        public static void main(String[] args) {
+            // 利用外部比较器, 必须自己指定:
+            /*Comparator<Student> com = new Comparator<Student>() {
+                @Override
+                public int compare(Student o1, Student o2) {
+                    return o1.getName().compareTo(o2.getName());
+                }
+            };
+            TreeSet<Student> ts = new TreeSet<>(com);*/
+            TreeSet<Student> ts = new TreeSet<>(new Comparator<Student>() {
+                @Override
+                public int compare(Student o1, Student o2) {
+                    return o1.getName().compareTo(o2.getName());
+                }
+            }); // 一旦指定外部比较器, 那么就会按照外部比较器来比较
+            ts.add(new Student(10, "e张三"));
+            ts.add(new Student(8, "b张三"));
+            ts.add(new Student(4, "a张三"));
+            ts.add(new Student(9, "c张三"));
+            ts.add(new Student(10, "e张三"));
+            ts.add(new Student(1, "d张三"));
+            System.out.println(ts.size());
+            System.out.println(ts);
+        }
+    }
+    ```
+5. TreeSet底层的二叉树的遍历是按照升序的结果出现的，这个升序是靠中序遍历得到的：
+<img src="images/12/1-2-42.png">
+
+#### Collection部分整体结构图
+
+<img src="images/12/1-2-43.png">
+
+## Map接口
+
+### 常用方法
+
+```java
+package cn.com.dhc10;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/23 - 下午5:47
+ * @Description: cn.com.dhc10
+ * @version: 1.0
+ */
+public class Test01 {
+    public static void main(String[] args) {
+        /*
+        增加: put(K key, V value)
+        删除: clear(), remove(Object key)
+        修改:
+        查看: entrySet(), keySet(), size(), values()
+        判断: containsKey(Object key), containsValue(Object value)
+             equals(), isEmpty()
+         */
+        // 创建一个Map集合: 无序, 唯一
+        Map<String, Integer> map1 = new HashMap();
+        System.out.println(map1.put("张三", 10101010));
+        map1.put("李四", 10101011);
+        map1.put("王五", 10101012);
+        System.out.println(map1.put("张三", 10101013));
+        map1.put("赵六", 10101014);
+        // map.clear(); // 清空
+        // map.remove("王五"); // 移除
+        System.out.println(map1.size());
+        System.out.println(map1);
+        System.out.println(map1.containsKey("王五"));
+        System.out.println(map1.containsValue(10101013));
+        Map<String, Integer> map2 = new HashMap();
+        System.out.println(map2.put("张三", 10101010));
+        map2.put("李四", 10101011);
+        map2.put("王五", 10101012);
+        System.out.println(map2.put("张三", 10101013));
+        map2.put("赵六", 10101014);
+        System.out.println(map1 == map2);
+        System.out.println(map1.equals(map2)); // equals进行了重写, 比较的是集合中的值是否一致
+
+        System.out.println("判断是否为空: " + map1.isEmpty());
+
+        System.out.println(map1.get("李四"));
+
+        // keySet()对集合中的key进行遍历查看:
+        System.out.println("================");
+        Set<String> set1 = map1.keySet();
+        for (String s : set1) {
+            System.out.println(s);
+        }
+        // values()对集合中的value进行遍历查看:
+        Collection<Integer> values = map1.values();
+        for (Integer value : values) {
+            System.out.println(value);
+        }
+        System.out.println("================");
+        // get(Object key) keySet()
+        Set<String> set2 = map1.keySet();
+        for (String s : set2) {
+            System.out.println(map1.get(s));
+        }
+        System.out.println("================");
+        // entrySet()
+        Set<Map.Entry<String, Integer>> entries = map1.entrySet();
+        for (Map.Entry<String, Integer> entry: entries) {
+            System.out.println(entry.getKey() + "---" + entry.getValue());
+        }
+    }
+}
+
+```
+
+### TreeMap
+
+1. key的类型为String类型：
+```java
+package cn.com.dhc10;
+
+import java.util.Map;
+import java.util.TreeMap;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/23 - 下午9:29
+ * @Description: cn.com.dhc10
+ * @version: 1.0
+ */
+public class Test02 {
+    public static void main(String[] args) {
+        Map<String, Integer> map = new TreeMap<>();
+        map.put("b张三", 1234);
+        map.put("a张三", 2345);
+        map.put("b张三", 5467);
+        map.put("c张三", 5678);
+        map.put("d张三", 2345);
+        System.out.println(map.size());
+        System.out.println(map);
+    }
+}
+```
+2. key的类型是一个自定义的引用数据类型：
+    1. 内部比较器：
+    ```java
+    package cn.com.dhc10;
+
+    import java.util.Map;
+    import java.util.TreeMap;
+
+    /**
+    * @Auther: Evin_D
+    * @Date: 2022/10/23 - 下午9:32
+    * @Description: cn.com.dhc10
+    * @version: 1.0
+    */
+    public class Test03 {
+        public static void main(String[] args) {
+            Map<Student,Integer> map = new TreeMap<>();
+            map.put(new Student(19, 170.5, "b张三"), 1001);
+            map.put(new Student(18, 150.5, "b张三"), 1002);
+            map.put(new Student(19, 180.5, "a张三"), 1003);
+            map.put(new Student(17, 140.5, "c张三"), 1004);
+            map.put(new Student(10, 160.5, "d张三"), 1005);
+            System.out.println(map);
+            System.out.println(map.size());
+        }
+    }
+    ```
+    ```java
+    package cn.com.dhc10;
+
+    /**
+    * @Auther: Evin_D
+    * @Date: 2022/10/23 - 下午9:31
+    * @Description: cn.com.dhc10
+    * @version: 1.0
+    */
+    public class Student implements Comparable<Student>{
+        private int age;
+        private double height;
+        private String name;
+
+        public int getAge() {
+            return age;
+        }
+
+        public void setAge(int age) {
+            this.age = age;
+        }
+
+        public double getHeight() {
+            return height;
+        }
+
+        public void setHeight(double height) {
+            this.height = height;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Student(int age, double height, String name) {
+            this.age = age;
+            this.height = height;
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return "Student{" +
+                    "age=" + age +
+                    ", height=" + height +
+                    ", name='" + name + '\'' +
+                    '}';
+        }
+
+        @Override
+        public int compareTo(Student o) {
+            // 按照年龄排序
+            // return this.getAge() - o.getAge();
+
+            // 按照名字排序
+            return this.getName().compareTo(o.getName());
+        }
+    }
+    ```
+    2. 外部比较器：
+    ```java
+    package cn.com.dhc10;
+
+    import java.util.Comparator;
+    import java.util.Map;
+    import java.util.TreeMap;
+
+    /**
+    * @Auther: Evin_D
+    * @Date: 2022/10/23 - 下午9:32
+    * @Description: cn.com.dhc10
+    * @version: 1.0
+    */
+    public class Test03 {
+        public static void main(String[] args) {
+            Map<Student,Integer> map = new TreeMap<>(new Comparator<Student>() {
+                @Override
+                public int compare(Student o1, Student o2) {
+                    return ((Double)(o1.getHeight())).compareTo((Double) (o2.getHeight()));
+                }
+            });
+            map.put(new Student(19, 170.5, "b张三"), 1001);
+            map.put(new Student(18, 150.5, "b张三"), 1002);
+            map.put(new Student(19, 180.5, "a张三"), 1003);
+            map.put(new Student(17, 140.5, "c张三"), 1004);
+            map.put(new Student(10, 160.5, "d张三"), 1005);
+            System.out.println(map);
+            System.out.println(map.size());
+        }
+    }
+    ```
+
+### Map部分整体结构图
+
+<img src="images/12/1-3-1.png">
+
+### 源码部分
+
+#### HashMap
+
+##### 代码展示特性
+
+```java
+```
+结果展示：
+<img src="images/12/1-3-2.png">
+
+##### 先演示原理
+
+先演示原理图，再看源码，直接看的话，有的人接不上就蒙了：
+相当于先看原理，然后从源码中验证这个原理是否正确：把图搞懂了，就是事倍功半的效果
+原理如下：(JDK1.7)
+<img src="images/12/1-3-3.png">
+
+##### 源码（JDK1.7版本）
+
+```java
+```
+
+##### 细节讲解：主数组的长度为2的倍数
+
+- 主数组的长度为2的倍数，
+因为这个length的长度，会影响 key的位置：
+key的位置的计算：
+<img src="images/12/1-3-4.png">
+因为这个length的长度，会影响 key的位置：
+key的位置的计算：
+<img src="images/12/1-3-5.png">
+实际上这个算法就是：  h%length   ,但是取模的话  效率太低，所以用位运算效率会很高。
+原因1：
+<img src="images/12/1-3-6.png">和<img src="images/12/1-3-7.png">等效的前提就是  length必须是2的整数倍
+原因2：如果不是2的整数倍，那么 哈西碰撞 哈西冲突的概率就高了很多
+位运算 就  涉及  到  length是不是2的整数倍：
+比如是2的整数倍：
+<img src="images/12/1-3-8.png">
+<img src="images/12/1-3-9.png">
+并且这个得到的索引值，一定在 0-15之间（数组是16的时候）：
+<img src="images/12/1-3-10.png">
+当然如果你扩容后数组长度为 32，那么这个索引就在0-31之间
+比如如果不是2的整数倍：
+<img src="images/12/1-3-11.png">
+发现：如果不是2的整数倍，那么 哈西碰撞 哈西冲突的概率就高了很多
+
+##### 细节讲解：装填因子0.75的原因
+
+如果装填因子是1， 那么数组满了再扩容，可以做到  最大的空间利用率 
+但是这是一个理想状态，元素不可能完全的均匀分布，很可能就哈西碰撞产生链表了。产生链表的话 查询时间就长了。 
+---》空间好，时间不好
+那么有人说 ，把装填因子搞小一点，0.5，  如果是0.5的话，就浪费空间，但是可以做到 到0.5就扩容 ，然后哈西碰撞就少，
+不产生链表的话，那么查询效率很高   
+---》时间好，空间不好
+所以在空间和时间中，<img src="images/12/1-3-12.png">取中间值，平衡这个因素 就取值为 0.75
+<img src="images/12/1-3-13.png">
+
+##### HashSet底层原理
+
+```java
+```
+
+#### TreeMap
+
+1. 原理大致介绍：
+<img src="images/12/1-3-14.png">
+
+2. 源码：
+```java
+```
+##### TreeSet源码
+
+```java
+```
+
+### Collections工具类
+
+```java
+```
