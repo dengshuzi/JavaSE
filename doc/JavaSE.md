@@ -10325,6 +10325,30 @@ public class Test02 {
 ##### 代码展示特性
 
 ```java
+package cn.com.dhc1;
+
+import java.util.HashMap;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/10/24 - 下午9:19
+ * @Description: cn.com.dhc1
+ * @version: 1.0
+ */
+public class Test01 {
+    public static void main(String[] args) {
+        // 创建一个HashMap对象: 存储的是双列数据, 键值对 key-value
+        HashMap<Integer, String> hashMap = new HashMap<>();
+        // 存储数据:
+        System.out.println(hashMap.put(12, "张三"));
+        System.out.println(hashMap.put(7, "李四"));
+        System.out.println(hashMap.put(19, "王五"));
+        System.out.println(hashMap.put(12, "赵六"));
+        System.out.println(hashMap.put(6, "李七"));
+        System.out.println("集合中的元素: " + hashMap);
+        System.out.println("集合中元素的数量: " + hashMap.size());
+    }
+}
 ```
 结果展示：
 <img src="images/12/1-3-2.png">
@@ -10339,6 +10363,164 @@ public class Test02 {
 ##### 源码（JDK1.7版本）
 
 ```java
+public class HashMap<K,V>
+    extends AbstractMap<K,V> //【1】继承的AbstractMap中，已经实现了Map接口
+        //【2】又实现了这个接口，多余，但是设计者觉得没有必要删除，就这么地了
+    implements Map<K,V>, Cloneable, Serializable{
+                
+                
+        //【3】后续会用到的重要属性：先粘贴过来：
+    static final int DEFAULT_INITIAL_CAPACITY = 16;//哈希表主数组的默认长度
+        //定义了一个float类型的变量，以后作为：默认的装填因子，加载因子是表示Hsah表中元素的填满的程度
+        //太大容易引起哈西冲突，太小容易浪费  0.75是经过大量运算后得到的最好值
+        //这个值其实可以自己改，但是不建议改，因为这个0.75是大量运算得到的
+        static final float DEFAULT_LOAD_FACTOR = 0.75f;
+        transient Entry<K,V>[] table;//主数组,每个元素为Entry类型
+        transient int size;
+        int threshold;//数组扩容的界限值,门槛值   16*0.75=12 
+        final float loadFactor;//用来接收装填因子的变量
+        
+        //【4】查看构造器：内部相当于：this(16,0.75f);调用了当前类中的带参构造器
+        public HashMap() {
+        this(DEFAULT_INITIAL_CAPACITY, DEFAULT_LOAD_FACTOR);
+    }
+        //【5】本类中带参数构造器：--》作用给一些数值进行初始化的！
+        public HashMap(int initialCapacity, float loadFactor) {
+        //【6】给capacity赋值，capacity的值一定是 大于你传进来的initialCapacity 的 最小的 2的倍数
+        int capacity = 1;
+        while (capacity < initialCapacity)
+            capacity <<= 1;
+                //【7】给loadFactor赋值，将装填因子0.75赋值给loadFactor
+        this.loadFactor = loadFactor;
+                //【8】数组扩容的界限值,门槛值
+        threshold = (int)Math.min(capacity * loadFactor, MAXIMUM_CAPACITY + 1);
+                
+                //【9】给table数组赋值，初始化数组长度为16
+        table = new Entry[capacity];
+                   
+    }
+        //【10】调用put方法：
+        public V put(K key, V value) {
+                //【11】对空值的判断
+        if (key == null)
+            return putForNullKey(value);
+                //【12】调用hash方法，获取哈希码
+        int hash = hash(key);
+                //【14】得到key对应在数组中的位置
+        int i = indexFor(hash, table.length);
+                //【16】如果你放入的元素，在主数组那个位置上没有值，e==null  那么下面这个循环不走
+                //当在同一个位置上放入元素的时候
+        for (Entry<K,V> e = table[i]; e != null; e = e.next) {
+            Object k;
+                        //哈希值一样  并且  equals相比一样   
+                        //(k = e.key) == key  如果是一个对象就不用比较equals了
+            if (e.hash == hash && ((k = e.key) == key || key.equals(k))) {
+                V oldValue = e.value;
+                e.value = value;
+                e.recordAccess(this);
+                return oldValue;
+            }
+        }
+        modCount++;
+                //【17】走addEntry添加这个节点的方法：
+        addEntry(hash, key, value, i);
+        return null;
+    }
+        
+        //【13】hash方法返回这个key对应的哈希值，内部进行二次散列，为了尽量保证不同的key得到不同的哈希码！
+        final int hash(Object k) {
+        int h = 0;
+        if (useAltHashing) {
+            if (k instanceof String) {
+                return sun.misc.Hashing.stringHash32((String) k);
+            }
+            h = hashSeed;
+        }
+                //k.hashCode()函数调用的是key键值类型自带的哈希函数，
+                //由于不同的对象其hashCode()有可能相同，所以需对hashCode()再次哈希，以降低相同率。
+        h ^= k.hashCode();
+        // This function ensures that hashCodes that differ only by
+        // constant multiples at each bit position have a bounded
+        // number of collisions (approximately 8 at default load factor).
+                /*
+                接下来的一串与运算和异或运算，称之为“扰动函数”，
+                扰动的核心思想在于使计算出来的值在保留原有相关特性的基础上，
+                增加其值的不确定性，从而降低冲突的概率。
+                不同的版本实现的方式不一样，但其根本思想是一致的。
+                往右移动的目的，就是为了将h的高位利用起来，减少哈西冲突
+                */
+        h ^= (h >>> 20) ^ (h >>> 12);
+        return h ^ (h >>> 7) ^ (h >>> 4);
+    }
+        //【15】返回int类型数组的坐标
+        static int indexFor(int h, int length) {
+                //其实这个算法就是取模运算：h%length，取模效率不如位运算
+        return h & (length-1);
+    }
+        //【18】调用addEntry
+        void addEntry(int hash, K key, V value, int bucketIndex) {
+                //【25】size的大小  大于 16*0.75=12的时候，比如你放入的是第13个，这第13个你打算放在没有元素的位置上的时候
+        if ((size >= threshold) && (null != table[bucketIndex])) {
+                        //【26】主数组扩容为2倍
+            resize(2 * table.length);
+                        //【30】重新调整当前元素的hash码
+            hash = (null != key) ? hash(key) : 0;
+                        //【31】重新计算元素位置
+            bucketIndex = indexFor(hash, table.length);
+        }
+                //【19】将hash,key,value,bucketIndex位置  封装为一个Entry对象：
+        createEntry(hash, key, value, bucketIndex);
+    }
+        //【20】
+        void createEntry(int hash, K key, V value, int bucketIndex) {
+                //【21】获取bucketIndex位置上的元素给e
+        Entry<K,V> e = table[bucketIndex];
+                //【22】然后将hash, key, value封装为一个对象，然后将下一个元素的指向为e （链表的头插法）
+                //【23】将新的Entry放在table[bucketIndex]的位置上
+        table[bucketIndex] = new Entry<>(hash, key, value, e);
+                //【24】集合中加入一个元素 size+1
+        size++;
+    }
+    //【27】
+        void resize(int newCapacity) {
+        Entry[] oldTable = table;
+        int oldCapacity = oldTable.length;
+        if (oldCapacity == MAXIMUM_CAPACITY) {
+            threshold = Integer.MAX_VALUE;
+            return;
+        }
+                //【28】创建长度为newCapacity的数组
+        Entry[] newTable = new Entry[newCapacity];
+        boolean oldAltHashing = useAltHashing;
+        useAltHashing |= sun.misc.VM.isBooted() &&
+                (newCapacity >= Holder.ALTERNATIVE_HASHING_THRESHOLD);
+        boolean rehash = oldAltHashing ^ useAltHashing;
+                //【28.5】转让方法：将老数组中的东西都重新放入新数组中
+        transfer(newTable, rehash);
+                //【29】老数组替换为新数组
+        table = newTable;
+                //【29.5】重新计算
+        threshold = (int)Math.min(newCapacity * loadFactor, MAXIMUM_CAPACITY + 1);
+    }
+        //【28.6】
+        void transfer(Entry[] newTable, boolean rehash) {
+        int newCapacity = newTable.length;
+        for (Entry<K,V> e : table) {
+            while(null != e) {
+                Entry<K,V> next = e.next;
+                if (rehash) {
+                    e.hash = null == e.key ? 0 : hash(e.key);
+                }
+                                //【28.7】将哈希值，和新的数组容量传进去，重新计算key在新数组中的位置
+                int i = indexFor(e.hash, newCapacity);
+                                //【28.8】头插法
+                e.next = newTable[i];//获取链表上元素给e.next
+                newTable[i] = e;//然后将e放在i位置 
+                e = next;//e再指向下一个节点继续遍历
+            }
+        }
+    }
+}
 ```
 
 ##### 细节讲解：主数组的长度为2的倍数
@@ -10379,6 +10561,19 @@ key的位置的计算：
 ##### HashSet底层原理
 
 ```java
+public class HashSet<E>{
+    //重要属性：
+    private transient HashMap<E,Object> map;
+    private static final Object PRESENT = new Object();
+    //构造器：
+    public HashSet() {
+        map = new HashMap<>();//HashSet底层就是利用HashMap来完成的
+    }
+        
+    public boolean add(E e) {
+        return map.put(e, PRESENT)==null;
+    }      
+}
 ```
 
 #### TreeMap
@@ -10388,13 +10583,316 @@ key的位置的计算：
 
 2. 源码：
 ```java
-```
+
+public class TreeMap<K,V>{
+    //重要属性：
+    //外部比较器：
+    private final Comparator<? super K> comparator;
+    //树的根节点：
+    private transient Entry<K,V> root = null;
+    //集合中元素的数量：
+    private transient int size = 0;
+    //空构造器:
+    public TreeMap() {
+        comparator = null;//如果使用空构造器，那么底层就不使用外部比较器
+    }
+    //有参构造器：
+    public TreeMap(Comparator<? super K> comparator) {
+        this.comparator = comparator;//如果使用有参构造器，那么就相当于指定了外部比较器
+    }
+        
+    public V put(K key, V value) {//k,V的类型在创建对象的时候确定了
+        //如果放入的是第一对元素，那么t的值为null
+        Entry<K,V> t = root;//在放入第二个节点的时候，root已经是根节点了
+                //如果放入的是第一个元素的话，走入这个if中：
+        if (t == null) {
+                        //自己跟自己比
+            compare(key, key); // type (and possibly null) check
+                        //根节点确定为root
+            root = new Entry<>(key, value, null);
+                        //size值变为1
+            size = 1;
+            modCount++;
+            return null;
+        }
+                
+        int cmp;
+        Entry<K,V> parent;
+        // split comparator and comparable paths
+                //将外部比较器赋给cpr:
+        Comparator<? super K> cpr = comparator;
+                //cpr不等于null，意味着你刚才创建对象的时候调用了有参构造器，指定了外部比较器
+        if (cpr != null) {
+            do {
+                parent = t;
+                cmp = cpr.compare(key, t.key);//将元素的key值做比较
+                                //cmp返回的值就是int类型的数据：
+                                //要是这个值《0 =0  》0
+                if (cmp < 0)
+                    t = t.left;
+                else if (cmp > 0)
+                    t = t.right;
+                else//cpm==0
+                                //如果key的值一样，那么新的value替换老的value  但是key不变 因为key是唯一的
+                    return t.setValue(value);
+            } while (t != null);
+        }
+                //cpr等于null，意味着你刚才创建对象的时候调用了空构造器，没有指定外部比较器，使用内部比较器
+        else {
+            if (key == null)
+                throw new NullPointerException();
+            Comparable<? super K> k = (Comparable<? super K>) key;
+            do {
+                parent = t;
+                cmp = k.compareTo(t.key);//将元素的key值做比较
+                if (cmp < 0)
+                    t = t.left;
+                else if (cmp > 0)
+                    t = t.right;
+                else
+                    return t.setValue(value);
+            } while (t != null);
+        }
+        Entry<K,V> e = new Entry<>(key, value, parent);
+        if (cmp < 0)
+            parent.left = e;
+        else
+            parent.right = e;
+        fixAfterInsertion(e);
+        size++;//size加1 操作
+        modCount++;
+        return null;
+    }
+        
+        
+}
+ static final class Entry<K,V> implements Map.Entry<K,V> {
+        K key;
+        V value;
+        Entry<K,V> left = null;
+        Entry<K,V> right = null;
+        Entry<K,V> parent;
+        boolean color = BLACK;
+ }
+ ```
 ##### TreeSet源码
 
 ```java
+public class TreeSet<E> extends AbstractSet<E>
+    implements NavigableSet<E>, Cloneable, java.io.Serializable{
+                //重要属性：
+                private transient NavigableMap<E,Object> m;
+                private static final Object PRESENT = new Object();
+                
+                //在调用空构造器的时候，底层创建了一个TreeMap
+                public TreeSet() {
+                        this(new TreeMap<E,Object>());
+                }
+                
+                TreeSet(NavigableMap<E,Object> m) {
+                        this.m = m;
+                }
+                
+                public boolean add(E e) {
+        return m.put(e, PRESENT)==null;
+    }
+}
 ```
 
 ### Collections工具类
 
 ```java
+package cn.com.dhc11;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/1 - 下午7:52
+ * @Description: cn.com.dhc11
+ * @version: 1.0
+ */
+public class Test01 {
+    public static void main(String[] args) {
+        // Collections不支持创建对象, 因为构造器私有化了
+        // Collections cols = new Collections();
+        // 里面的属性和方法都是被static修饰, 我们可以直接用类名.调用即可
+        // 常用方法:
+        // addAll:
+        ArrayList<String> list1 = new ArrayList<>();
+        list1.add("cc");
+        list1.add("bb");
+        list1.add("aa");
+        Collections.addAll(list1, "ee", "dd", "ff");
+        Collections.addAll(list1, new String[]{"gg", "hh", "jj"});
+        System.out.println(list1);
+
+        //binarySearch必须在有序集合中查找: --> 排序:
+        Collections.sort(list1); // sort提供的是升序排列
+        System.out.println(list1);
+        System.out.println(Collections.binarySearch(list1, "cc"));
+
+        // copy: 替换方法
+        ArrayList<String> list2 = new ArrayList<>();
+        Collections.addAll(list2, "tt", "ss");
+        Collections.copy(list1, list2);
+        System.out.println(list1);
+        System.out.println(list2);
+
+        // fill: 填充
+        Collections.fill(list2, "yyy");
+        System.out.println(list2);
+    }
+}
 ```
+
+# 第十二章_IO流
+
+## File类
+
+### 引入
+
+1. 文件，目录：
+文件： 
+内存中存放的数据在计算机关机后就会消失。要长久保存数据，就要使用硬盘、光盘、U 盘等设备。为了便于数据的管理和检索，引入了“文件”的概念。一篇文章、一段视频、一个可执行程序，都可以被保存为一个文件，并赋予一个文件名。操作系统以文件为单位管理磁盘中的数据。
+一般来说，文件可分为文本文件、视频文件、音频文件、图像文件、可执行文件等多种类别，这是从文件的功能进行分类的。从数据存储的角度来说，所有的文件本质上都是一样的，都是由一个个字节组成的，归根到底都是 0、1 比特串。不同的文件呈现出不同的形态（有的是文本，有的是视频等等）
+文件夹（目录）：
+成千上万个文件如果不加分类放在一起，用户使用起来显然非常不便，因此又引入了树形目录（目录也叫文件夹）的机制，可以把文件放在不同的文件夹中，文件夹中还可以嵌套文件夹，这就便于用户对文件进行管理和使用
+2. 查看文件/目录的信息：
+右键-属性
+3. 在java程序中操纵 文件/目录 ？怎么办？
+java程序，最典型的特点，面向对象，java程序最擅长的就是操作对象，盘符上的文件/目录，将它的各种信息进行了封装，封装为一个对象，
+java程序最擅长的就是操纵对象，这个对象属于 ---》File类
+盘符上的文件---》封装为对象---》对象属于File类的对象--》有了这个对象，我们程序就可以直接操纵这个对象，通过这个对象获取文件的各种信息，还可以对文件进行创建 ，删除。
+
+### 对文件进行操作
+
+```java
+package cn.com.dhc.test01;
+
+import java.io.File;
+import java.io.IOException;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/1 - 下午8:50
+ * @Description: cn.com.dhc.test01
+ * @version: 1.0
+ */
+public class Test01 {
+    public static void main(String[] args) throws IOException {
+        // 将文件封装为一个File类的对象:
+        // File.separator属性帮我们获取当前操作系统的路径拼接符号
+        File file1 = new File(File.separator + "tmp" + File.separator + "test.txt");
+        File file2 = new File(File.separator + "tmp" + File.separator + "test.txt");
+
+        // 常用方法
+        System.out.println("文件是否可读: " + file1.canRead());
+        System.out.println("文件是否可写: " + file1.canWrite());
+        System.out.println("文件的名字: " + file1.getName());
+        System.out.println("上级目录: " + file1.getParent());
+        System.out.println("是否是一个目录: " + file1.isDirectory());
+        System.out.println("是否是一个文件: " + file1.isFile());
+        System.out.println("是否隐藏: " + file1.isHidden());
+        System.out.println("文件的大小: " + file1.isHidden());
+        System.out.println("文件是否存在:" + file1.exists());
+        if (file1.exists()) {
+            file1.delete();
+        } else {
+            file1.createNewFile();
+        }
+        System.out.println(file1 == file2); // 比较两个对象的地址
+        System.out.println(file1.equals(file2)); // 比较两个对象对应的路径
+
+        // 根路径相关的:
+        System.out.println("file1: " + file1.getAbsolutePath());
+        System.out.println("file1: " + file1.getPath());
+        System.out.println("file1: " + file1.toString());
+        System.out.println("=================");
+        File file3 = new File("demo.txt");
+        if (!file3.exists()) {
+            file3.createNewFile();
+        }
+        // 绝对路径指的就是: 真实的一个精准的, 完整的路径
+        System.out.println("file3: " + file3.getAbsolutePath());
+        // 相对路径: 有一个参照物, 相对这个参照物的路径
+        System.out.println("file3: " + file3.getPath());
+        // toString的效果永远是相对路径
+        System.out.println("file3: " + file3.toString());
+        File file4 = new File("/c/demo.txt");
+        if (!file4.exists()) {
+            file4.createNewFile();
+        }
+        System.out.println("file4: " + file4.getAbsolutePath());
+        System.out.println("file4: " + file4.getPath());
+    }
+}
+```
+
+### 对目录进行操作
+
+```java
+package cn.com.dhc.test01;
+
+import java.io.File;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/1 - 下午9:35
+ * @Description: cn.com.dhc.test01
+ * @version: 1.0
+ */
+public class Test02 {
+    public static void main(String[] args) {
+        // 将目录封装为File类的对象:
+        File file1 = new File("/tmp/test/");
+        System.out.println("文件是否可读: " + file1.canRead());
+        System.out.println("文件是否可写: " + file1.canWrite());
+        System.out.println("文件的名字: " + file1.getName());
+        System.out.println("上级目录: " + file1.getParent());
+        System.out.println("是否是一个目录: " + file1.isDirectory());
+        System.out.println("是否是一个文件: " + file1.isFile());
+        System.out.println("是否隐藏: " + file1.isHidden());
+        System.out.println("文件的大小: " + file1.isHidden());
+        System.out.println("文件是否存在:" + file1.exists());
+        System.out.println("绝对路径: " + file1.getAbsolutePath());
+        System.out.println("相对路径: " + file1.getPath());
+
+        // 根目录相关的方法:
+        File file2 = new File("/tmp/test/a/b");
+        file2.mkdir(); // 创建单层目录
+        file2.mkdirs(); // 创建多层目录
+        // 删除: 如果是删除目录的话, 只会删除一层, 并且前提: 这层目录是空的, 里面没有内容, 如果由内容就不会被删除
+        // file2.delete();
+
+        // 查看
+        String[] list = file1.list(); // 文件夹下目录/文件对应的名字的数组
+        for (String s : list) {
+            System.out.println(s);
+        }
+        System.out.println("================");
+        File[] files = file1.listFiles();
+        for (File f : files) {
+            System.out.println(f.getName() + "," + f.getAbsolutePath());
+        }
+    }
+}
+```
+
+## IO流
+
+### 引入
+
+1. File类：封装文件/目录的各种信息，对目录/文件进行操作，但是我们不可以获取到文件/目录中的内容。
+2. 引入：IO流：
+I/O ： Input/Output的缩写，用于处理设备之间的数据的传输。
+3. 形象理解：IO流 当做一根 “管”：
+<img src="images/13/1-1-1.png">
+
+4. IO流的体系结构：
+<img src="images/13/1-1-2.png">
+
+### 案例：通过java程序完成文件的复制操作
+

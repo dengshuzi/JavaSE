@@ -1,0 +1,33 @@
+
+e
+java:S1192&"HDefine a constant instead of duplicating this literal "file1: " 3 times.(ÉŞğ8ƒİÊšÃ0
+e
+java:S1192/"HDefine a constant instead of duplicating this literal "file3: " 3 times.(—ÉÒ—8ƒİÊšÃ0
+M	java:S106"9Replace this use of System.out or System.err by a logger.(¹ş’;
+N	java:S106"9Replace this use of System.out or System.err by a logger.(Şòíˆ
+S	java:S106"9Replace this use of System.out or System.err by a logger.(µĞ‹²ùÿÿÿÿ
+N	java:S106"9Replace this use of System.out or System.err by a logger.(Ãùûˆ
+S	java:S106"9Replace this use of System.out or System.err by a logger.(¶ëµ‡şÿÿÿÿ
+N	java:S106"9Replace this use of System.out or System.err by a logger.(’¤†
+N	java:S106"9Replace this use of System.out or System.err by a logger.(¾¦«œ
+S	java:S106"9Replace this use of System.out or System.err by a logger.(•Ö½Óÿÿÿÿÿ
+S	java:S106"9Replace this use of System.out or System.err by a logger.(Ö–ğ¬şÿÿÿÿ
+O	java:S899";Do something with the "boolean" value returned by "delete".(±Ü‹
+c
+java:S4042"NUse "java.nio.file.Files#delete" here for better messages on error conditions.(±Ü‹
+W	java:S899 "BDo something with the "boolean" value returned by "createNewFile".(á‡³
+S	java:S106""9Replace this use of System.out or System.err by a logger.(‡Û×Äşÿÿÿÿ
+N	java:S106#"9Replace this use of System.out or System.err by a logger.(ÔüôÎ
+N	java:S106&"9Replace this use of System.out or System.err by a logger.(ÉŞğ
+N	java:S106'"9Replace this use of System.out or System.err by a logger.(ÜÄªÚ
+N	java:S106("9Replace this use of System.out or System.err by a logger.(½¯ıä
+T	java:S106)"9Replace this use of System.out or System.err by a logger.(²ÏË8ë†ÀšÃ0
+^	java:S899,"BDo something with the "boolean" value returned by "createNewFile".(¡°ø“8÷¾šÃ0
+U	java:S106/"9Replace this use of System.out or System.err by a logger.(—ÉÒ—8ë†ÀšÃ0
+Z	java:S1061"9Replace this use of System.out or System.err by a logger.(æ¾İ°øÿÿÿÿ8ë†ÀšÃ0
+Z	java:S1063"9Replace this use of System.out or System.err by a logger.(èàÑáüÿÿÿÿ8ûÅËšÃ0
+c
+java:S10754"ARefactor your code to get this URI from a customizable parameter.(í™ÍÊÿÿÿÿÿ8ûÖĞšÃ0
+c	java:S8996"BDo something with the "boolean" value returned by "createNewFile".(å‚¸¬ıÿÿÿÿ8»„ÌšÃ0
+Z	java:S1068"9Replace this use of System.out or System.err by a logger.(âëœ‡üÿÿÿÿ8ÍşÍšÃ0
+U	java:S1069"9Replace this use of System.out or System.err by a logger.(†èÊº8äšÎšÃ0
