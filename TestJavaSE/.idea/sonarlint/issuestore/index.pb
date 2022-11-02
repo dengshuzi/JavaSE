@@ -13,7 +13,3 @@ Y
 )TestHashMap01/src/cn/com/dhc1/Test01.java,6/2/62a6ce9deadec93dc1b60f67ba592111ae962406
 [
 +TestCollection/src/cn/com/dhc11/Test01.java,a/d/ad7bcdd3a74e2bd569386648e6c0d60678269565
-X
-(TestIO/src/cn/com/dhc/test01/Test01.java,8/e/8e0c83b9c3684944ba73734d44859be492faaac2
-X
-(TestIO/src/cn/com/dhc/test01/Test02.java,b/f/bff926d245386972f21a8a5bb04efd136b02177b
