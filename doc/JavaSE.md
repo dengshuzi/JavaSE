@@ -10953,7 +10953,179 @@ public class Test01 {
     }
 }
 ```
+想一次性读取五个字符，不够的话下次再读五个字符：
+```java
+package cn.com.dhc.io01;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/8 - 下午8:13
+ * @Description: cn.com.dhc.io01
+ * @version: 1.0
+ */
+public class Test02 {
+    public static void main(String[] args) throws IOException {
+        // 文件 --> 程序:
+        // 1. 创建一个File类的对象
+        File file = new File("/tmp/Test.txt");
+
+        // 2. 创建一个FileReader的流的对象
+        FileReader fileReader = new FileReader(file);
+
+        // 3. 读取动作
+        // 引入一个快递员的小车, 这个小车一次拉五个快递
+        char[] ch = new char[5];
+        int len = fileReader.read(ch);// 一次读取五个: 返回值是这个数组中的有效长度
+        while (len != -1) {
+            // 错误方式:
+            /*for (int i = 0; i < ch.length; i++) {
+                System.out.println(ch[i]);
+            }*/
+            // 正确方式1:
+            /*for (int i = 0; i < len; i++) {
+                System.out.println(ch[i]);
+            }*/
+            // 正确方式2:
+            String str = new String(ch, 0, len);
+            System.out.print(str);
+            len = fileReader.read(ch);
+        }
+
+        // 4. 关闭流
+        fileReader.close();
+    }
+}
+```
+
+#### 功能分解2：程序--》文件：FileWriter
+
+一个字符一个字符的向外输出：
+
+```java
+package cn.com.dhc.io01;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/8 - 下午8:38
+ * @Description: cn.com.dhc.io01
+ * @version: 1.0
+ */
+public class Test03 {
+    public static void main(String[] args) throws IOException {
+        // 1. 有个目标文件:
+        File file = new File("/tmp/demo.txt");
+        // 2. FileWrite管怼到文件上去:
+        FileWriter fileWriter = new FileWriter(file);
+        // 3. 开始动作: 输出动作:
+        // 一个字符一个字符的往外输出:
+        String str = "hello你好";
+        for (int i = 0; i < str.length(); i++) {
+            fileWriter.write(str.charAt(i));
+        }
+        // 4. 关闭流:
+        fileWriter.close();
+    }
+}
+```
+
+发现：
+如果目标文件不存在的话，那么会自动创建此文件。
+如果目标文件存在的话：
+```new FileWriter(f)``` 相当于源文件进行覆盖操作
+```new FileWriter(f, false)``` 相当于对源文件进行覆盖操作, 不是追加
+```new FileWriter(f, true)``` 对原来的文件进行追加, 而不是覆盖
+利用缓冲数组：向外输出 
+```java
+package cn.com.dhc.io01;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/8 - 下午8:38
+ * @Description: cn.com.dhc.io01
+ * @version: 1.0
+ */
+public class Test03 {
+    public static void main(String[] args) throws IOException {
+        // 1. 有个目标文件:
+        File file = new File("/tmp/demo.txt");
+        // 2. FileWrite管怼到文件上去:
+        FileWriter fileWriter = new FileWriter(file);
+        // 3. 开始动作: 输出动作:
+        // 利用缓冲数组输出:
+        String str = "aaa";
+        char[] chars = str.toCharArray();
+        fileWriter.write(chars);
+        // 4. 关闭流:
+        fileWriter.close();
+    }
+}
+
+```
+
+#### 功能分解3：利用FileReader，FileWriter文件复制
+
+```java
+package cn.com.dhc.io01;
+
+import java.io.*;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/8 - 下午9:12
+ * @Description: cn.com.dhc.io01
+ * @version: 1.0
+ */
+public class Test04 {
+    public static void main(String[] args) throws IOException {
+        // 1. 有一个源文件
+        File file1 = new File("/tmp/Test.txt");
+        // 2. 有一个目标文件
+        File file2 = new File("/tmp/Demo.txt");
+        // 3. 搞一个输入的管怼到源文件上
+        FileReader fileReader = new FileReader(file1);
+        // 4. 搞一个输出的管怼到目标文件上
+        FileWriter fileWriter = new FileWriter(file2);
+        // 5.开始动作:
+        // 方式1: 一个字符一个字符的复制:
+        /*int n = fileReader.read();
+        while (n != -1) {
+            fileWriter.write(n);
+            n = fileReader.read();
+        }*/
+        // 方式2: 利用缓冲字符数组:
+        /*char[] ch = new char[5];
+        int len = fileReader.read(ch);
+        System.out.println(len);
+        while (len != -1) {
+            fileWriter.write(ch, 0, len); // 将缓冲数组中有效长度写出
+            len = fileReader.read();
+        }*/
+        // 方式3: 利用缓冲字符数组, 将数组转为String写出:
+        char[] ch = new char[5];
+        int len = fileReader.read(ch);
+        while (len != -1) {
+            String str = new String(ch, 0, len);
+            fileWriter.write(str);
+            len = fileReader.read();
+        }
+        // 6. 关闭流: (关闭流的时候, 倒着关闭, 后用先关)
+        fileWriter.close();
+        fileReader.close();
+    }
+}
+```
 
 ### 警告：不要用字符流去操作非文本文件
 
