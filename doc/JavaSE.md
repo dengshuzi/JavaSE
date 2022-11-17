@@ -11134,3 +11134,776 @@ public class Test04 {
 
 ### 利用try-catch-finally处理异常方式
 
+```java
+package cn.com.dhc.io01;
+
+import java.io.*;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/8 - 下午9:12
+ * @Description: cn.com.dhc.io01
+ * @version: 1.0
+ */
+public class Test04 {
+    public static void main(String[] args) {
+        // 1. 有一个源文件
+        File file1 = new File("/tmp/Test.txt");
+        // 2. 有一个目标文件
+        File file2 = new File("/tmp/Demo.txt");
+        // 3. 搞一个输入的管怼到源文件上
+        FileReader fileReader = null;
+        FileWriter fileWriter = null;
+        try {
+            fileReader = new FileReader(file1);
+            // 4. 搞一个输出的管怼到目标文件上
+            fileWriter = new FileWriter(file2);
+            // 5.开始动作:
+            char[] ch = new char[5];
+            int len = fileReader.read(ch);
+            while (len != -1) {
+                String str = new String(ch, 0, len);
+                fileWriter.write(str);
+                len = fileReader.read();
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            // 6. 关闭流: (关闭流的时候, 倒着关闭, 后用先关)
+            try {
+                if (fileWriter != null)
+                    fileWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (fileReader != null)
+                    fileReader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+```
+
+### FileInputStream读取文件中内容
+
+1. 读取文本文件：
+```java
+package cn.com.dhc.io02;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/9 - 下午7:54
+ * @Description: cn.com.dhc.io02
+ * @version: 1.0
+ */
+public class Test01 {
+    public static void main(String[] args) {
+        // 功能: 利用字节流将文件中内容读到程序中来:
+        // 1. 有一个源文件:
+        File file1 = new File("/tmp/Test.txt");
+        File file2 = new File("/tmp/Demo.txt");
+
+        // 2. 将一个字节流管怼到源文件上：
+        FileInputStream inputStream = null;
+        try {
+            // 3. 开始读取动作:
+            /*
+                细节1:
+                    文件是utf-8进行存储的, 所以英文字符底层实际占用1个字节
+                    但是中文字符, 底层实际占用3个字节
+                细节2:
+                    如果文件是文本文件, 那么就不要使用字节流读取了, 建议使用字符流
+                细节3:
+                    read()读取一个字节, 但是你有没有发现返回值是int类型, 而不是byte类型
+                    read方法底层做了处理, 让返回数据都是正数
+                    就是为了避免如果字节返回的是-1的话, 那到底是读入的字节, 还是到文件结尾呢
+             */
+            inputStream = new FileInputStream(file1);
+            int n = inputStream.read();
+            while (n != -1) {
+                System.out.println(n);
+                n = inputStream.read();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            // 4. 关闭流:
+            try {
+                if (inputStream == null)
+                    inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+```
+2. 利用字节流读取非文本文件：（以图片为案例：）--》一个字节一个字节的读取：
+```java
+package cn.com.dhc.io02;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/9 - 下午8:08
+ * @Description: cn.com.dhc.io02
+ * @version: 1.0
+ */
+public class Test02 {
+    public static void main(String[] args) {
+        File file1 = new File("/home/d/Pictures/Guo.jpg");
+        FileInputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(file1);
+            int count = 0; // 定义一个计数器, 用来计读入的字节的个数
+            int n = inputStream.read();
+            while (n != -1) {
+                count++;
+                System.out.println(n);
+                n = inputStream.read();
+            }
+            System.out.println("count = " + count);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (IOException e) {
+                throw new RuntimeException();
+            }
+        }
+    }
+}
+```
+3. 利用字节类型的缓冲数组：
+
+```java
+package cn.com.dhc.io02;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/9 - 下午8:15
+ * @Description: cn.com.dhc.io02
+ * @version: 1.0
+ */
+public class Test03 {
+    public static void main(String[] args) {
+        File file = new File("/home/d/Pictures/Guo.jpg");
+        FileInputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(file);
+            byte[] bytes = new byte[1024*50];
+            int len = inputStream.read(bytes); // len指的就是读取的数组中的有效长度
+            while (len != -1) {
+                for (int i = 0; i < len; i++) {
+                    System.out.println(bytes[i]);
+                }
+                len = inputStream.read();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException();
+        } finally {
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+```
+
+#### FileInputStream,FileOutputStream完成非文本文件的复制
+
+【1】读入一个字节，写出一个字节：
+
+```java
+package cn.com.dhc.io02;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/9 - 下午8:41
+ * @Description: cn.com.dhc.io02
+ * @version: 1.0
+ */
+public class Test04 {
+    // 这是一个main方法, 是程序的入口:
+    public static void main(String[] args) {
+        // 功能: 完成图片的复制:
+        // 1. 有一个源图片:
+        File file1 = new File("/home/d/Pictures/Guo.jpg");
+        // 2. 有一个目标图片:
+        File file2 = new File("/home/d/Pictures/Demo.jpg");
+        // 3. 有一个输入的管道怼到源文件:
+        FileInputStream inputStream = null;
+        // 4. 有一个输出的管道怼到目标文件:
+        FileOutputStream outputStream = null;
+
+        try {
+            inputStream = new FileInputStream(file1);
+            outputStream = new FileOutputStream(file2);
+            // 5. 开始复制
+            int n = inputStream.read();
+            while (n != -1) {
+                outputStream.write(n);
+                n = inputStream.read();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException();
+        } finally {
+            // 6. 关闭流(倒着关闭流):
+            try {
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+```
+
+【2】利用缓冲字节数组：
+
+```java
+package cn.com.dhc.io02;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/14 - 下午7:23
+ * @Description: cn.com.dhc.io02
+ * @version: 1.0
+ */
+public class Test05 {
+    public static void main(String[] args) {
+        FileInputStream inputStream = null;
+        FileOutputStream outputStream = null;
+        File file1 = new File("/home/d/Pictures/Guo.jpg");
+        File file2 = new File("/home/d/Pictures/Demo.jpg");
+        try {
+            inputStream = new FileInputStream(file1);
+            outputStream = new FileOutputStream(file2);
+            // 利用缓冲数组:
+            byte[] b = new byte[1024 * 50];
+            int len = inputStream.read(b);
+            while (len != -1) {
+                outputStream.write(b, 0, len);
+                len = inputStream.read(b);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (outputStream != null)
+                    outputStream.close();
+                if (inputStream != null)
+                    inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+```
+
+#### 缓冲字节流(处理流)-BufferedInputStream ,BufferedOutputStream
+
+1. 读入一个字节，写出一个字节：
+<img src="images/13/1-1-3.png">
+
+2. 利用缓冲字节数组：
+<img src="images/13/1-1-4.png">
+
+3. 利用缓冲区：
+<img src="images/13/1-1-5.png">
+
+想要完成上面的效果，单纯的靠FileInputStream,FileOutputStream是不可以完成的，这个时候就需要功能的加强，
+这个加强就需要引入新的流（在FileInputStream,FileOutputStream外面再套一层流）：BufferedInputStream ,BufferedOutputStream. ----->处理流
+
+```java
+package cn.com.dhc.io02;
+
+import java.io.*;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/14 - 下午7:39
+ * @Description: cn.com.dhc.io02
+ * @version: 1.0
+ */
+public class Test06 {
+    public static void main(String[] args) {
+        File file1 = new File("/home/d/Pictures/Guo.jpg");
+        File file2 = new File("/home/d/Pictures/Demo.jpg");
+        FileInputStream fis = null;
+        FileOutputStream fos = null;
+        BufferedInputStream bis = null;
+        BufferedOutputStream bos = null;
+        try {
+            fis = new FileInputStream(file1);
+            fos = new FileOutputStream(file2);
+            bis = new BufferedInputStream(fis);
+            bos = new BufferedOutputStream(fos);
+
+            byte[] b = new byte[1024 * 10];
+            int len = bis.read(b);
+            while (len != -1) {
+                bos.write(b, 0, len);
+                /* bos.flush(); 底层已经帮我们做了刷新缓冲区的操作, 不哟航我们手动完成: 底层调用flushBuffer() */
+                len = bis.read();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                // 如果处理流包裹着节点流的话, 那么其实只要关闭高级流(处理流), 那么里面的节点流也会随之被关闭
+                if (bos != null)
+                    bos.close();
+                if (bis != null)
+                    bis.close();
+                /*if (fos != null)
+                    fos.close();
+                if (fis != null)
+                    fis.close();*/
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+```
+
+#### 比对非文本文件复制的三种方法的效率
+
+1. 读入一个字节，写出一个字节：
+<img src="images/13/1-1-6.png">
+
+2. 利用缓冲字节数组：
+<img src="images/13/1-1-7.png">
+
+3. 利用缓冲区：
+<img src="images/13/1-1-8.png">
+
+```java
+package cn.com.dhc.io02;
+
+import java.io.*;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/14 - 下午7:39
+ * @Description: cn.com.dhc.io02
+ * @version: 1.0
+ */
+public class Test06 {
+    public static void main(String[] args) {
+        File file1 = new File("/home/d/Pictures/Guo.jpg");
+        File file2 = new File("/home/d/Pictures/Demo.jpg");
+        FileInputStream fis = null;
+        FileOutputStream fos = null;
+        BufferedInputStream bis = null;
+        BufferedOutputStream bos = null;
+        try {
+            fis = new FileInputStream(file1);
+            fos = new FileOutputStream(file2);
+            bis = new BufferedInputStream(fis);
+            bos = new BufferedOutputStream(fos);
+
+            byte[] b = new byte[1024];
+            int len = bis.read(b);
+            long starTime = System.currentTimeMillis();
+            while (len != -1) {
+                bos.write(b, 0, len);
+                /* bos.flush(); 底层已经帮我们做了刷新缓冲区的操作, 不哟航我们手动完成: 底层调用flushBuffer() */
+                len = bis.read();
+            }
+            long endTime = System.currentTimeMillis();
+            System.out.println("复制完成的时间为:" + (endTime - starTime));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                // 如果处理流包裹着节点流的话, 那么其实只要关闭高级流(处理流), 那么里面的节点流也会随之被关闭
+                if (bos != null)
+                    bos.close();
+                if (bis != null)
+                    bis.close();
+                /*if (fos != null)
+                    fos.close();
+                if (fis != null)
+                    fis.close();*/
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+```
+
+#### 缓冲字符流(处理流)-BufferedReader,BufferedWriter完成文本文件的复制
+
+```java
+package cn.com.dhc.io02;
+
+import java.io.*;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/14 - 下午8:33
+ * @Description: cn.com.dhc.io02
+ * @version: 1.0
+ */
+public class Test07 {
+    public static void main(String[] args) {
+        File file1 = new File("/tmp/Test.txt");
+        File file2 = new File("/tmp/Demo.txt");
+        FileReader fr = null;
+        FileWriter fw = null;
+        BufferedReader br = null;
+        BufferedWriter bw = null;
+        try {
+            fr = new FileReader(file1);
+            fw = new FileWriter(file2);
+            br = new BufferedReader(fr);
+            bw = new BufferedWriter(fw);
+            //  方式1: 读取一个字符, 输出一个字符:
+            /*int n = br.read();
+            while (n != -1) {
+                bw.write(n);
+                n = br.read();
+            }*/
+
+            // 方式2: 利用缓冲数组:
+            /*char[] ch = new char[30];
+            int len = br.read(ch);
+            while (len != -1) {
+                bw.write(ch, 0, len);
+                len = br.read(ch);
+            }*/
+
+            // 方式3: 读取String:
+            String readLine = br.readLine(); //每次读取文本文件中一行, 返回字符串
+            if (readLine != null) {
+                bw.write(readLine);
+                // 在文本文件中应该再写出一个换行:
+                bw.newLine(); // 新起一行
+                readLine = br.readLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (bw != null)
+                    bw.close();
+                if (br != null)
+                    br.close();
+            } catch (IOException e) {
+
+            }
+        }
+    }
+}
+```
+
+#### 转换流-InputStreamReader,OutputStreamWriter
+
+1. 转换流：作用：将字节流和字符流进行转换。
+2. 转换流  属于 字节流还是字符流？属于字符流
+InputStreamReader  ：字节输入流 ---》字符的输入流
+OutputStreamWriter  ： 字符输出流 --》字节的输出流
+3. 图解：
+<img src="images/13/1-1-9.png">
+
+4. 将输入的字节流转换为输入的字符流，然后完成文件--》程序 ：
+```java
+package cn.com.dhc.io03;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/17 - 下午7:04
+ * @Description: cn.com.dhc.io03
+ * @version: 1.0
+ */
+public class Test01 {
+    public static void main(String[] args) {
+        // 文件 --> 程序:
+        File file1 = new File("/tmp/Test.txt");
+        FileInputStream fis = null;
+        InputStreamReader isr = null;
+        try {
+            fis = new FileInputStream(file1);
+            // 将字节转换为字符的时候, 需要指定一个编码, 这个编码跟文件本身的编码格式同一
+            // isr = new InputStreamReader(fis, "utf-8");
+            // 获取程序本身的编码格式
+            isr = new InputStreamReader(fis);
+            char[] ch = new char[20];
+            int len = isr.read(ch);
+            while (len != -1) {
+                System.out.print(new String(ch, 0, len));
+                len = isr.read(ch);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (isr != null) {
+                    isr.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+```
+
+#### 转换流-InputStreamReader,OutputStreamWriter实现文本文件的复制
+
+```java
+package cn.com.dhc.io03;
+
+import java.io.*;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/17 - 下午7:38
+ * @Description: cn.com.dhc.io03
+ * @version: 1.0
+ */
+public class Test02 {
+    public static void main(String[] args) {
+        File file1 = new File("/tmp/Test.txt");
+        File file2 = new File("/tmp/Demo.txt");
+        FileInputStream fis = null;
+        InputStreamReader isr = null;
+        FileOutputStream fos = null;
+        OutputStreamWriter osw = null;
+        try {
+            fis = new FileInputStream(file1);
+            isr = new InputStreamReader(fis, "utf-8");
+            fos = new FileOutputStream(file2);
+            osw = new OutputStreamWriter(fos, "gbk");
+            char[] ch = new char[20];
+            int len = isr.read(ch);
+            while (len != -1) {
+                osw.write(ch, 0, len);
+                len = isr.read(ch);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (osw != null) {
+                    osw.close();
+                }
+                if (isr != null) {
+                    isr.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+```
+
+#### System类对IO流的支持
+
+1. System的属性：
+System.in  : “标准”输入流。---》默认情况下  从键盘输入
+System.out  :“标准”输出流。 ---》默认情况下，输出到控制台。
+2. System.in ：“标准”输入流。---》默认情况下  从键盘输入
+```java
+package cn.com.dhc.io04;
+
+import java.io.*;
+import java.util.Scanner;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/17 - 下午7:52
+ * @Description: cn.com.dhc.io04
+ * @version: 1.0
+ */
+public class Test01 {
+    public static void main(String[] args) {
+        // 得到的是标准的输入流: --> 从键盘输入:
+       /* InputStream in = System.in;
+        // 调用方法:
+        try {
+            int n = in.read(); // read方法等待键盘的录入, 所以这个方法是一个阻塞方法
+            System.out.println(n);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
+
+        // 以前案例: 从键盘录入一个int类型的数据:
+        // 从上面代码证明, 键盘录入实际上是: System.in
+        // 形象的理解: System.in管, 这个管怼到键盘上去了, 所以你从键盘录入的话, 就从这个管到程序中了
+        // Scanner的作用: 扫描器: 起扫描作用的, 扫键盘的从这根管出来的数据
+        /*Scanner scanner = new Scanner(System.in);
+        int i = scanner.nextInt();
+        System.out.println(i);*/
+        try{
+            // 既然Scanner是扫描的作用, 不一定非得扫System.in进来的东西, 还可以扫描其他管的内容:
+            Scanner scanner = new Scanner(new FileInputStream(new File("/tmp/Test.txt")));
+            while (scanner.hasNext()) {
+                System.out.println(scanner.next());
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+3. System.out  : 返回的输出流 、 打印流（PrintStream）
+```java
+package cn.com.dhc.io04;
+
+import java.io.PrintStream;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/17 - 下午8:06
+ * @Description: cn.com.dhc.io04
+ * @version: 1.0
+ */
+public class Test02 {
+    public static void main(String[] args) {
+        // 写到控制台上:
+        PrintStream out = System.out;
+        // 调用方法：
+        out.print("你好1"); // 直接在控制台写出, 但是不换行
+        out.print("你好2");
+        out.print("你好3");
+        out.print("你好4");
+        System.out.println();
+        out.println("Hello1"); // 直接在控制台写出, 并且换行操作
+        out.println("Hello2");
+        out.println("Hello3");
+        out.println("Hello4");
+    }
+}
+```
+
+#### 练习：键盘录入内容输出到文件中
+
+1. 解决思路：
+
+<img src="images/13/1-1-10.png">
+
+```java
+package cn.com.dhc.io04;
+
+import com.sun.deploy.util.StringUtils;
+
+import java.io.*;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/17 - 下午8:45
+ * @Description: cn.com.dhc.io04
+ * @version: 1.0
+ */
+public class Test03 {
+    public static void main(String[] args) {
+        // 1. 先准备输入方向:
+        // 键盘录入:
+        InputStream in = System.in; // 属于字节流
+        // 字节流 --> 字符流:
+        InputStreamReader isr = new InputStreamReader(in);
+        // 在isr外面再套一个缓冲流:
+        BufferedReader br = new BufferedReader(isr);
+
+        // 2. 再准备输出方向:
+        File file = new File("/tmp/Demo.txt");
+        BufferedWriter bw = null;
+        try {
+            FileWriter fw = new FileWriter(file);
+            bw = new BufferedWriter(fw);
+
+            String s = br.readLine();
+            while (!s.equals("exit")) {
+                bw.write(s);
+                bw.newLine();
+                s = br.readLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (bw != null) {
+                    bw.close();
+                }
+                if (br != null) {
+                    br.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+```
+
+#### 数据流-DataInputStream,DataOutputStream
+
+1. 数据流：用来操作基本数据类型和字符串的
+2. 
+DataInputStream:将文件中存储的基本数据类型和字符串  写入  内存的变量中
+DataOutputStream:  将内存中的基本数据类型和字符串的变量 写出  文件中
+3. 代码：
+利用DataOutputStream向外写出变量：
+```java
+```
+在Demo2.txt文件中，我们看到：
+<img src="images/13/1-1-11.png">
+发现：这个内容我们看不懂，是给程序看的
+所以下面我们开始读取的程序：
+```java
+```
+结果：
+<img src="images/13/1-1-12.png">
+验证：那个文件，我们看不懂，程序看得懂
+要求：
+写出的类型跟读入的类型 必须 要匹配！

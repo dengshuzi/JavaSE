@@ -1,0 +1,45 @@
+
+S
+java:S1854"8Remove this useless assignment to local variable "str3".(¼Îòÿıÿÿÿÿ
+S
+java:S1854"8Remove this useless assignment to local variable "str2".(Şï–ßúÿÿÿÿ
+N
+java:S1854"8Remove this useless assignment to local variable "str1".(ÑàÓ
+M	java:S106"9Replace this use of System.out or System.err by a logger.(ƒÚáB
+6
+java:S2129" Remove this "String" constructor(ÑàÓ
+?
+java:S1481")Remove this unused "str1" local variable.(ÑàÓ
+;
+java:S2129" Remove this "String" constructor(Şï–ßúÿÿÿÿ
+D
+java:S1481")Remove this unused "str2" local variable.(Şï–ßúÿÿÿÿ
+D
+java:S1481")Remove this unused "str3" local variable.(¼Îòÿıÿÿÿÿ
+N	java:S106"9Replace this use of System.out or System.err by a logger.(„Û°
+6
+java:S2129" Remove this "String" constructor(”äıÏ
+N	java:S106"9Replace this use of System.out or System.err by a logger.(µ¹óÕ
+N	java:S106"9Replace this use of System.out or System.err by a logger.(–Ñ€²
+;
+java:S2129" Remove this "String" constructor(ËªÆ¾ûÿÿÿÿ
+;
+java:S2129" Remove this "String" constructor(—ªªÓùÿÿÿÿ
+N	java:S106 "9Replace this use of System.out or System.err by a logger.(¼Ôç
+;
+java:S2129"" Remove this "String" constructor(‡…‚¹üÿÿÿÿ
+;
+java:S2129#" Remove this "String" constructor(äÜæÀøÿÿÿÿ
+S	java:S106$"9Replace this use of System.out or System.err by a logger.(šåˆ±úÿÿÿÿ
+N	java:S106("9Replace this use of System.out or System.err by a logger.(À½â›
+N	java:S106)"9Replace this use of System.out or System.err by a logger.(Ûœ™Ä
+N	java:S106,"9Replace this use of System.out or System.err by a logger.(–Ÿş
+N	java:S1060"9Replace this use of System.out or System.err by a logger.(Ğ¯Éî
+M	java:S1065"9Replace this use of System.out or System.err by a logger.(¨Ğû
+S	java:S1069"9Replace this use of System.out or System.err by a logger.(™Ûúùÿÿÿÿ
+N	java:S106:"9Replace this use of System.out or System.err by a logger.(œ§ú„
+S	java:S106>"9Replace this use of System.out or System.err by a logger.(ĞÀ€Ûıÿÿÿÿ
+N	java:S106B"9Replace this use of System.out or System.err by a logger.(ŠèÂˆ
+^
+java:S1858B"H"str15" is already a string, there's no need to call "toString()" on it.(ŠèÂˆ
+S	java:S106E"9Replace this use of System.out or System.err by a logger.(œ¥§şÿÿÿÿ

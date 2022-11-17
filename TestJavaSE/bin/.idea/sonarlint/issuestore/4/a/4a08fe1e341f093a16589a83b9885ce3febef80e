@@ -1,0 +1,10 @@
+
+h
+java:S2095"MUse try-with-resources or close this "FileInputStream" in a "finally" clause.(Žë­›øÿÿÿÿ
+\
+java:S1075"ARefactor your code to get this URI from a customizable parameter.(”é‚äÿÿÿÿÿ
+\
+java:S1075"ARefactor your code to get this URI from a customizable parameter.(œ€ªúüÿÿÿÿ
+U	java:S106 "9Replace this use of System.out or System.err by a logger.(Úˆ° 8œýð°Ç0
+E
+java:S2093"*Change this "try" to a try-with-resources.(¡»¢üùÿÿÿÿ
