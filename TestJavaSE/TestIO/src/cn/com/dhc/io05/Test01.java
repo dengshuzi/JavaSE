@@ -1,9 +1,6 @@
 package cn.com.dhc.io05;
 
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.*;
 
 /**
  * @Auther: Evin_D
@@ -17,9 +14,17 @@ public class Test01 {
         DataOutputStream dos = null;
         try {
             dos = new DataOutputStream(new FileOutputStream(new File("/tmp/Demo.txt")));
-            // 
+            // 向外将变量写到文件中去:
+            dos.writeUTF("你好");
+            dos.writeBoolean(false);
+            dos.writeDouble(6.9);
+            dos.writeInt(82);
+            // 关闭流:
+            dos.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

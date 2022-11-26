@@ -11334,7 +11334,7 @@ public class Test03 {
 }
 ```
 
-#### FileInputStream,FileOutputStream完成非文本文件的复制
+### FileInputStream,FileOutputStream完成非文本文件的复制
 
 【1】读入一个字节，写出一个字节：
 
@@ -11441,7 +11441,7 @@ public class Test05 {
 }
 ```
 
-#### 缓冲字节流(处理流)-BufferedInputStream ,BufferedOutputStream
+### 缓冲字节流(处理流)-BufferedInputStream ,BufferedOutputStream
 
 1. 读入一个字节，写出一个字节：
 <img src="images/13/1-1-3.png">
@@ -11508,7 +11508,7 @@ public class Test06 {
 }
 ```
 
-#### 比对非文本文件复制的三种方法的效率
+### 比对非文本文件复制的三种方法的效率
 
 1. 读入一个字节，写出一个字节：
 <img src="images/13/1-1-6.png">
@@ -11575,7 +11575,7 @@ public class Test06 {
 }
 ```
 
-#### 缓冲字符流(处理流)-BufferedReader,BufferedWriter完成文本文件的复制
+### 缓冲字符流(处理流)-BufferedReader,BufferedWriter完成文本文件的复制
 
 ```java
 package cn.com.dhc.io02;
@@ -11640,7 +11640,7 @@ public class Test07 {
 }
 ```
 
-#### 转换流-InputStreamReader,OutputStreamWriter
+### 转换流-InputStreamReader,OutputStreamWriter
 
 1. 转换流：作用：将字节流和字符流进行转换。
 2. 转换流  属于 字节流还是字符流？属于字符流
@@ -11697,7 +11697,7 @@ public class Test01 {
 }
 ```
 
-#### 转换流-InputStreamReader,OutputStreamWriter实现文本文件的复制
+### 转换流-InputStreamReader,OutputStreamWriter实现文本文件的复制
 
 ```java
 package cn.com.dhc.io03;
@@ -11747,7 +11747,7 @@ public class Test02 {
 }
 ```
 
-#### System类对IO流的支持
+### System类对IO流的支持
 
 1. System的属性：
 System.in  : “标准”输入流。---》默认情况下  从键盘输入
@@ -11826,7 +11826,7 @@ public class Test02 {
 }
 ```
 
-#### 练习：键盘录入内容输出到文件中
+### 练习：键盘录入内容输出到文件中
 
 1. 解决思路：
 
@@ -11886,7 +11886,7 @@ public class Test03 {
 }
 ```
 
-#### 数据流-DataInputStream,DataOutputStream
+### 数据流-DataInputStream,DataOutputStream
 
 1. 数据流：用来操作基本数据类型和字符串的
 2. 
@@ -11895,15 +11895,422 @@ DataOutputStream:  将内存中的基本数据类型和字符串的变量 写出
 3. 代码：
 利用DataOutputStream向外写出变量：
 ```java
+package cn.com.dhc.io05;
+
+import java.io.*;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/17 - 下午9:04
+ * @Description: cn.com.dhc.io05
+ * @version: 1.0
+ */
+public class Test01 {
+    public static void main(String[] args) {
+        // DataOutputStream: 将内存中的基本数据类型和字符串的变量  写出  文件中
+        DataOutputStream dos = null;
+        try {
+            dos = new DataOutputStream(new FileOutputStream(new File("/tmp/Demo.txt")));
+            // 向外将变量写到文件中去:
+            dos.writeUTF("你好");
+            dos.writeBoolean(false);
+            dos.writeDouble(6.9);
+            dos.writeInt(82);
+            // 关闭流:
+            dos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
 ```
 在Demo2.txt文件中，我们看到：
 <img src="images/13/1-1-11.png">
+
 发现：这个内容我们看不懂，是给程序看的
 所以下面我们开始读取的程序：
 ```java
+package cn.com.dhc.io05;
+
+import java.io.*;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/26 - 上午11:09
+ * @Description: cn.com.dhc.io05
+ * @version: 1.0
+ */
+public class Test02 {
+    public static void main(String[] args) throws IOException {
+        // DataInputStream: 将文件中存储的基本数据类型和字符串写入内存的变量中
+        DataInputStream dis = new DataInputStream(new FileInputStream(new File("/tmp/Demo.txt")));
+        // 将文件中内容读取到程序中来:
+        System.out.println(dis.readUTF());
+        System.out.println(dis.readBoolean());
+        System.out.println(dis.readDouble());
+        System.out.println(dis.readInt());
+        dis.close();
+    }
+}
 ```
 结果：
 <img src="images/13/1-1-12.png">
 验证：那个文件，我们看不懂，程序看得懂
 要求：
 写出的类型跟读入的类型 必须 要匹配！
+
+### 对象流-ObjectInputStream,ObjectOutputStream
+
+1. 对象流：ObjectInputStream，ObjectInputStream
+用于存储和读取基本数据类型数据或对象的处理流。
+它的强大之处就是可以把Java中的对象写入到数据源中，也能把对象从数据源中还原回来。
+2. 序列化和反序列化：
+ObjectOutputStream 类 ： 把内存中的Java对象转换成平台无关的二进制数据，从而允许把这种二进制数据持久地保存在磁盘上，或通过网络将这种二进制数据传输到另一个网络节点。----》序列化
+用ObjectInputStream类 ： 当其它程序获取了这种二进制数据，就可以恢复成原来的Java对象。----》反序列化
+3. 代码：操作字符串对象：
+首先将一个字符串对象写到文件中去：----》序列化
+```java
+package cn.com.dhc.io06;
+
+import java.io.*;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/26 - 上午11:17
+ * @Description: cn.com.dhc.io06
+ * @version: 1.0
+ */
+public class Test01 {
+    public static void main(String[] args) throws IOException {
+        // 将内存中的字符串写出到文件中:
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("/tmp/Demo.txt")));
+        // 将内存中的字符串写出到文件中:
+        oos.writeObject("你好");
+        // 关闭流:
+        oos.close();
+    }
+}
+```
+
+查看文件:
+<img src="images/13/1-1-13.png">
+
+我们看不懂文件的内容，但是程序是可以看懂的，所以可以写一个程序读文件中内容：----》反序列化
+```java
+package cn.com.dhc.io06;
+
+import java.io.*;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/26 - 上午11:21
+ * @Description: cn.com.dhc.io06
+ * @version: 1.0
+ */
+public class Test02 {
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
+        // 将文件中保存的字符串读入到内存:
+        ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File("/tmp/Demo.txt")));
+        // 读取:
+        String s = (String) (ois.readObject());
+        System.out.println(s);
+        // 关闭流:
+        ois.close();
+    }
+}
+```
+控制台:
+<img src="images/13/1-1-14.png">
+
+4. 代码：操作自定义类的对象：
+自定义的Person类：
+```java
+package cn.com.dhc.io07;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/26 - 上午11:28
+ * @Description: cn.com.dhc.io07
+ * @version: 1.0
+ */
+public class Person {
+    private String name;
+    private int age;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public Person() {
+    }
+
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+}
+```
+测试类：
+```java
+package cn.com.dhc.io07;
+
+import java.io.*;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/26 - 上午11:28
+ * @Description: cn.com.dhc.io07
+ * @version: 1.0
+ */
+public class Test01 {
+    public static void main(String[] args) throws IOException {
+        // 序列化: 将内存中对象 --> 文件:
+        Person p = new Person("张三", 19);
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("/tmp/Demo.txt")));
+        oos.writeObject(p);
+        oos.close();
+    }
+}
+```
+运行的时候发现出现异常：
+<img src="images/13/1-1-15.png">
+
+出现异常的原因：
+你想要序列化的那个对象对应的类，必须要实现一个接口：
+<img src="images/13/1-1-16.png">
+
+接口内部，什么都没有，这种接口叫 标识接口。
+起到标识作用，标识什么呢？只要实现这个接口的类的对象才能序列化，否则不可以。
+解决办法：将Person 实现这个标识接口就可以：
+```java
+package cn.com.dhc.io07;
+
+import java.io.Serializable;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/26 - 上午11:28
+ * @Description: cn.com.dhc.io07
+ * @version: 1.0
+ */
+public class Person implements Serializable {
+    private String name;
+    private int age;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public Person() {
+    }
+
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+}
+ ```
+测试：发现序列化成功，Person具备了序列化的能力。
+<img src="images/13/1-1-17.png">
+
+这个二进制数据我们看不懂，但是程序可以看懂，所以我们可以用程序实现 反序列化操作：
+将这个对象 恢复到内存中来：
+```java
+package cn.com.dhc.io07;
+
+import java.io.*;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/26 - 上午11:28
+ * @Description: cn.com.dhc.io07
+ * @version: 1.0
+ */
+public class Test01 {
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
+        // 序列化: 将内存中对象 --> 文件:
+        Person p = new Person("张三", 19);
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("/tmp/Demo.txt")));
+        oos.writeObject(p);
+        oos.close();
+        ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File("/tmp/Demo.txt")));
+        Person person = (Person) (ois.readObject());
+        System.out.println(person.toString());
+        ois.close();
+    }
+}
+```
+结果：
+因为我们没有重写toString方法，所以结果为：
+<img src="images/13/1-1-18.png">
+
+证明了反序列化成功：   将二进制数据 --》内存
+
+5. serialVersionUID：
+凡是实现Serializable接口（标识接口）的类都有一个表示序列化版本标识符的静态常量:
+- private static final long serialVersionUID;
+- serialVersionUID用来表明类的不同版本间的兼容性。简言之，其目的是以序列化对象进行版本控制，有关各版本反序加化时是否兼容。
+- 如果类没有显示定义这个静态变量，它的值是Java运行时环境根据类的内部细节自动生成的。若类的实例变量做了修改，serialVersionUID 可能发生变化。故建议，显式声明。
+- 简单来说，Java的序列化机制是通过在运行时判断类的serialVersionUID来验证版本一致性的。在进行反序列化时，JVM会把传来的字节流中的serialVersionUID与本地相应实体类的serialVersionUID进行比较，如果相同就认为是一致的，可以进行反序列化，否则就会出现序列化版本不一致的异常。(InvalidCastException)
+我现在在Person类中加入toString方法：
+```java
+package cn.com.dhc.io07;
+
+import java.io.Serializable;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/26 - 上午11:28
+ * @Description: cn.com.dhc.io07
+ * @version: 1.0
+ */
+public class Person implements Serializable {
+    private String name;
+    private int age;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public Person() {
+    }
+
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "name='" + name + '\'' +
+                ", age=" + age +
+                '}';
+    }
+}
+```
+再次运行测试类：
+出现异常：
+<img src="images/13/1-1-19.png">
+出现异常的原因：
+<img src="images/13/1-1-20.png">
+解决：给这个类 加入一个 序列号：serialVersionUID
+<img src="images/13/1-1-21.png">
+
+6. IDEA中配置序列化版本号：
+
+<img src="images/13/1-1-22.png">
+在Person类上：alt+enter:
+<img src="images/13/1-1-23.png">
+回车即可生成
+<img src="images/13/1-1-24.png">
+
+7. 序列化细节：
+    1. 被序列化的类的内部的所有属性，必须是可序列化的 （基本数据类型都是可序列化的）
+    <img src="images/13/1-1-25.png">
+    <img src="images/13/1-1-26.png">
+
+    2. static，transient修饰的属性 不可以被序列化。
+    ```java
+    public class Person implements Serializable {
+        private static final long serialVersionUID = 8027651838638826533L;
+        private transient String name;
+        private static int age;
+        private Famaily f = new Famaily();
+        public String getName() {
+            return name;
+        }
+        public void setName(String name) {
+            this.name = name;
+        }
+        public int getAge() {
+            return age;
+        }
+        public void setAge(int age) {
+            this.age = age;
+        }
+        public Person() {
+        }
+        @Override
+        public String toString() {
+            return "Person{" +
+                    "name='" + name + '\'' +
+                    ", f=" + f + ",age=" + age +
+                    '}';
+        }
+    }
+    ```
+    <img src="images/13/1-1-27.png">
+
+# 第十三章_多线程
+
+## 程序，进程，线程
+
+1. 程序，进程，线程
+- 程序(program)：是为完成特定任务、用某种语言编写的一组指令的集合,是一段静态的代码。 （程序是静态的）
+- 进程(process)：是程序的一次执行过程。正在运行的一个程序，进程作为资源分配的单位，在内存中会为每个进程分配不同的内存区域。 （进程是动态的）是一个动的过程 ，进程的生命周期  :  有它自身的产生、存在和消亡的过程 
+- 线程(thread)，进程可进一步细化为线程， 是一个程序内部的一条执行路径。
+  若一个进程同一时间并行执行多个线程，就是支持多线程的。
+    <img src="images/14/1-1-1.png">
+
+2. 单核CPU与多核CPU的任务执行：
+<img src="images/14/1-1-2.png">
+<img src="images/14/1-1-3.png">
+
+3. 并行和并发：
+并行：多个CPU同时执行多个任务
+并发：一个CPU“同时”执行多个任务（采用时间片切换）
+
+# 创建线程的三种方式
+
+## 第一种：继承Thread类
+
+【1】在学习多线程一章之前，以前的代码是单线程的吗？不是，以前也是有三个线程同时执行的。
+
+【2】现在我想自己制造多线程---》创建线程 ？？
+线程类--》线程对象
+
+## 第二种：实现Runnable接口
+
+## 第三种：实现Callable接口
+
+## 线程的生命周期
+

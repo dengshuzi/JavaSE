@@ -1,0 +1,14 @@
+
+b
+java:S2095"LUse try-with-resources or close this "BufferedReader" in a "finally" clause.(Âõ–
+^
+java:S2095"HUse try-with-resources or close this "FileReader" in a "finally" clause.(¢±ä×
+\
+java:S1075"ARefactor your code to get this URI from a customizable parameter.(¸•˜„ùÿÿÿÿ
+\
+java:S1075"ARefactor your code to get this URI from a customizable parameter.(×Âà¶şÿÿÿÿ
+V	java:S125"<This block of commented-out lines of code should be removed.(²³œúÿÿÿÿ
+V	java:S125 "<This block of commented-out lines of code should be removed.(ãÖËÙşÿÿÿÿ
+>	java:S1087")Either remove or fill this block of code.(ï­£Ä
+E
+java:S2093"*Change this "try" to a try-with-resources.(¡»¢üùÿÿÿÿ

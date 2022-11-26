@@ -23,3 +23,13 @@ V
 &TestIO/src/cn/com/dhc/io02/Test05.java,4/a/4a08fe1e341f093a16589a83b9885ce3febef80e
 V
 &TestIO/src/cn/com/dhc/io02/Test06.java,7/6/76eb461097bbb1bd41c79996ee73f2acc1fa2e49
+V
+&TestIO/src/cn/com/dhc/io02/Test07.java,7/c/7cc9cb301dfe01525bdd4f937cfa52d49c47c6d5
+V
+&TestIO/src/cn/com/dhc/io03/Test01.java,8/a/8a7c461a2108e6391be654398770a88992faaa6e
+V
+&TestIO/src/cn/com/dhc/io03/Test02.java,c/8/c854ccd54f2fa6c19c88e061b44a0e50350fe5f9
+V
+&TestIO/src/cn/com/dhc/io04/Test02.java,b/3/b3fc6d4a53fe8ae9c45220438a83a8e192a5a0d8
+V
+&TestIO/src/cn/com/dhc/io04/Test01.java,4/4/44ec5497bbeddac34257f114dea57aa8b85b0486
