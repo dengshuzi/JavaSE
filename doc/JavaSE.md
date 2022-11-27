@@ -12299,18 +12299,321 @@ public class Person implements Serializable {
 并行：多个CPU同时执行多个任务
 并发：一个CPU“同时”执行多个任务（采用时间片切换）
 
-# 创建线程的三种方式
+## 创建线程的三种方式
 
-## 第一种：继承Thread类
+### 第一种：继承Thread类
 
-【1】在学习多线程一章之前，以前的代码是单线程的吗？不是，以前也是有三个线程同时执行的。
+1. 在学习多线程一章之前，以前的代码是单线程的吗？不是，以前也是有三个线程同时执行的。
+<img src="images/14/1-2-1.png">
 
-【2】现在我想自己制造多线程---》创建线程 ？？
+2. 现在我想自己制造多线程---》创建线程 ？？
 线程类--》线程对象
+<img src="images/14/1-2-2.png">
 
-## 第二种：实现Runnable接口
+```java
+package cn.com.dhc.test01;
 
-## 第三种：实现Callable接口
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/27 - 下午2:50
+ * @Description: cn.com.dhc.test01
+ * 线程类叫TestThread, 不是说你名字中带县城单词你就具备了多线程能力了(争抢资源能力)
+ * 现在想要具备能力, 继承一个类: Thread, 具备了争抢资源的能力
+ * @version: 1.0
+ */
+public class TestThread extends Thread{
+    /**
+     * 一会线程对象就要开始争抢资源了, 这个线程要执行的任务到底是啥, 这个任务你要放在方法中
+     * 但是这个方法不能是随便的一个方法, 必须是重写Thread类中的run方法
+     * 然后线程的任务/逻辑写在run方法中
+     */
+    @Override
+    public void run() {
+        // 输出1-10
+        for (int i = 1; i <= 10; i++) {
+            System.out.println(i);
+        }
+    }
+}
+```
+```java
+package cn.com.dhc.test01;
 
-## 线程的生命周期
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/27 - 下午2:49
+ * @Description: cn.com.dhc.test01
+ * @version: 1.0
+ */
+public class Test01 {
+    public static void main(String[] args) {
+        for (int i = 1; i <= 10; i++) {
+            System.out.println("main1: " + i);
+        }
+        // 制造其他线程, 要跟主线程争抢资源:
+        // 具体线程对象:  子线程
+        TestThread thread = new TestThread();
+        // thread.run(); // 调用run方法, 想要执行线程中的任务 --> 这个run方法不能直接调用, 直接调用就会被当做一个普通方法
+        // 想要thread子线程真正起作用比如要启动线程:
+        thread.start(); // start()是Thread类中的方法
+
+        // 主线程中也要输出10个数
+        for (int i = 1; i <= 10; i++) {
+            System.out.println("main2: " + i);
+        }
+    }
+}
+```
+运行结果：
+<img src="images/14/1-2-3.png">
+
+#### 设置读取线程名字
+
+1. setName,getName方法来进行设置读取：
+```java
+package cn.com.dhc.test01;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/27 - 下午2:50
+ * @Description: cn.com.dhc.test01
+ * 线程类叫TestThread, 不是说你名字中带县城单词你就具备了多线程能力了(争抢资源能力)
+ * 现在想要具备能力, 继承一个类: Thread, 具备了争抢资源的能力
+ * @version: 1.0
+ */
+public class TestThread extends Thread{
+    /**
+     * 一会线程对象就要开始争抢资源了, 这个线程要执行的任务到底是啥, 这个任务你要放在方法中
+     * 但是这个方法不能是随便的一个方法, 必须是重写Thread类中的run方法
+     * 然后线程的任务/逻辑写在run方法中
+     */
+    @Override
+    public void run() {
+        // 输出1-10
+        for (int i = 1; i <= 10; i++) {
+            System.out.println(this.getName() + i);
+        }
+    }
+}
+```
+```java
+package cn.com.dhc.test01;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/27 - 下午2:49
+ * @Description: cn.com.dhc.test01
+ * @version: 1.0
+ */
+public class Test01 {
+    public static void main(String[] args) {
+        // 给main方法这个主线程设置名字:
+        // Thread.currentThread() 作用获取当前正在执行的线程:
+        Thread.currentThread().setName("主线程");
+        for (int i = 1; i <= 10; i++) {
+            System.out.println(Thread.currentThread().getName() + "1: " + i);
+        }
+        // 制造其他线程, 要跟主线程争抢资源:
+        // 具体线程对象:  子线程
+        TestThread thread = new TestThread();
+        thread.setName("子线程");
+        // thread.run(); // 调用run方法, 想要执行线程中的任务 --> 这个run方法不能直接调用, 直接调用就会被当做一个普通方法
+        // 想要thread子线程真正起作用比如要启动线程:
+        thread.start(); // start()是Thread类中的方法
+
+        // 主线程中也要输出10个数
+        for (int i = 1; i <= 10; i++) {
+            System.out.println(Thread.currentThread().getName() + "2: " + i);
+        }
+    }
+}
+```
+2. 通过构造器设置 名字：
+```java
+package cn.com.dhc.test01;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/27 - 下午2:50
+ * @Description: cn.com.dhc.test01
+ * 线程类叫TestThread, 不是说你名字中带县城单词你就具备了多线程能力了(争抢资源能力)
+ * 现在想要具备能力, 继承一个类: Thread, 具备了争抢资源的能力
+ * @version: 1.0
+ */
+public class TestThread extends Thread{
+    public TestThread(String name) {
+        super(name); // 调用父类的有参构造器
+    }
+    /**
+     * 一会线程对象就要开始争抢资源了, 这个线程要执行的任务到底是啥, 这个任务你要放在方法中
+     * 但是这个方法不能是随便的一个方法, 必须是重写Thread类中的run方法
+     * 然后线程的任务/逻辑写在run方法中
+     */
+    @Override
+    public void run() {
+        // 输出1-10
+        for (int i = 1; i <= 10; i++) {
+            System.out.println(this.getName() + i);
+        }
+    }
+}
+```
+
+#### 习题：买火车票
+
+1. 原理：每个窗口都是一个线程对象：
+<img src="images/14/1-2-4.png">
+
+2. 代码：
+```java
+package cn.com.dhc.test02;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/27 - 下午4:52
+ * @Description: cn.com.dhc.test02
+ * @version: 1.0
+ */
+public class ButTicketThread extends Thread{
+    public ButTicketThread(String name) {
+        super(name);
+    }
+    // 一共10张票
+    static int ticketNum = 10;
+    // 每个窗口都是一个线程对象: 每个对象执行的代码放入run方法中
+    @Override
+    public void run() {
+        // 每个窗口后面都有100个人在抢票:
+        for (int i = 1; i <= 100 ; i++) {
+            if (ticketNum > 0) {
+                System.out.println("我在" + this.getName() + "我买到了从北京到哈尔滨的第" + ticketNum-- + "张车票");
+            }
+        }
+    }
+}
+```
+```java
+package cn.com.dhc.test02;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/27 - 下午4:55
+ * @Description: cn.com.dhc.test02
+ * @version: 1.0
+ */
+public class Test {
+    public static void main(String[] args) {
+        // 多个窗口抢票: 三个窗口三个线程对象:
+        ButTicketThread t1 = new ButTicketThread("窗口1");
+        t1.start();
+        ButTicketThread t2 = new ButTicketThread("窗口2");
+        t2.start();
+        ButTicketThread t3 = new ButTicketThread("窗口3");
+        t3.start();
+    }
+}
+```
+
+### 第二种：实现Runnable接口
+
+1. 代码：
+```java
+package cn.com.dhc.test03;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/27 - 下午5:08
+ * @Description: cn.com.dhc.test03
+ * TestThread实现了这个接口, 才会编程一个线程类
+ * @version: 1.0
+ */
+public class TestThread implements Runnable{
+    @Override
+    public void run() {
+        // 输出1-10数字:
+        for (int i = 1; i <= 10; i++) {
+            System.out.println(Thread.currentThread().getName() + ": " + i);
+        }
+    }
+}
+```
+```java
+package cn.com.dhc.test03;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/27 - 下午5:08
+ * @Description: cn.com.dhc.test03
+ * @version: 1.0
+ */
+public class Test {
+    public static void main(String[] args) {
+        TestThread tt = new TestThread();
+        Thread t = new Thread(tt, "子线程");
+        t.start();
+
+        // 主线程里面也是打印1-10数字:
+        for (int i = 1; i <= 10; i++) {
+            System.out.println(Thread.currentThread().getName() + ": " + i);
+        }
+    }
+}
+```
+运行结果:
+<img src="images/14/1-2-5.png">
+
+#### 习题：买火车票
+
+1. 代码：
+```java
+package cn.com.dhc.test04;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/27 - 下午5:16
+ * @Description: cn.com.dhc.test04
+ * @version: 1.0
+ */
+public class BuyTicketThread implements Runnable {
+    int ticketNum = 10;
+    @Override
+    public void run() {
+        for (int i = 1; i <= 100 ; i++) {
+            if (ticketNum > 0) {
+                System.out.println("我在" + Thread.currentThread().getName() + "我买到了从北京到哈尔滨的第" + ticketNum-- + "张车票");
+            }
+        }
+    }
+}
+```
+```java
+package cn.com.dhc.test04;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/27 - 下午5:19
+ * @Description: cn.com.dhc.test04
+ * @version: 1.0
+ */
+public class Test {
+    public static void main(String[] args) {
+        BuyTicketThread buyTicketThread = new BuyTicketThread();
+        Thread thread1 = new Thread(buyTicketThread, "窗口1");
+        thread1.start();
+        Thread thread2 = new Thread(buyTicketThread, "窗口2");
+        thread2.start();
+        Thread thread3 = new Thread(buyTicketThread, "窗口3");
+        thread3.start();
+    }
+}
+```
+2. 实际开发中，方式1 继承Thread类   还是  方式2 实现Runnable接口这种方式多呢？--》方式2
+    1. 方式1的话有 Java单继承的局限性，因为继承了Thread类，就不能再继承其它的类了
+    2. 方式2的共享资源的能力也会强一些，不需要非得加个static来修饰
+3. Thread类 Runnable接口 有联系吗？
+<img src="images/14/1-2-6.png">
+ 
+### 第三种：实现Callable接口
+
+### 线程的生命周期
 
