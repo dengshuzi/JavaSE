@@ -12615,5 +12615,1063 @@ public class Test {
  
 ### 第三种：实现Callable接口
 
-### 线程的生命周期
+对比第一种和第二种创建线程的方式发现，无论第一种继承Thread类的方式还是第二种实现Runnable接口的方式，都需要有一个run方法，
+但是这个run方法有不足：
+<img src="images/14/1-2-7.png">
 
+1. 没有返回值
+2. 不能抛出异常
+基于上面的两个不足，在JDK1.5以后出现了第三种创建线程的方式：实现Callable接口：
+实现Callable接口好处：（1）有返回值  （2）能抛出异常
+缺点：线程创建比较麻烦
+```java
+package cn.com.dhc.test05;
+
+import java.util.Random;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/27 - 下午8:17
+ * @Description: cn.com.dhc.test05
+ * @version: 1.0
+ */
+public class TestRandom implements Callable<Integer> {
+    /**
+     * @return Integer
+     * @throws Exception
+     * 1. 实现Callable接口, 可以不带泛型, 如果不带泛型, 那么call方式的返回值就是Object类型
+     * 2. 如果带泛型, 那么call的返回值就是泛型对应的类型
+     * 3. 从call方法看到: 方法有返回值, 可以抛出异常
+     */
+    @Override
+    public Integer call() throws Exception {
+        return new Random().nextInt(10); // 返回10以内的随机数
+    }
+}
+class Test {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        // 定义一个线程对象:
+        TestRandom testRandom = new TestRandom();
+        FutureTask futureTask = new FutureTask(testRandom);
+        Thread thread = new Thread(futureTask);
+        thread.start();
+        // 获取线程得到的返回值:
+        Object obj = futureTask.get();
+        System.out.println(obj);
+    }
+}
+```
+
+## 线程的生命周期
+
+1. 线程声明周期：线程开始--》线程消亡
+2. 线程经历哪些阶段：
+<img src="images/14/1-3-1.png">
+
+## 线程常见方法
+
+1. start() :  启动当前线程，表面上调用start方法，实际在调用线程里面的run方法
+2. run() : 线程类 继承 Thread类 或者 实现Runnable接口的时候，都要重新实现这个run方法，run方法里面是线程要执行的内容
+3. currentThread :Thread类中一个静态方法：获取当前正在执行的线程
+4. setName 设置线程名字
+5. getName 读取线程名字
+
+### 设置优先级
+
+1. 同优先级别的线程，采取的策略就是先到先服务，使用时间片策略
+2. 如果优先级别高，被CPU调度的概率就高
+3. 级别：1-10   默认的级别为5
+<img src="images/14/1-4-1.png">
+
+4. 代码：
+
+```java
+package cn.com.dhc.test06;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/27 - 下午8:43
+ * @Description: cn.com.dhc.test06
+ * @version: 1.0
+ */
+public class TestThread01 extends Thread{
+    @Override
+    public void run() {
+        for (int i = 1; i <= 10 ; i++) {
+            System.out.println(i);
+        }
+    }
+}
+class TestThread02 extends Thread {
+    @Override
+    public void run() {
+        for (int i = 20; i <= 30; i++) {
+            System.out.println(i);
+        }
+    }
+}
+class Test {
+    public static void main(String[] args) {
+        // 创建两个子线程, 让这两个子线程争抢资源:
+        TestThread01 t1 = new TestThread01();
+        t1.setPriority(10); // 优先级别高
+        t1.start();
+
+        TestThread02 t2 = new TestThread02();
+        t1.setPriority(1); // 优先级别低
+        t2.start();
+    }
+}
+```
+
+### join
+
+join方法：当一个线程调用了join方法，这个线程就会先被执行，它执行结束以后才可以去执行其余的线程。
+注意：必须先start，再join才有效。
+```java
+package cn.com.dhc.test07;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/27 - 下午8:51
+ * @Description: cn.com.dhc.test07
+ * @version: 1.0
+ */
+public class TestThread extends Thread {
+    public TestThread(String name) {
+        super(name);
+    }
+    @Override
+    public void run() {
+        for (int i = 1; i <= 10; i++) {
+            System.out.println(this.getName() + ": " + i);
+        }
+    }
+}
+class Test {
+    public static void main(String[] args) throws InterruptedException {
+        for (int i = 1; i <= 100; i++) {
+            System.out.println(Thread.currentThread().getName() + ": " + i);
+            if (i == 6) {
+                // 创建子线程:
+                TestThread thread = new TestThread("子线程");
+                thread.start();
+                thread.join();
+            }
+        }
+    }
+}
+```
+
+### sleep
+
+1. sleep : 人为的制造阻塞事件
+```java
+package cn.com.dhc.test08;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/27 - 下午8:58
+ * @Description: cn.com.dhc.test08
+ * @version: 1.0
+ */
+public class Test01 {
+    public static void main(String[] args) {
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("============");
+    }
+}
+```
+2. 案例：完成秒表功能：
+```java
+package cn.com.dhc.test08;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/27 - 下午9:00
+ * @Description: cn.com.dhc.test08
+ * @version: 1.0
+ */
+public class Test02 {
+    public static void main(String[] args) {
+        DateFormat df = new SimpleDateFormat("HH:mm:ss");
+        while (true) {
+            // 1. 获取当前时间:
+            Date date = new Date();
+            // 2. 定义时间格式:
+            System.out.println(df.format(date));
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+```
+
+### setDaemon
+
+1. 设置伴随线程
+将子线程设置为主线程的伴随线程，主线程停止的时候，子线程也不要继续执行了
+案例：皇上 --》驾崩 ---》妃子陪葬
+```java
+package cn.com.dhc.test09;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/27 - 下午9:10
+ * @Description: cn.com.dhc.test09
+ * @version: 1.0
+ */
+public class TestThread extends Thread{
+    public TestThread(String name) {
+        super(name);
+    }
+    @Override
+    public void run() {
+        for (int i = 1; i <= 1000; i++) {
+            System.out.println(this.getName() + ": " + i);
+        }
+    }
+}
+class Test {
+    public static void main(String[] args) {
+        TestThread thread = new TestThread("子线程");
+        thread.setDaemon(true); // 设置伴随线程: 注意: 先设置, 再启动
+        thread.start();
+
+        for (int i = 1; i <= 10; i++) {
+            System.out.println(Thread.currentThread().getName() + ": " + i);
+        }
+    }
+}
+```
+结果:
+<img src="images/14/1-4-2.png">
+
+### stop
+
+```java
+package cn.com.dhc.test09;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/27 - 下午9:16
+ * @Description: cn.com.dhc.test09
+ * @version: 1.0
+ */
+public class Demo {
+    public static void main(String[] args) {
+        for (int i = 1; i <= 100; i++) {
+            if (i == 6)
+                Thread.currentThread().stop(); // 过期方法, 不建议使用
+            System.out.println(Thread.currentThread().getName() + ": " + i);
+        }
+    }
+}
+```
+
+## 线程安全问题
+
+- 出现问题：
+1. 出现了两个10张票或者3个10张票：
+<img src="images/14/1-5-1.png">
+
+2. 出现0，-1，-2可能：
+<img src="images/14/1-5-2.png">
+上面的代码出现问题：出现了 重票，错票，---》 线程安全引起的问题 
+原因：多个线程，在争抢资源的过程中，导致共享的资源出现问题。一个线程还没执行完，另一个线程就参与进来了，开始争抢。
+解决：
+在我的程序中，加入“锁” --》加同步  --》同步监视器
+
+### 方法1：同步代码块
+
+1. 同步代码块演示1：
+```java
+package cn.com.dhc.test04;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/27 - 下午5:16
+ * @Description: cn.com.dhc.test04
+ * @version: 1.0
+ */
+public class BuyTicketThread implements Runnable {
+    int ticketNum = 10;
+    @Override
+    public void run() {
+        for (int i = 1; i <= 100 ; i++) {
+            // 此处有1000行代码
+            synchronized (this) { // 把具有安全隐患的代码锁住即可, 如果锁多了就会效率低 --> this就是这个锁
+                if (ticketNum > 0) {
+                    System.out.println("我在" + Thread.currentThread().getName() + "我买到了从北京到哈尔滨的第" + ticketNum-- + "张车票");
+                }
+            }
+            // 此处有1000行代码
+        }
+    }
+}
+```
+2. 同步代码块演示2：
+```java
+package cn.com.dhc.test02;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/27 - 下午4:52
+ * @Description: cn.com.dhc.test02
+ * @version: 1.0
+ */
+public class ButTicketThread extends Thread{
+    public ButTicketThread(String name) {
+        super(name);
+    }
+    // 一共10张票
+    static int ticketNum = 10;
+    // 每个窗口都是一个线程对象: 每个对象执行的代码放入run方法中
+    @Override
+    public void run() {
+        // 每个窗口后面都有100个人在抢票:
+        synchronized (ButTicketThread.class) { // 锁必须多个线程用的是同一把锁
+            for (int i = 1; i <= 100 ; i++) {
+                if (ticketNum > 0) {
+                    System.out.println("我在" + this.getName() + "我买到了从北京到哈尔滨的第" + ticketNum-- + "张车票");
+                }
+            }
+        }
+    }
+}
+```
+3. 同步监视器总结：
+    - 总结1：认识同步监视器（锁子）   -----  synchronized(同步监视器){ }
+    1. 必须是引用数据类型，不能是基本数据类型
+    2. 也可以创建一个专门的同步监视器，没有任何业务含义 
+    3. 一般使用共享资源做同步监视器即可   
+    4. 在同步代码块中不能改变同步监视器对象的引用 
+    <img src="images/14/1-5-3.png">
+
+    5. 尽量不要String和包装类Integer做同步监视器 
+    6. 建议使用final修饰同步监视器
+    - 总结2：同步代码块的执行过程
+    1. 第一个线程来到同步代码块，发现同步监视器open状态，需要close,然后执行其中的代码
+    3. 第一个线程执行过程中，发生了线程切换（阻塞 就绪），第一个线程失去了cpu，但是没有开锁open
+    3. 第二个线程获取了cpu，来到了同步代码块，发现同步监视器close状态，无法执行其中的代码，第二个线程也进入阻塞状态
+    4. 第一个线程再次获取CPU,接着执行后续的代码；同步代码块执行完毕，释放锁open
+    5. 第二个线程也再次获取cpu，来到了同步代码块，发现同步监视器open状态，拿到锁并且上锁，由阻塞状态进入就绪状态，再进入运行状态，重复第一个线程的处理过程（加锁）
+    强调：同步代码块中能发生CPU的切换吗？能！！！ 但是后续的被执行的线程也无法执行同步代码块（因为锁仍旧close） 
+    - 总结3：其他
+    1. 多个代码块使用了同一个同步监视器（锁），锁住一个代码块的同时，也锁住所有使用该锁的所有代码块，其他线程无法访问其中的任何一个代码块 
+    2. 多个代码块使用了同一个同步监视器（锁），锁住一个代码块的同时，也锁住所有使用该锁的所有代码块， 但是没有锁住使用其他同步监视器的代码块，其他线程有机会访问其他同步监视器的代码块
+
+### 方法2：同步方法
+
+1. 代码展示：
+```java
+package cn.com.dhc.test04;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/27 - 下午5:16
+ * @Description: cn.com.dhc.test04
+ * @version: 1.0
+ */
+public class BuyTicketThread implements Runnable {
+    int ticketNum = 10;
+    @Override
+    public void run() {
+        // 此处有1000行代码
+        for (int i = 1; i <= 100 ; i++) {
+            buyTicket();
+        }
+        // 此处有1000行代码
+    }
+    public synchronized void buyTicket() { // 锁住的是this
+        if (ticketNum > 0) {
+            System.out.println("我在" + Thread.currentThread().getName() + "我买到了从北京到哈尔滨的第" + ticketNum-- + "张车票");
+        }
+    }
+}
+```
+```java
+package cn.com.dhc.test02;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/27 - 下午4:52
+ * @Description: cn.com.dhc.test02
+ * @version: 1.0
+ */
+public class ButTicketThread extends Thread{
+    public ButTicketThread(String name) {
+        super(name);
+    }
+    // 一共10张票
+    static int ticketNum = 10;
+    // 每个窗口都是一个线程对象: 每个对象执行的代码放入run方法中
+    @Override
+    public void run() {
+        // 每个窗口后面都有100个人在抢票:
+        synchronized (ButTicketThread.class) { // 锁必须多个线程用的是同一把锁
+            for (int i = 1; i <= 100 ; i++) {
+                buyTicket();
+            }
+        }
+    }
+    public static synchronized void buyTicket() { // 锁住的同步监视器: BuyTicketThread.class
+        if (ticketNum > 0) {
+            System.out.println("我在" + Thread.currentThread().getName() + "我买到了从北京到哈尔滨的第" + ticketNum-- + "张车票");
+        }
+    }
+}
+```
+2. 总结：
+    - 总结1：
+        多线程在争抢资源，就要实现线程的同步（就要进行加锁，并且这个锁必须是共享的，必须是唯一的。
+        咱们的锁一般都是引用数据类型的。
+        目的：解决了线程安全问题。
+    - 总结2：关于同步方法
+        1. 不要将run()定义为同步方法
+        2. 非静态同步方法的同步监视器是this
+            静态同步方法的同步监视器是 类名.class 字节码信息对象
+        3. 同步代码块的效率要高于同步方法
+            原因：同步方法是将线程挡在了方法的外部，而同步代码块锁将线程挡在了代码块的外部，但是却是方法的内部
+        4. 同步方法的锁是this，一旦锁住一个方法，就锁住了所有的同步方法；同步代码块只是锁住使用该同步监视器的代码块，而没有锁住使用其他监视器的代码块
+
+### 方法3：Lock锁
+
+1. Lock锁引入：
+JDK1.5后新增新一代的线程同步方式:Lock锁
+与采用synchronized相比，lock可提供多种锁方案，更灵活
+synchronized是Java中的关键字，这个关键字的识别是靠JVM来识别完成的呀。是虚拟机级别的。
+但是Lock锁是API级别的，提供了相应的接口和对应的实现类，这个方式更灵活，表现出来的性能优于之前的方式。
+2. 代码演示：
+```java
+package cn.com.dhc.test04;
+
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/27 - 下午5:16
+ * @Description: cn.com.dhc.test04
+ * @version: 1.0
+ */
+public class BuyTicketThread implements Runnable {
+    int ticketNum = 10;
+    // 拿来一把锁:
+    Lock lock = new ReentrantLock();
+    @Override
+    public void run() {
+        // 此处有1000行代码
+        for (int i = 1; i <= 100 ; i++) {
+            // 拿来一把锁:
+            lock.lock();
+            try {
+                if (ticketNum > 0) {
+                    System.out.println("我在" + Thread.currentThread().getName() + "我买到了从北京到哈尔滨的第" + ticketNum-- + "张车票");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                // 关闭锁:
+                lock.unlock();
+            }
+        }
+        // 此处有1000行代码
+    }
+}
+```
+3. Lock和synchronized的区别
+    1. Lock是显式锁（手动开启和关闭锁，别忘记关闭锁），synchronized是隐式锁
+    2. Lock只有代码块锁，synchronized有代码块锁和方法锁
+    3. 使用Lock锁，JVM将花费较少的时间来调度线程，性能更好。并且具有更好的扩展性（提供更多的子类）
+4. 优先使用顺序：
+    Lock----同步代码块（已经进入了方法体，分配了相应资源）----同步方法（在方法体之外）
+
+### 线程同步的优缺点
+
+1. 对比：
+线程安全，效率低
+线程不安全，效率高
+2. 可能造成死锁：
+死锁
+- 不同的线程分别占用对方需要的同步资源不放弃，都在等待对方放弃自己需要的同步资源，就形成了线程的死锁
+- 出现死锁后，不会出现异常，不会出现提示，只是所有的线程都处于阻塞状态，无法继续
+3. 代码演示：
+```java
+package cn.com.dhc.test10;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/28 - 下午7:19
+ * @Description: cn.com.dhc.test10
+ * @version: 1.0
+ */
+public class TestDeadLock implements Runnable{
+    public int flag = 1;
+    static Object o1 = new Object();
+    static Object o2 = new Object();
+
+    @Override
+    public void run() {
+        System.out.println("flat: " + flag);
+        // 当flag == 1锁住o1
+        if (flag == 1) {
+            synchronized (o1) {
+                try {
+                    Thread.sleep(500);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                // 只要锁住o2就完成
+                synchronized (o2) {
+                    System.out.println("2");
+                }
+            }
+        }
+        // 如果flag == 0 就锁住o2
+        if (flag == 0) {
+            synchronized (o2) {
+                try {
+                    Thread.sleep(500);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                // 只要锁住o1就完成
+                synchronized (o1) {
+                    System.out.println("3");
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        TestDeadLock td1 = new TestDeadLock();
+        TestDeadLock td2 = new TestDeadLock();
+        td1.flag = 1;
+        td2.flag = 0;
+        Thread t1 = new Thread(td1);
+        Thread t2 = new Thread(td2);
+        t1.start();
+        t2.start();
+    }
+}
+```
+4. 解决方法： 减少同步资源的定义，避免嵌套同步
+
+## 线程通信问题
+
+应用场景：生产者和消费者问题
+假设仓库中只能存放一件产品，生产者将生产出来的产品放入仓库，消费者将仓库中产品取走消费
+如果仓库中没有产品，则生产者将产品放入仓库，否则停止生产并等待，直到仓库中的产品被消费者取走为止
+如果仓库中放有产品，则消费者可以将产品取走消费，否则停止消费并等待，直到仓库中再次放入产品为止
+<img src="images/14/1-6-1.png">
+代码结果展示：
+<img src="images/14/1-6-2.png">
+
+代码：
+1. 商品：属性：品牌 ，名字
+2. 线程1：生产者
+3. 线程2：消费者
+
+### 分解1
+
+出现问题：
+1. 生产者和消费者没有交替输出
+2. 打印数据错乱
+哈尔滨 - null
+费列罗啤酒
+哈尔滨巧克力
+----没有加同步
+代码展示：
+```java
+package cn.com.dhc.test11;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/28 - 下午7:30
+ * @Description: cn.com.dhc.test11
+ * @version: 1.0
+ */
+public class Product {
+    private String brand;
+    private String name;
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+```
+```java
+package cn.com.dhc.test11;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/28 - 下午7:31
+ * @Description: cn.com.dhc.test11
+ * @version: 1.0
+ */
+public class ProducerThread extends Thread{
+    private Product p;
+
+    public ProducerThread(Product p) {
+        this.p = p;
+    }
+
+    @Override
+    public void run() {
+        for (int i = 1; i <= 10; i++) {
+            if (i % 2 == 0) {
+                p.setBrand("费列罗");
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                p.setName("巧克力");
+            } else {
+                p.setBrand("哈尔滨");
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                p.setName("啤酒");
+            }
+            System.out.println("生产者生产了: " + p.getBrand() + "--->" + p.getName());
+        }
+    }
+}
+```
+```java
+package cn.com.dhc.test11;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/28 - 下午7:35
+ * @Description: cn.com.dhc.test11
+ * @version: 1.0
+ */
+public class ConsumerThread extends Thread{
+    private Product p;
+
+    public ConsumerThread(Product p) {
+        this.p = p;
+    }
+
+    @Override
+    public void run() {
+        for (int i = 1; i <= 10; i++) {
+            System.out.println("消费者消费了: " + p.getBrand() + "--->" + p.getName());
+        }
+    }
+}
+```
+```java
+package cn.com.dhc.test11;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/28 - 下午7:37
+ * @Description: cn.com.dhc.test11
+ * @version: 1.0
+ */
+public class Test {
+    public static void main(String[] args) {
+        Product product = new Product();
+        ProducerThread pt = new ProducerThread(product);
+        ConsumerThread ct = new ConsumerThread(product);
+        pt.start();
+        ct.start();
+    }
+}
+```
+
+### 分解2
+
+1. 利用同步代码块解决问题：
+```java
+package cn.com.dhc.test11;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/28 - 下午7:31
+ * @Description: cn.com.dhc.test11
+ * @version: 1.0
+ */
+public class ProducerThread extends Thread{
+    private Product p;
+
+    public ProducerThread(Product p) {
+        this.p = p;
+    }
+
+    @Override
+    public void run() {
+        for (int i = 1; i <= 10; i++) {
+            synchronized (p) {
+                if (i % 2 == 0) {
+                    p.setBrand("费列罗");
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    p.setName("巧克力");
+                } else {
+                    p.setBrand("哈尔滨");
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    p.setName("啤酒");
+                }
+                System.out.println("生产者生产了: " + p.getBrand() + "--->" + p.getName());
+            }
+        }
+    }
+}
+```
+```java
+package cn.com.dhc.test11;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/28 - 下午7:35
+ * @Description: cn.com.dhc.test11
+ * @version: 1.0
+ */
+public class ConsumerThread extends Thread{
+    private Product p;
+
+    public ConsumerThread(Product p) {
+        this.p = p;
+    }
+
+    @Override
+    public void run() {
+        for (int i = 1; i <= 10; i++) {
+            synchronized (p) {
+                System.out.println("消费者消费了: " + p.getBrand() + "--->" + p.getName());
+            }
+        }
+    }
+}
+```
+2. 利用同步方法解决问题：
+```java
+package cn.com.dhc.test12;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/28 - 下午7:30
+ * @Description: cn.com.dhc.test11
+ * @version: 1.0
+ */
+public class Product {
+    private String brand;
+    private String name;
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    public synchronized void setProduct(String brand, String name) {
+        this.setBrand(brand);
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        this.setName(name);
+        System.out.println("生产者生产了: " + this.getBrand() + "--->" + this.getName());
+    }
+    public synchronized void getProduct() {
+        System.out.println("消费者消费了: " + this.getBrand() + "--->" + this.getName());
+    }
+}
+```
+```java
+package cn.com.dhc.test12;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/28 - 下午7:31
+ * @Description: cn.com.dhc.test11
+ * @version: 1.0
+ */
+public class ProducerThread extends Thread{
+    private Product p;
+
+    public ProducerThread(Product p) {
+        this.p = p;
+    }
+
+    @Override
+    public void run() {
+        for (int i = 1; i <= 10; i++) {
+            if (i % 2 == 0) {
+              p.setProduct("费列罗", "巧克力");
+            } else {
+                p.setProduct("哈尔滨", "啤酒");
+            }
+        }
+    }
+}
+```
+```java
+package cn.com.dhc.test12;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/28 - 下午7:35
+ * @Description: cn.com.dhc.test11
+ * @version: 1.0
+ */
+public class ConsumerThread extends Thread{
+    private Product p;
+
+    public ConsumerThread(Product p) {
+        this.p = p;
+    }
+
+    @Override
+    public void run() {
+        for (int i = 1; i <= 10; i++) {
+            p.getProduct();
+        }
+    }
+}
+```
+（这个else中的代码在分解3中 演示了错误）
+
+### 分解3
+
+1. 原理：
+<img src="images/14/1-6-3.png">
+
+2. 代码：
+```java
+package cn.com.dhc.test12;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/28 - 下午7:30
+ * @Description: cn.com.dhc.test11
+ * @version: 1.0
+ */
+public class Product {
+    private String brand;
+    private String name;
+    private boolean flag = false; // 默认情况下没有商品, 让生产者先生产, 然后消费者再消费
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    public synchronized void setProduct(String brand, String name) {
+        if (flag) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        this.setBrand(brand);
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        this.setName(name);
+        System.out.println("生产者生产了: " + this.getBrand() + "--->" + this.getName());
+        flag = true;
+        notify();
+    }
+    public synchronized void getProduct() {
+        if (!flag) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("消费者消费了: " + this.getBrand() + "--->" + this.getName());
+        flag = false;
+        notify();
+    }
+}
+```
+3. 原理：
+<img src="images/14/1-6-4.png">
+
+注意：wait方法和notify方法  是必须放在同步方法或者同步代码块中才生效的 （因为在同步的基础上进行线程的通信才是有效的）
+注意：sleep和wait的区别：sleep进入阻塞状态没有释放锁，wait进入阻塞状态但是同时释放了锁
+4. 线程生命周期完整图：
+<img src="images/14/1-6-5.png">
+
+### Lock锁情况下的线程通信
+
+Condition是在Java1.5中才出现的，它用来替代传统的Object的wait()、notify()实现线程间的协作，相比使用Object的wait()、notify()，使用Condition1的await()、signal()这种方式实现线程间协作更加安全和高效。 
+它的更强大的地方在于：能够更加精细的控制多线程的休眠与唤醒。对于同一个锁，我们可以创建多个Condition，在不同的情况下使用不同的Condition 
+一个Condition包含一个等待队列。一个Lock可以产生多个Condition，所以可以有多个等待队列。
+在Object的监视器模型上，一个对象拥有一个同步队列和等待队列，而Lock（同步器）拥有一个同步队列和多个等待队列。 
+Object中的wait(),notify(),notifyAll()方法是和"同步锁"(synchronized关键字)捆绑使用的；而Condition是需要与"互斥锁"/"共享锁"捆绑使用的。 
+调用Condition的await()、signal()、signalAll()方法，都必须在lock保护之内，就是说必须在lock.lock()和lock.unlock之间才可以使用 
+- Conditon中的await()对应Object的wait()；
+- Condition中的signal()对应Object的notify()；
+- Condition中的signalAll()对应Object的notifyAll()。
+```void await() throws InterruptedException```
+造成当前线程在接到信号或被中断之前一直处于等待状态。
+与此 Condition 相关的锁以原子方式释放，并且出于线程调度的目的，将禁用当前线程，且在发生以下四种情况之一 以前，当前线程将一直处于休眠状态：
+  - 其他某个线程调用此 Condition 的 ```signal()```方法，并且碰巧将当前线程选为被唤醒的线程；或者
+  - 其他某个线程调用此 Condition 的 ```signalAll()```方法；或者
+  - 其他某个线程中断当前线程，且支持中断线程的挂起；或者
+  - 发生“虚假唤醒”
+在所有情况下，在此方法可以返回当前线程之前，都必须重新获取与此条件有关的锁。在线程返回时，可以保证它保持此锁。
+```void signal()```
+唤醒一个等待线程。
+如果所有的线程都在等待此条件，则选择其中的一个唤醒。在从 await 返回之前，该线程必须重新获取锁。
+```void signalAll()```
+唤醒所有等待线程。
+如果所有的线程都在等待此条件，则唤醒所有线程。在从 await 返回之前，每个线程都必须重新获取锁。    
+
+更改代码:
+<img src="images/14/1-6-6.png">
+
+```java
+package cn.com.dhc.test13;
+
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2022/11/28 - 下午7:30
+ * @Description: cn.com.dhc.test11
+ * @version: 1.0
+ */
+public class Product {
+    private String brand;
+    private String name;
+    private boolean flag = false; // 默认情况下没有商品, 让生产者先生产, 然后消费者再消费
+    private Lock lock = new ReentrantLock();
+    Condition produceCondition = lock.newCondition();
+    Condition consumeCondition = lock.newCondition();
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    public void setProduct(String brand, String name) {
+        lock.lock();
+        try {
+            if (flag) {
+                try {
+                    // wait();
+                    // 生产者阻塞, 生产者进入等待队列中
+                    produceCondition.await();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            this.setBrand(brand);
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            this.setName(name);
+            System.out.println("生产者生产了: " + this.getBrand() + "--->" + this.getName());
+            flag = true;
+            // notify();
+            consumeCondition.signal();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+    }
+    public void getProduct() {
+        lock.lock();
+        try {
+            if (!flag) {
+                try {
+                    // wait();
+                    consumeCondition.await();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            System.out.println("消费者消费了: " + this.getBrand() + "--->" + this.getName());
+            flag = false;
+            // notify();
+            produceCondition.signal();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+    }
+}
+```

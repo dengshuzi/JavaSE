@@ -16,10 +16,15 @@ public class ButTicketThread extends Thread{
     @Override
     public void run() {
         // 每个窗口后面都有100个人在抢票:
-        for (int i = 1; i <= 100 ; i++) {
-            if (ticketNum > 0) {
-                System.out.println("我在" + this.getName() + "我买到了从北京到哈尔滨的第" + ticketNum-- + "张车票");
+        synchronized (ButTicketThread.class) { // 锁必须多个线程用的是同一把锁
+            for (int i = 1; i <= 100 ; i++) {
+                buyTicket();
             }
+        }
+    }
+    public static synchronized void buyTicket() { // 锁住的同步监视器: BuyTicketThread.class
+        if (ticketNum > 0) {
+            System.out.println("我在" + Thread.currentThread().getName() + "我买到了从北京到哈尔滨的第" + ticketNum-- + "张车票");
         }
     }
 }
