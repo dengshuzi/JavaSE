@@ -13675,3 +13675,1081 @@ public class Product {
     }
 }
 ```
+
+# 第十四章_网络编程
+
+## 引入
+
+### 1. 网络编程
+
+把分布在不同地理区域的计算机与专门的外部设备用通信线路互连成一个规模大、功能强的网络系统，从而使众多的计算机可以方便地互相传递信息、共享硬件、软件、数据信息等资源。
+设备之间在网络中进行数据的传输，发送/接收数据。
+<img src="images/15/1-1-1.png">
+
+### 2. 通信两个重要的要素：IP+PORT
+
+<img src="images/15/1-1-2.png">
+
+域名：www.baidu.com      ------>DNS服务器解析 ----> IP地址
+          www.mashibing.com
+          www.sina.com
+          www.wanda.com
+          www.bbbb.com 
+
+### 3. 设备之间进行传输的时候，必须遵照一定的规则 ---》通信协议：
+
+<img src="images/15/1-1-3.png">
+<img src="images/15/1-1-4.png">
+
+### 4. TCP协议：可靠的
+
+建立连接：  三次握手
+<img src="images/15/1-1-5.png">
+
+释放连接：四次挥手
+<img src="images/15/1-1-6.png">
+
+### 5. UDP协议：不可靠的
+
+<img src="images/15/1-1-6.png">
+
+## InetAddress,InetSocketAddress
+
+前情提要：File   ---》   封装盘符一个文件 
+### 1. InetAddress   ---》 封装了IP 
+
+```java
+package cn.com.dhc.test01;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/1/31 - 下午8:06
+ * @Description: cn.com.dhc.test01
+ * @version: 1.0
+ */
+public class Test01 {
+    public static void main(String[] args) throws UnknownHostException {
+        // 封装IP:
+        // InetAddress inetAddress = new InetAddress(); 不能直接创建对象, 因为InteAddress()被default修饰了
+        InetAddress ia = InetAddress.getByName("192.168.1.106");
+        System.out.println(ia);
+        InetAddress ia2 = InetAddress.getByName("localhost"); // localhost指代的是本机的ip地址
+        System.out.println(ia2);
+        InetAddress ia3 = InetAddress.getByName("127.0.0.1"); // 127.0.0.1指代的是本机的ip地址
+        System.out.println(ia3);
+        InetAddress ia4 = InetAddress.getByName("kali"); // 封装计算机名
+        System.out.println(ia4);
+        InetAddress ia5 = InetAddress.getByName("www.baidu.com"); // 封装域名
+        System.out.println(ia5);
+
+        System.out.println(ia5.getHostName());
+        System.out.printf( ia5.getHostAddress());
+    }
+}
+```
+
+### 2. InetSocketAddress  ---》封装了IP，端口号
+
+```java
+package cn.com.dhc.test01;
+
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/1/31 - 下午8:15
+ * @Description: cn.com.dhc.test01
+ * @version: 1.0
+ */
+public class Test02 {
+    public static void main(String[] args) {
+        InetSocketAddress isa = new InetSocketAddress("192.168.1.106", 8080);
+        System.out.println(isa);
+        System.out.println(isa.getHostName());
+        System.out.println(isa.getPort());
+
+        InetAddress ia = isa.getAddress();
+        System.out.println(ia.getHostName());
+        System.out.println(ia.getHostAddress());
+    }
+}
+```
+
+## 网络通信原理--套接字
+
+<img src="images/15/1-2-1.png">
+
+### 基于TCP的网络编程
+
+功能：模拟网站的登录，客户端录入账号密码，然后服务器端进行验证。
+
+#### 功能分解1：单向通信
+
+功能：客户端发送一句话到服务器：
+客户端：
+```java
+package cn.com.dhc.test02;
+
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.Socket;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/1/31 - 下午8:25
+ * @Description: cn.com.dhc.test02
+ * @version: 1.0
+ */
+public class TestClient { // 客户端
+    public static void main(String[] args) throws IOException {
+        // 1. 创建套接字: 制定服务器的ip和端口号:
+        Socket socket = new Socket("192.168.1.106", 8888);
+        // 2. 对于程序员来说, 向外发送数据 感受 ==> 利用输出流:
+        OutputStream outputStream = socket.getOutputStream();
+        DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
+        // 利用OutputStream就可以向外发送数据了, 但是没有直接发送String的方法
+        // 所以我们又在OutputStream外面套了一个处理流: DataOutputStream
+        dataOutputStream.writeUTF("你好");
+
+        // 3. 关闭流 + 网络资源
+        dataOutputStream.close();
+        outputStream.close();
+        socket.close();
+    }
+}
+```
+服务器：
+```java
+package cn.com.dhc.test02;
+
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/1/31 - 下午8:31
+ * @Description: cn.com.dhc.test02
+ * @version: 1.0
+ */
+public class TestServer { // 服务器
+    public static void main(String[] args) throws IOException {
+        // 1. 创建套接字: 指定服务器的端口号
+        ServerSocket serverSocket = new ServerSocket(8888);
+        // 2. 等着客户端来的信息:
+        Socket socket = serverSocket.accept();// 阻塞方法: 等待接收客户端的数据, 什么时候接收到数据, 什么时候程序继续向下执行
+        // accept() 返回值为一个Socket, 这个Socket其实就是客户端的Socket
+        // 接到这个Socket以后, 客户端和服务器才真正产生了连接, 才真正可以通信了
+        InputStream inputStream = socket.getInputStream();
+        DataInputStream dataInputStream = new DataInputStream(inputStream);
+
+        // 4. 读取客户端发来的数据:
+        String str = dataInputStream.readUTF();
+        System.out.println("客户端发来的数据为: " + str);
+
+        // 5. 关闭流 + 关闭网络资源
+         dataInputStream.close();
+         inputStream.close();
+         socket.close();
+         serverSocket.close();
+    }
+}
+```
+
+测试：
+1. 先开启客户端还是先开启服务器：先开服务器，再开启客户端
+侧面验证：先开客户端：出错：
+<img src="images/15/1-2-2.png">
+
+#### 功能分解2：双向通信
+
+服务器端：
+```java
+package cn.com.dhc.test02;
+
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/1/31 - 下午8:31
+ * @Description: cn.com.dhc.test02
+ * @version: 1.0
+ */
+public class TestServer { // 服务器
+    public static void main(String[] args) throws IOException {
+        // 1. 创建套接字: 指定服务器的端口号
+        ServerSocket serverSocket = new ServerSocket(8888);
+        // 2. 等着客户端来的信息:
+        Socket socket = serverSocket.accept();// 阻塞方法: 等待接收客户端的数据, 什么时候接收到数据, 什么时候程序继续向下执行
+        // accept() 返回值为一个Socket, 这个Socket其实就是客户端的Socket
+        // 接到这个Socket以后, 客户端和服务器才真正产生了连接, 才真正可以通信了
+        InputStream inputStream = socket.getInputStream();
+        DataInputStream dataInputStream = new DataInputStream(inputStream);
+
+        // 4. 读取客户端发来的数据:
+        String str = dataInputStream.readUTF();
+        System.out.println("客户端发来的数据为: " + str);
+
+        // 向客户端输出一句话: ==> 操作流 ==> 输出流
+        OutputStream outputStream = socket.getOutputStream();
+        DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
+        dataOutputStream.writeUTF("你好, 我是服务器端, 我接受到你的请求了");
+
+        // 5. 关闭流 + 关闭网络资源
+        dataOutputStream.close();
+        outputStream.close();
+        dataInputStream.close();
+        inputStream.close();
+        socket.close();
+        serverSocket.close();
+    }
+}
+```
+
+客户端：
+
+```java
+package cn.com.dhc.test02;
+
+import java.io.*;
+import java.net.Socket;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/1/31 - 下午8:25
+ * @Description: cn.com.dhc.test02
+ * @version: 1.0
+ */
+public class TestClient { // 客户端
+    public static void main(String[] args) throws IOException {
+        // 1. 创建套接字: 制定服务器的ip和端口号:
+        Socket socket = new Socket("192.168.1.106", 8888);
+        // 2. 对于程序员来说, 向外发送数据 感受 ==> 利用输出流:
+        OutputStream outputStream = socket.getOutputStream();
+        DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
+        // 利用OutputStream就可以向外发送数据了, 但是没有直接发送String的方法
+        // 所以我们又在OutputStream外面套了一个处理流: DataOutputStream
+        dataOutputStream.writeUTF("你好");
+
+        // 接收服务器端的回话 ==> 利用输入流:
+        InputStream inputStream = socket.getInputStream();
+        DataInputStream dataInputStream = new DataInputStream(inputStream);
+        System.out.println("服务器端对我说: " + dataInputStream.readUTF());
+
+        // 3. 关闭流 + 网络资源
+        dataInputStream.close();
+        inputStream.close();
+        dataOutputStream.close();
+        outputStream.close();
+        socket.close();
+    }
+}
+```
+
+注意：关闭防火墙
+
+#### 功能分解3：对象流传送
+
+封装的User类：
+```java
+package cn.com.dhc.test03;
+
+import java.io.Serializable;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/2 - 下午7:20
+ * @Description: cn.com.dhc.test03
+ * @version: 1.0
+ */
+public class User implements Serializable {
+    private static final long serialVersionUID = -6981884944971423945L;
+    private String name;
+    private String pwd;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPwd() {
+        return pwd;
+    }
+
+    public void setPwd(String pwd) {
+        this.pwd = pwd;
+    }
+
+    public User(String name, String pwd) {
+        this.name = name;
+        this.pwd = pwd;
+    }
+}
+```
+
+客户端：
+```java
+package cn.com.dhc.test03;
+
+import java.io.*;
+import java.net.Socket;
+import java.util.Scanner;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/1/31 - 下午8:25
+ * @Description: cn.com.dhc.test02
+ * @version: 1.0
+ */
+public class TestClient { // 客户端
+    public static void main(String[] args) throws IOException {
+        // 1. 创建套接字: 制定服务器的ip和端口号:
+        Socket socket = new Socket("192.168.1.106", 8888);
+
+        // 录入用户的账号和密码:
+        Scanner sc = new Scanner(System.in);
+        System.out.println("请录入您的账号: ");
+        String name = sc.next();
+        System.out.println("请录入您的密码: ");
+        String pwd = sc.next();
+        // 将账号和密码封装为一个User对象:
+        User user = new User(name, pwd);
+        
+        // 2. 对于程序员来说, 向外发送数据 感受 ==> 利用输出流:
+        OutputStream outputStream = socket.getOutputStream();
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+        objectOutputStream.writeObject(user);
+
+
+        // 接收服务器端的回话 ==> 利用输入流:
+        InputStream inputStream = socket.getInputStream();
+        DataInputStream dataInputStream = new DataInputStream(inputStream);
+        boolean flag = dataInputStream.readBoolean();
+        if (flag) {
+            System.out.println("登录成功");
+        } else {
+            System.out.println("登录失败");
+        }
+
+        // 3. 关闭流 + 网络资源
+        dataInputStream.close();
+        inputStream.close();
+        objectOutputStream.close();
+        outputStream.close();
+        socket.close();
+    }
+}
+```
+
+服务器：
+```java
+package cn.com.dhc.test03;
+
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/1/31 - 下午8:31
+ * @Description: cn.com.dhc.test02
+ * @version: 1.0
+ */
+public class TestServer { // 服务器
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
+        // 1. 创建套接字: 指定服务器的端口号
+        ServerSocket serverSocket = new ServerSocket(8888);
+        // 2. 等着客户端来的信息:
+        Socket socket = serverSocket.accept();// 阻塞方法: 等待接收客户端的数据, 什么时候接收到数据, 什么时候程序继续向下执行
+        // accept() 返回值为一个Socket, 这个Socket其实就是客户端的Socket
+        // 接到这个Socket以后, 客户端和服务器才真正产生了连接, 才真正可以通信了
+        InputStream inputStream = socket.getInputStream();
+        ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
+
+        // 4. 读取客户端发来的数据:
+        User user = (User) (objectInputStream.readObject());
+
+        // 对对象进行验证:
+        boolean flag = false;
+        if(user.getName().equals("张三") && user.getPwd().equals("123")) {
+            flag = true;
+        }
+
+        // 向客户端输出一句话: ==> 操作流 ==> 输出流
+        OutputStream outputStream = socket.getOutputStream();
+        DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
+        dataOutputStream.writeBoolean(flag);
+
+        // 5. 关闭流 + 关闭网络资源
+        dataOutputStream.close();
+        outputStream.close();
+        objectInputStream.close();
+        inputStream.close();
+        socket.close();
+        serverSocket.close();
+    }
+}
+```
+
+#### 功能分解4：加入完整的处理异常方式
+
+服务器端：
+```java
+package cn.com.dhc.test03;
+
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/1/31 - 下午8:31
+ * @Description: cn.com.dhc.test02
+ * @version: 1.0
+ */
+public class TestServer { // 服务器
+    public static void main(String[] args)  {
+        ServerSocket serverSocket = null;
+        Socket socket = null;
+        InputStream inputStream = null;
+        ObjectInputStream objectInputStream = null;
+        OutputStream outputStream = null;
+        DataOutputStream dataOutputStream = null;
+        try {
+            // 1. 创建套接字: 指定服务器的端口号
+            serverSocket = new ServerSocket(8888);
+            // 2. 等着客户端来的信息:
+            socket = serverSocket.accept();// 阻塞方法: 等待接收客户端的数据, 什么时候接收到数据, 什么时候程序继续向下执行
+            // accept() 返回值为一个Socket, 这个Socket其实就是客户端的Socket
+            // 接到这个Socket以后, 客户端和服务器才真正产生了连接, 才真正可以通信了
+            inputStream = socket.getInputStream();
+            objectInputStream = new ObjectInputStream(inputStream);
+
+            // 4. 读取客户端发来的数据:
+            User user = (User) (objectInputStream.readObject());
+
+            // 对对象进行验证:
+            boolean flag = false;
+            if(user.getName().equals("张三") && user.getPwd().equals("123")) {
+                flag = true;
+            }
+
+            // 向客户端输出一句话: ==> 操作流 ==> 输出流
+            outputStream = socket.getOutputStream();
+             dataOutputStream = new DataOutputStream(outputStream);
+            dataOutputStream.writeBoolean(flag);
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            // 5. 关闭流 + 关闭网络资源
+            try {
+                if (dataOutputStream != null)
+                    dataOutputStream.close();
+                if (outputStream != null)
+                    outputStream.close();
+                if (objectInputStream != null)
+                    objectInputStream.close();
+                if (inputStream != null)
+                    inputStream.close();
+                if (socket != null)
+                    socket.close();
+                if (serverSocket != null)
+                    serverSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+```
+
+客户端：
+```java
+package cn.com.dhc.test03;
+
+import java.io.*;
+import java.net.Socket;
+import java.util.Scanner;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/1/31 - 下午8:25
+ * @Description: cn.com.dhc.test02
+ * @version: 1.0
+ */
+public class TestClient { // 客户端
+    public static void main(String[] args) {
+        Socket socket = null;
+        OutputStream outputStream = null;
+        ObjectOutputStream objectOutputStream = null;
+        InputStream inputStream = null;
+        DataInputStream dataInputStream = null;
+        try {
+            // 1. 创建套接字: 制定服务器的ip和端口号:
+            socket = new Socket("192.168.1.106", 8888);
+
+            // 录入用户的账号和密码:
+            Scanner sc = new Scanner(System.in);
+            System.out.println("请录入您的账号: ");
+            String name = sc.next();
+            System.out.println("请录入您的密码: ");
+            String pwd = sc.next();
+            // 将账号和密码封装为一个User对象:
+            User user = new User(name, pwd);
+
+            // 2. 对于程序员来说, 向外发送数据 感受 ==> 利用输出流:
+            outputStream = socket.getOutputStream();
+            objectOutputStream = new ObjectOutputStream(outputStream);
+            objectOutputStream.writeObject(user);
+
+            // 接收服务器端的回话 ==> 利用输入流:
+            inputStream = socket.getInputStream();
+            dataInputStream = new DataInputStream(inputStream);
+            boolean flag = dataInputStream.readBoolean();
+            if (flag) {
+                System.out.println("登录成功");
+            } else {
+                System.out.println("登录失败");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                // 3. 关闭流 + 网络资源
+                if (dataInputStream != null)
+                    dataInputStream.close();
+                if (inputStream != null)
+                    inputStream.close();
+                if (objectOutputStream != null)
+                    objectOutputStream.close();
+                if (outputStream != null)
+                    outputStream.close();
+                if (socket != null)
+                    socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+```
+
+#### 功能分解5：多线程接收用户请求
+
+遗留问题：服务器针对一个请求服务，之后服务器就关闭了（程序自然结束了）
+现在需要解决：服务器必须一直在监听 ，一直开着，等待客户端的请求
+在当前代码中，客户端不用动了
+<img src="images/15/1-2-3.png">
+
+更改服务器代码：
+```java
+package cn.com.dhc.test03;
+
+import java.io.*;
+import java.net.Socket;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/2 - 下午8:14
+ * @Description: cn.com.dhc.test03
+ * @version: 1.0
+ */
+public class ServerThread extends Thread { // 线程: 专门处理客户端的请求
+    InputStream inputStream = null;
+    ObjectInputStream objectInputStream = null;
+    OutputStream outputStream = null;
+    DataOutputStream dataOutputStream = null;
+    Socket socket = null;
+    public ServerThread(Socket socket) {
+        this.socket = socket;
+    }
+    @Override
+    public void run() {
+        try {
+            // 2. 等着客户端来的信息:
+            // accept() 返回值为一个Socket, 这个Socket其实就是客户端的Socket
+            // 接到这个Socket以后, 客户端和服务器才真正产生了连接, 才真正可以通信了
+            inputStream = socket.getInputStream();
+            objectInputStream = new ObjectInputStream(inputStream);
+
+            // 4. 读取客户端发来的数据:
+            User user = (User) (objectInputStream.readObject());
+
+            // 对对象进行验证:
+            boolean flag = false;
+            if(user.getName().equals("张三") && user.getPwd().equals("123")) {
+                flag = true;
+            }
+
+            // 向客户端输出一句话: ==> 操作流 ==> 输出流
+            outputStream = socket.getOutputStream();
+            dataOutputStream = new DataOutputStream(outputStream);
+            dataOutputStream.writeBoolean(flag);
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+```java
+package cn.com.dhc.test03;
+
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/1/31 - 下午8:31
+ * @Description: cn.com.dhc.test02
+ * @version: 1.0
+ */
+public class TestServer { // 服务器
+    public static void main(String[] args)  {
+        System.out.println("服务器启动了");
+        ServerSocket serverSocket = null;
+        Socket socket = null; // 定义一个计数器, 用来计数客户端的请求
+        int count = 0;
+        try {
+            // 1. 创建套接字: 指定服务器的端口号
+            serverSocket = new ServerSocket(8888);
+            while (true) { // 加入死循环, 服务器一直监听客户端是否发送数据
+                socket = serverSocket.accept();// 阻塞方法: 等待接收客户端的数据, 什么时候接收到数据, 什么时候程序继续向下执行
+                // 每次过来的客户端请求靠线程处理：
+                new ServerThread(socket).start();
+                count++;
+                System.out.println("当前是第" + count + "个用户访问我们的服务器, 对应的用户是: " + socket.getInetAddress());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+### 基于UDP的网络编程
+
+TCP:
+客户端：Socket                                         程序感受到的 使用流  ：输出流
+服务器端：  ServerSocket --->Socket     程序感受到的 使用流  ：输入流
+（客户端和服务器端地位不平等。）
+
+UDP:
+发送方：DatagramSocket   发送：数据包  DatagramPacket
+接收方：DatagramSocket   接收：数据包  DatagramPacket
+（发送方和接收方的地址是平等的。）
+
+UDP案例：  完成网站的咨询聊天
+
+#### 功能分解1：单向通信
+
+发送方：
+```java
+package cn.com.dhc.test04;
+
+import java.io.IOException;
+import java.net.*;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/2 - 下午8:30
+ * @Description: cn.com.dhc.test04
+ * @version: 1.0
+ */
+public class TestSend { //发送方
+    public static void main(String[] args) throws IOException {
+        System.out.println("学生上线");
+        // 1. 准备套接字: 指定发送方的端口号
+        DatagramSocket ds = new DatagramSocket(8888);
+        // 2. 准备数据包
+        String str = "你好";
+        byte[] bytes = str.getBytes();
+        /*
+        * 需要四个参数：
+        * 1. 指的是传送数据转为字节数组
+        * 2. 字节数组的长度
+        * 3. 封装接收方的ip
+        * 4. 指定接收方的端口号
+        * */
+        DatagramPacket dp = new DatagramPacket(bytes, bytes.length, InetAddress.getByName("localhost"), 9999);
+        // 发送:
+        ds.send(dp);
+
+        // 关闭资源
+        ds.close();
+    }
+}
+```
+
+接收方：
+```java
+package cn.com.dhc.test04;
+
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/2 - 下午8:34
+ * @Description: cn.com.dhc.test04
+ * @version: 1.0
+ */
+public class TestReceive { // 接收方
+    public static void main(String[] args) throws IOException {
+        System.out.println("老师上线了");
+        // 1. 创建套接字: 指定接收方的端口
+        DatagramSocket ds = new DatagramSocket(9999);
+        // 2. 有一个空的数据包, 打算用来接收对方传过来的数据包:
+        byte[] b = new byte[1024];
+        DatagramPacket dp = new DatagramPacket(b, b.length);
+        // 3. 接收对方的数据包, 然后放入我们的dp数据包中填充
+        ds.receive(dp); // 接收完以后dp里面就填充好内容了
+        // 4. 取出数据
+        byte[] data = dp.getData();
+        String s = new String(data, 0, dp.getLength()); // dp.getLength()数组包中的有效长度
+        System.out.println("学生对我说: " + s);
+        // 5. 关闭资源
+        ds.close();
+
+    }
+}
+```
+
+#### 功能分解2：双向通信
+
+发送方：
+```java
+package cn.com.dhc.test04;
+
+import java.io.IOException;
+import java.net.*;
+import java.util.Scanner;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/2 - 下午8:30
+ * @Description: cn.com.dhc.test04
+ * @version: 1.0
+ */
+public class TestSend { //发送方
+    public static void main(String[] args) throws IOException {
+        System.out.println("学生上线");
+        // 1. 准备套接字: 指定发送方的端口号
+        DatagramSocket ds = new DatagramSocket(8888);
+        // 2. 准备数据包
+        Scanner sc = new Scanner(System.in);
+        System.out.println("学生: ");
+        String str = sc.next();
+        byte[] bytes = str.getBytes();
+        /*
+        * 需要四个参数：
+        * 1. 指的是传送数据转为字节数组
+        * 2. 字节数组的长度
+        * 3. 封装接收方的ip
+        * 4. 指定接收方的端口号
+        * */
+        DatagramPacket dp = new DatagramPacket(bytes, bytes.length, InetAddress.getByName("localhost"), 9999);
+        // 发送:
+        ds.send(dp);
+        // 接收老师发送回来的信息:
+        // 2. 有一个空的数据包, 打算用来接收对方传过来的数据包:
+        byte[] b = new byte[1024];
+        DatagramPacket dp2 = new DatagramPacket(b, b.length);
+        ds.receive(dp2); // 接收完以后dp2里面就填充好内容了
+        // 4. 取出数据
+        byte[] data = dp2.getData();
+        String s = new String(data, 0, dp2.getLength()); // dp.getLength()数组包中的有效长度
+        System.out.println("老师对我说: " + s);
+
+        // 关闭资源
+        ds.close();
+    }
+}
+```
+
+接收方：
+```java
+package cn.com.dhc.test04;
+
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.util.Scanner;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/2 - 下午8:34
+ * @Description: cn.com.dhc.test04
+ * @version: 1.0
+ */
+public class TestReceive { // 接收方
+    public static void main(String[] args) throws IOException {
+        System.out.println("老师上线了");
+        // 1. 创建套接字: 指定接收方的端口
+        DatagramSocket ds = new DatagramSocket(9999);
+        // 2. 有一个空的数据包, 打算用来接收对方传过来的数据包:
+        byte[] b = new byte[1024];
+        DatagramPacket dp = new DatagramPacket(b, b.length);
+        // 3. 接收对方的数据包, 然后放入我们的dp数据包中填充
+        ds.receive(dp); // 接收完以后dp里面就填充好内容了
+        // 4. 取出数据
+        byte[] data = dp.getData();
+        String s = new String(data, 0, dp.getLength()); // dp.getLength()数组包中的有效长度
+        System.out.println("学生对我说: " + s);
+        // 老师进行回复:
+        Scanner sc = new Scanner(System.in);
+        String str = sc.next();
+        byte[] bytes = str.getBytes();
+        // 封装数据, 并且指定学生的ip和端口号
+        DatagramPacket dp2 = new DatagramPacket(bytes, bytes.length, InetAddress.getByName("localhost"), 8888);
+        ds.send(dp2);
+        // 5. 关闭资源
+        ds.close();
+
+    }
+}
+```
+
+#### 功能分解3：加入完整的处理异常方式
+
+发送方：
+```java
+package cn.com.dhc.test04;
+
+import java.io.IOException;
+import java.net.*;
+import java.util.Scanner;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/2 - 下午8:30
+ * @Description: cn.com.dhc.test04
+ * @version: 1.0
+ */
+public class TestSend { //发送方
+    public static void main(String[] args) {
+        System.out.println("学生上线");
+        DatagramSocket ds = null;
+        try {
+            ds = new DatagramSocket(8888);
+            // 1. 准备套接字: 指定发送方的端口号
+            // 2. 准备数据包
+            Scanner sc = new Scanner(System.in);
+            System.out.println("学生: ");
+            String str = sc.next();
+            byte[] bytes = str.getBytes();
+            /*
+             * 需要四个参数：
+             * 1. 指的是传送数据转为字节数组
+             * 2. 字节数组的长度
+             * 3. 封装接收方的ip
+             * 4. 指定接收方的端口号
+             * */
+            DatagramPacket dp = new DatagramPacket(bytes, bytes.length, InetAddress.getByName("localhost"), 9999);
+            // 发送:
+            ds.send(dp);
+            // 接收老师发送回来的信息:
+            // 2. 有一个空的数据包, 打算用来接收对方传过来的数据包:
+            byte[] b = new byte[1024];
+            DatagramPacket dp2 = new DatagramPacket(b, b.length);
+            ds.receive(dp2); // 接收完以后dp2里面就填充好内容了
+            // 4. 取出数据
+            byte[] data = dp2.getData();
+            String s = new String(data, 0, dp2.getLength()); // dp.getLength()数组包中的有效长度
+            System.out.println("老师对我说: " + s);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            // 关闭资源
+            ds.close();
+        }
+    }
+}
+```
+
+接收方：
+```java
+package cn.com.dhc.test04;
+
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.util.Scanner;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/2 - 下午8:34
+ * @Description: cn.com.dhc.test04
+ * @version: 1.0
+ */
+public class TestReceive { // 接收方
+    public static void main(String[] args) {
+        System.out.println("老师上线了");
+        DatagramSocket ds = null;
+        try {
+            // 1. 创建套接字: 指定接收方的端口
+            ds = new DatagramSocket(9999);
+            // 2. 有一个空的数据包, 打算用来接收对方传过来的数据包:
+            byte[] b = new byte[1024];
+            DatagramPacket dp = new DatagramPacket(b, b.length);
+            // 3. 接收对方的数据包, 然后放入我们的dp数据包中填充
+            ds.receive(dp); // 接收完以后dp里面就填充好内容了
+            // 4. 取出数据
+            byte[] data = dp.getData();
+            String s = new String(data, 0, dp.getLength()); // dp.getLength()数组包中的有效长度
+            System.out.println("学生对我说: " + s);
+            // 老师进行回复:
+            Scanner sc = new Scanner(System.in);
+            String str = sc.next();
+            byte[] bytes = str.getBytes();
+            // 封装数据, 并且指定学生的ip和端口号
+            DatagramPacket dp2 = new DatagramPacket(bytes, bytes.length, InetAddress.getByName("localhost"), 8888);
+            ds.send(dp2);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            // 5. 关闭资源
+            ds.close();
+        }
+    }
+}
+```
+
+#### 功能分解4：正常通信
+
+发送方：
+```java
+package cn.com.dhc.test04;
+
+import java.io.IOException;
+import java.net.*;
+import java.util.Scanner;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/2 - 下午8:30
+ * @Description: cn.com.dhc.test04
+ * @version: 1.0
+ */
+public class TestSend { //发送方
+    public static void main(String[] args) {
+        System.out.println("学生上线");
+        DatagramSocket ds = null;
+        try {
+            ds = new DatagramSocket(8888);
+            while (true) {
+                // 1. 准备套接字: 指定发送方的端口号
+                // 2. 准备数据包
+                Scanner sc = new Scanner(System.in);
+                System.out.println("学生: ");
+                String str = sc.next();
+                byte[] bytes = str.getBytes();
+                /*
+                 * 需要四个参数：
+                 * 1. 指的是传送数据转为字节数组
+                 * 2. 字节数组的长度
+                 * 3. 封装接收方的ip
+                 * 4. 指定接收方的端口号
+                 * */
+                DatagramPacket dp = new DatagramPacket(bytes, bytes.length, InetAddress.getByName("localhost"), 9999);
+                // 发送:
+                ds.send(dp);
+                if (str.equals("byebye")) {
+                    System.out.println("学生下线");
+                    break;
+                }
+                // 接收老师发送回来的信息:
+                // 2. 有一个空的数据包, 打算用来接收对方传过来的数据包:
+                byte[] b = new byte[1024];
+                DatagramPacket dp2 = new DatagramPacket(b, b.length);
+                ds.receive(dp2); // 接收完以后dp2里面就填充好内容了
+                // 4. 取出数据
+                byte[] data = dp2.getData();
+                String s = new String(data, 0, dp2.getLength()); // dp.getLength()数组包中的有效长度
+                System.out.println("老师对我说: " + s);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            // 关闭资源
+            ds.close();
+        }
+    }
+}
+```
+
+接收方：
+```java
+package cn.com.dhc.test04;
+
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.util.Scanner;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/2 - 下午8:34
+ * @Description: cn.com.dhc.test04
+ * @version: 1.0
+ */
+public class TestReceive { // 接收方
+    public static void main(String[] args) {
+        System.out.println("老师上线了");
+        DatagramSocket ds = null;
+        try {
+            // 1. 创建套接字: 指定接收方的端口
+            ds = new DatagramSocket(9999);
+            while (true) {
+                // 2. 有一个空的数据包, 打算用来接收对方传过来的数据包:
+                byte[] b = new byte[1024];
+                DatagramPacket dp = new DatagramPacket(b, b.length);
+                // 3. 接收对方的数据包, 然后放入我们的dp数据包中填充
+                ds.receive(dp); // 接收完以后dp里面就填充好内容了
+                // 4. 取出数据
+                byte[] data = dp.getData();
+                String s = new String(data, 0, dp.getLength()); // dp.getLength()数组包中的有效长度
+                System.out.println("学生对我说: " + s);
+                if (s.equals("byebye")) {
+                    System.out.println("学生已经下线了, 老师也下线");
+                    break;
+                }
+                // 老师进行回复:
+                Scanner sc = new Scanner(System.in);
+                System.out.println("老师: ");
+                String str = sc.next();
+                byte[] bytes = str.getBytes();
+                // 封装数据, 并且指定学生的ip和端口号
+                DatagramPacket dp2 = new DatagramPacket(bytes, bytes.length, InetAddress.getByName("localhost"), 8888);
+                ds.send(dp2);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            // 5. 关闭资源
+            ds.close();
+        }
+    }
+}
+```

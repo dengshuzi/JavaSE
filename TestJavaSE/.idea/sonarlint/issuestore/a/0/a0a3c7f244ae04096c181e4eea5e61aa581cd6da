@@ -1,0 +1,19 @@
+
+t
+java:S2142!"^Either re-interrupt this method or rethrow the "InterruptedException" that can be caught here.(ä ¹€
+O
+java:S2274 ":Remove this call to "wait" or move it into a "while" loop.(ç£ŠM
+t
+java:S2142("^Either re-interrupt this method or rethrow the "InterruptedException" that can be caught here.(ä ¹€
+Y
+java:S2276'"CReplace the call to "Thread.sleep(...)" with a call to "wait(...)".(á˜ ¶
+N	java:S106,"9Replace this use of System.out or System.err by a logger.(ÕÄ†‘
+R
+java:S2446."0"notify" may not wake up the appropriate thread.(óÄ£¶øÿÿÿÿ8ÂßìðË0
+t
+java:S21424"^Either re-interrupt this method or rethrow the "InterruptedException" that can be caught here.(ä ¹€
+V
+java:S22743":Remove this call to "wait" or move it into a "while" loop.(ç£ŠM8¯¢ëðË0
+S	java:S1068"9Replace this use of System.out or System.err by a logger.(¿Š–Éûÿÿÿÿ
+R
+java:S2446:"0"notify" may not wake up the appropriate thread.(óÄ£¶øÿÿÿÿ8ÐÃíðË0

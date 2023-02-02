@@ -1,0 +1,27 @@
+
+P
+java:S1141("5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿ
+P
+java:S11411"5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿ
+W
+java:S1141E"5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿ8™Á¢ñË0
+t
+java:S2142;"^Either re-interrupt this method or rethrow the "InterruptedException" that can be caught here.(”ı¾
+t
+java:S2142,"^Either re-interrupt this method or rethrow the "InterruptedException" that can be caught here.(ä ¹€
+X
+java:S2274+";Remove this call to "await" or move it into a "while" loop.(Ï´ˆš8å‡£ñË0
+]	java:S125)"<This block of commented-out lines of code should be removed.(©®ˆ¿ûÿÿÿÿ8ÛÉñË0
+t
+java:S21423"^Either re-interrupt this method or rethrow the "InterruptedException" that can be caught here.(ä ¹€
+N	java:S1067"9Replace this use of System.out or System.err by a logger.(ÕÄ†‘
+]	java:S1259"<This block of commented-out lines of code should be removed.(•Ñ¤úÿÿÿÿ8ğ¸ŸñË0
+{
+java:S2142P"^Either re-interrupt this method or rethrow the "InterruptedException" that can be caught here.(”ı¾8ªÁ¢ñË0
+{
+java:S2142H"^Either re-interrupt this method or rethrow the "InterruptedException" that can be caught here.(ä ¹€8«Á¢ñË0
+]
+java:S2274G";Remove this call to "await" or move it into a "while" loop.(»¡ÌÓÿÿÿÿÿ8¦ç¬ñË0
+]	java:S125F"<This block of commented-out lines of code should be removed.(©®ˆ¿ûÿÿÿÿ8æ‡£ñË0
+Z	java:S106L"9Replace this use of System.out or System.err by a logger.(¿Š–Éûÿÿÿÿ8«Á¢ñË0
+]	java:S125N"<This block of commented-out lines of code should be removed.(•Ñ¤úÿÿÿÿ8ËÚ£ñË0
