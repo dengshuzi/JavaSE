@@ -9,6 +9,7 @@
         <module name="TestNetWork" />
         <module name="untitled" />
         <module name="TestThread" />
+        <module name="TestAnnotation" />
         <module name="TestJunit" />
       </profile>
     </annotationProcessing>

@@ -1,7 +1,9 @@
 package cn.com.dhc.test;
 
 import cn.com.dhc.calculator.Calculator;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -11,6 +13,15 @@ import org.junit.Test;
  * @version: 1.0
  */
 public class CalculatorTest {
+    @Before
+    public void init() {
+        System.out.println("方法测试开始了");
+    }
+    @After
+    public void close() {
+        System.out.println("方法测试结束");
+    }
+
     // 测试add方法
     @Test
     public void testAdd() {

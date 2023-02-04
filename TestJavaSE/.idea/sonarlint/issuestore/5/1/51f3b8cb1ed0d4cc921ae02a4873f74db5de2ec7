@@ -1,0 +1,4 @@
+
+S	java:S106"9Replace this use of System.out or System.err by a logger.(ÊÆ­üÿÿÿÿ
+K
+java:S1874"0Remove this use of "getMonth"; it is deprecated.(ÊÆ­üÿÿÿÿ

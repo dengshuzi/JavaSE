@@ -14932,6 +14932,387 @@ public class CalculatorTest {
 
 ### @Before_@After
 
+- @Before:
+某一个方法中，加入了@Before注解以后，那么这个方法中的功能会在测试方法执行前先执行
+一般会在@Beforer修饰的那个方法中加入：加入一些申请资源的代码：申请数据库资源，申请IO资源，申请网络资源。。。
+
+- @After:
+某一个方法中，加入了@After注解以后，那么这个方法中的功能会在测试方法执行后先执行
+一般会在@After修饰的那个方法中加入：加入释放资源的代码：释放数据库资源，释放IO资源，释放网络资源。。。
+
+代码：
+```java
+package cn.com.dhc.test;
+
+import cn.com.dhc.calculator.Calculator;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/3 - 下午10:53
+ * @Description: cn.com.dhc.test
+ * @version: 1.0
+ */
+public class CalculatorTest {
+    @Before
+    public void init() {
+        System.out.println("方法测试开始了");
+    }
+    @After
+    public void close() {
+        System.out.println("方法测试结束");
+    }
+
+    // 测试add方法
+    @Test
+    public void testAdd() {
+        System.out.println("测试add方法");
+        Calculator calculator = new Calculator();
+        int result = calculator.add(10, 30);
+        // System.out.println(result); --> 程序的结果可以不关注
+        // 假如加入断言: 预测一下结果, 判断一下我预测的结果和实际的结果是否一致:
+        Assert.assertEquals(40, result); //第一个参数: 预测结果 第二个结果: 实际结果
+    }
+
+    // 测试sub方法
+    @Test
+    public void testSub() {
+        System.out.println("测试sub方法");
+        Calculator calculator = new Calculator();
+        int result = calculator.sub(10, 30);
+        System.out.println(result);
+    }
+}
+```
+
 ## 注解
+
+### 引入
+
+1. 历史：
+JDK5.0 新增 ---  注解（Annotation）,也叫元数据
+2. 什么是注解？
+注解其实就是代码里的特殊标记，这些标记可以在编译,类加载,运行时被读取,并执行相应的处理。通过使用注解,程序员可以在不改变原有逻辑的情况下，在源文件中嵌入一些补充信息。代码分析工具、开发工具和部署工具可以通过这些补充信息进行验证或者进行部署。
+使用注解时要在其前面增加@符号,并把该注解当成一个修饰符使用。用于修饰它支持的程序元素。
+3. 注解的重要性：
+Annotation 可以像修饰符一样被使用，可用于修饰包，类，构造器,方法，成员变量,参数，局部变量的声明，这些信息被保存在Annotation的"name=value"对中。在JavaSE中，注解的使用目的比较简单，例如标记过时的功能，忽略警告等。在JavaEE/ArIdroid中注解占据了更重要的角色，例如用来配置应用程序的任何切面，代替JavaEE旧版中所遗留的繁冗代码和XML配置等。未来的开发模式都是基于注解的，JPA(java的持久化API)是基于注解的，Spring2.5以. E都是基于注解的，Hibernate3.x以后也是基于注解的，现在的Struts2有一部分也是基于注解的了，注解是一种趋势，一定程度上可以说 ：框架=注解+反射+设计模式。
+
+### 注解的使用实例
+
+#### Junit的注解
+
+@Test
+@Before
+@After
+
+代码：
+```java
+package cn.com.dhc.test;
+
+import cn.com.dhc.calculator.Calculator;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/3 - 下午10:53
+ * @Description: cn.com.dhc.test
+ * @version: 1.0
+ */
+public class CalculatorTest {
+    @Before
+    public void init() {
+        System.out.println("方法测试开始了");
+    }
+    @After
+    public void close() {
+        System.out.println("方法测试结束");
+    }
+
+    // 测试add方法
+    @Test
+    public void testAdd() {
+        System.out.println("测试add方法");
+        Calculator calculator = new Calculator();
+        int result = calculator.add(10, 30);
+        // System.out.println(result); --> 程序的结果可以不关注
+        // 假如加入断言: 预测一下结果, 判断一下我预测的结果和实际的结果是否一致:
+        Assert.assertEquals(40, result); //第一个参数: 预测结果 第二个结果: 实际结果
+    }
+
+    // 测试sub方法
+    @Test
+    public void testSub() {
+        System.out.println("测试sub方法");
+        Calculator calculator = new Calculator();
+        int result = calculator.sub(10, 30);
+        System.out.println(result);
+    }
+}
+```
+
+#### 文档相关的注解
+
+说明注释允许你在程序中嵌入关于程序的信息。你可以使用 javadoc 工具软件来生成信息，并输出到HTML文件中。
+说明注释，使你更加方便的记录你的程序信息。
+文档注解我们一般使用在文档注释中，配合javadoc工具
+javadoc 工具软件识别以下标签：
+<img src="images/16/1-2-1.png">
+
+其中注意：
+- @param @return和@exception这三个标记都是只用于方法的。
+- @param的格式要求: @param 形参名 形参类型 形参说明
+- @return的格式要求: @return 返回值类型返回值说明，如果方法的返回值类型是void就不能写
+- @exception的格式要求: @exception 异常类型异常说明
+- @param和@exception可以并列多个
+代码：
+```java
+package cn.com.dhc.anno;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/4 - 下午8:39
+ * @Description: cn.com.dhc.anno
+ * @version: 1.0
+ */
+public class Person {
+    /**
+     * 下面是eat方法，实现了XXX功能
+     * @param num1 就餐人数
+     * @param num2 点了几个菜
+     */
+    public void eat(int num1, int num2) {
+
+    }
+
+    /**
+     *
+     * @param age 年龄
+     * @return int
+     * @exception RuntimeException 当年龄过大的时候
+     * @exception RuntimeException 当年龄过小的时候
+     * @see Student
+     */
+    public int sleep (int age) {
+        new Student();
+        if(age > 100) {
+            throw new RuntimeException();
+        }
+        if (age < 0) {
+            throw new RuntimeException();
+        }
+        return 10;
+    }
+}
+```
+
+IDEA中的javadoc使用：
+<img src="images/16/1-2-2.png">
+
+防止乱码:
+<img src="images/16/1-2-3.png">
+<img src="images/16/1-2-4.png">
+
+#### JDK内置的3个注解
+
+- @Override:限定重写父类方法，该注解只能用于方法
+```java
+package cn.com.dhc.anno.cn.com.dhc.anno2;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/4 - 下午9:00
+ * @Description: cn.com.dhc.anno.cn.com.dhc.anno2
+ * @version: 1.0
+ */
+public class Person {
+    public void eat() {
+        System.out.println("父类eat");
+    }
+}
+```
+
+```java
+package cn.com.dhc.anno.cn.com.dhc.anno2;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/4 - 下午9:00
+ * @Description: cn.com.dhc.anno.cn.com.dhc.anno2
+ * @version: 1.0
+ */
+public class Student extends Person {
+    /*
+    @Override的作用: 限定重写的方法, 只要重写方法有问题, 就有错误提示
+     */
+    @Override
+    public void eat() {
+        System.out.println("子类eat");
+    }
+}
+```
+
+- @Deprecated:用于表示所修饰的元素(类,方法，构造器，属性等)已过时。通常是因为所修饰的结构危险或存在更好的选择
+```java
+package cn.com.dhc.anno.cn.com.dhc.anno2;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/4 - 下午9:00
+ * @Description: cn.com.dhc.anno.cn.com.dhc.anno2
+ * @version: 1.0
+ */
+public class Student extends Person {
+    /*
+    @Override的作用: 限定重写的方法, 只要重写方法有问题, 就有错误提示
+     */
+    @Override
+    public void eat() {
+        System.out.println("子类eat");
+    }
+    /*
+    在方法前加入@Depreacted, 这个注解就会变成一盒废弃方法/过期方法/过时方法
+     */
+    @Deprecated
+    public void study() {}
+}
+```
+<img src="images/16/1-2-5.png">
+
+- @SuppressWarnings:抑制编译器警告
+```java
+package cn.com.dhc.anno.cn.com.dhc.anno2;
+
+import java.util.ArrayList;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/4 - 下午9:13
+ * @Description: cn.com.dhc.anno.cn.com.dhc.anno2
+ * @version: 1.0
+ */
+public class Test2 {
+    public static void main(String[] args) {
+        @SuppressWarnings("unsued")
+        int age = 10;
+
+        int num = 10;
+        System.out.println(num);
+        @SuppressWarnings({"unused", "rwatypes"})
+        ArrayList al = new ArrayList();
+    }
+}
+```
+
+#### 实现替代配置文件功能的注解
+
+在servlet3.0之前的配置：
+```java
+package com.bjsxt.servlet;
+
+import javax.servlet.*;
+import java.io.IOException;
+
+public class HelloServlet implements Servlet {
+    @Override
+    public void init(ServletConfig servletConfig) throws ServletException {
+
+    }
+
+    @Override
+    public ServletConfig getServletConfig() {
+        return null;
+    }
+
+   
+    @Override
+    public void service(ServletRequest servletRequest, ServletResponse servletResponse) throws ServletException, IOException {
+        System.out.println("service方法被调用了...");
+    }
+
+    @Override
+    public String getServletInfo() {
+        return null;
+    }
+
+    @Override
+    public void destroy() {
+
+    }
+}
+```
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+         version="4.0">
+    <!--配置Servlet-->
+    <!--配置Servlet的信息-->
+    <servlet>
+        <servlet-name>HelloServlet</servlet-name>
+        <servlet-class>com.bjsxt.servlet.HelloServlet</servlet-class>
+    </servlet>
+    <!--配置Servlet的映射路径-->
+    <servlet-mapping>
+        <servlet-name>HelloServlet</servlet-name>
+        <!--http://localhost:8080/01-hello-servlet/hello-->
+        <url-pattern>/hello</url-pattern>
+    </servlet-mapping>
+</web-app>
+```
+
+在servlet3.0之后使用注解：替代配置文件。
+```java
+package com.bjsxt.servlet;
+
+import javax.servlet.*;
+import java.io.IOException;
+
+@WebServlet("/hello")
+public class HelloServlet implements Servlet {
+    @Override
+    public void init(ServletConfig servletConfig) throws ServletException {
+
+    }
+
+    @Override
+    public ServletConfig getServletConfig() {
+        return null;
+    }
+
+    /**
+    * 用于提供服务, 接收请求, 处理响应
+    *
+    * @param servletRequest
+    * @param servletResponse
+    * @throws ServletException
+    * @throws IOException
+    */
+    @Override
+    public void service(ServletRequest servletRequest, ServletResponse servletResponse) throws ServletException, IOException {
+        System.out.println("service方法被调用了...");
+    }
+
+    @Override
+    public String getServletInfo() {
+        return null;
+    }
+
+    @Override
+    public void destroy() {
+
+    }
+}
+```
+
+### 自定义注解
+
+
 
 ## 枚举
