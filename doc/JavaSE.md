@@ -15313,6 +15313,176 @@ public class HelloServlet implements Servlet {
 
 ### 自定义注解
 
+1. 自定义注解使用很少，一般情况下都是用现成的注解。
+2. 如何自定义注解：
+<img src="images/16/1-2-6.png">
+<img src="images/16/1-2-7.png">
 
+发现定义的注解的声明使用的关键字：@interface, 跟接口没有一点关系。
+3. 注解的内部：
+以@SupperssWarnings为例，发现内部：
+<img src="images/16/1-2-8.png">
+
+这value是属性还是方法？
+答案：看上去是无参数方法，实际上理解为一个成员变量，一个属性
+无参数方法名字--》成员变量的名字
+无参数方法的返回值--》成员变量的类型
+这个参数叫 配置参数
+无参数方法的类型：基本数据类型（八种），String，枚举，注解类型，还可以是以上类型对应的数组。
+PS：注意：如果只有一个成员变量的话，名字尽量叫value。
+4. 使用注解：
+    (1) 使用注解的话，如果你定义了配置参数，就必须给配置参数进行赋值操作：
+    ```java
+    package cn.com.dhc.anno.cn.com.dhc.anno03;
+
+        /**
+        * @Auther: Evin_D
+        * @Date: 2023/2/5 - 下午5:26
+        * @Description: cn.com.dhc.anno.cn.com.dhc.anno03
+        * @version: 1.0
+        */
+        @MyAnnotation(value={"abc","def","hig"})
+        public class Person {
+        }
+    ```
+    (2) 如果只有一个参数，并且这个参数的名字为value的话，那么value=可以省略不写。
+    ```java
+    package cn.com.dhc.anno.cn.com.dhc.anno03;
+
+    /**
+    * @Auther: Evin_D
+    * @Date: 2023/2/5 - 下午5:26
+    * @Description: cn.com.dhc.anno.cn.com.dhc.anno03
+    * @version: 1.0
+    */
+    @MyAnnotation({"abc","def","hig"})
+    public class Person {
+    }
+    ```
+    (3) 如果你给配置参数设置默认的值了，那么使用的时候可以无需传值：
+    ```java
+    package cn.com.dhc.anno.cn.com.dhc.anno03;
+
+    /**
+    * @Auther: Evin_D
+    * @Date: 2023/2/5 - 下午5:29
+    * @Description: cn.com.dhc.anno.cn.com.dhc.anno03
+    * @version: 1.0
+    */
+    public @interface MyAnnotation2 {
+        String value() default "abc";
+    }
+    ```
+    使用：
+    ```java
+    package cn.com.dhc.anno.cn.com.dhc.anno03;
+
+    /**
+    * @Auther: Evin_D
+    * @Date: 2023/2/5 - 下午5:26
+    * @Description: cn.com.dhc.anno.cn.com.dhc.anno03
+    * @version: 1.0
+    */
+    @MyAnnotation2
+    @MyAnnotation({"abc","def","hig"})
+    public class Person {
+    }
+    ```
+    (4) 一个注解的内部是可以不定义配置参数的：
+    ```java
+    package cn.com.dhc.anno.cn.com.dhc.anno03;
+
+    /**
+    * @Auther: Evin_D
+    * @Date: 2023/2/5 - 下午5:30
+    * @Description: cn.com.dhc.anno.cn.com.dhc.anno03
+    * @version: 1.0
+    */
+    public @interface MyAnnotation3 {
+    }
+    ```
+
+内部没有定义配置参数的注解--》可以叫做标记
+<img src="images/16/1-2-9.png">
+
+内部定义配置参数的注解--》元数据
+5. 注解的使用：
+现在只学习注解的大致技能点，具体怎么应用  后面慢慢学习。
+
+### 元注解
+
+元注解是用于修饰其它注解的注解。 
+举例：
+<img src="images/16/1-2-10.png">
+
+JDK5.0提供了四种元注解：Retention, Target, Documented, Inherited
+
+#### Retention
+@Retention:用于修饰注解，用于指定修饰的那个注解的生命周期，@Rentention包含一个RetentionPolicy枚举类型的成员变量,使用@Rentention时必须为该value成员变量指定值:
+- RetentionPolicy.SOURCE:在源文件中有效(即源文件保留),编译器直接丢弃这种策略的注释，在.class文件中不会保留注解信息
+案例：
+<img src="images/16/1-2-11.png">
+<img src="images/16/1-2-12.png">
+
+反编译查看字节码文件：发现字节码文件中没有MyAnnotation这个注解：
+<img src="images/16/1-2-13.png">
+
+- RetentionPolicy.CLASS:在class文件中有效(即class保留)，保留在.class文件中，但是当运行Java程序时，他就不会继续加载了，不会保留在内存中，JVM不会保留注解。如果注解没有加Retention元注解，那么相当于默认的注解就是这种状态。
+案例：
+<img src="images/16/1-2-14.png">
+<img src="images/16/1-2-15.png">
+
+反编译看字节码文件，字节码文件中带有MyAnnotation注解：
+<img src="images/16/1-2-16.png">
+
+- RetentionPolicy.RUNTIME:在运行时有效(即运行时保留),当运行 Java程序时，JVM会保留注释，加载在内存中了，那么程序可以通过反射获取该注释。
+
+#### Target
+
+用于修饰注解的注解，用于指定被修饰的注解能用于修饰哪些程序元素。@Target也包含一个名为value的成员变量。
+案例：
+```java
+package cn.com.dhc.anno.cn.com.dhc.anno03;
+
+import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.*;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/6 - 下午8:50
+ * @Description: cn.com.dhc.anno.cn.com.dhc.anno03
+ * @version: 1.0
+ */
+@Target({TYPE, CONSTRUCTOR, METHOD})
+public @interface MyAnnotation4 {
+}
+```
+使用：
+<img src="images/16/1-2-17.png">
+
+#### Documented（很少）
+
+用于指定被该元注解修饰的注解类将被javadoc工具提取成文档。默认情况下，javadoc是 不包括注解的，但是加上了这个注解生成的文档中就会带着注解了
+案例：
+如果：Documented注解修饰了Deprecated注解，
+<img src="images/16/1-2-18.png">
+
+那么Deprecated注解就会在javadoc提取的时候，提取到API中：
+<img src="images/16/1-2-19.png">
+
+#### Inherited（极少）
+
+被它修饰的Annotation将具有继承性。如果某个类使用了被
+@Inherited修饰的Annotation,则其子类将自动具有该注解。
+案例：
+注解：如果MyAnno注解使用了@Inherited之后，就具备了继承性，那么相当于子类Student也使用了这个MyAnno
+<img src="images/16/1-2-20.png">
+
+父类：
+<img src="images/16/1-2-21.png">
+
+子类：
+<img src="images/16/1-2-22.png">
 
 ## 枚举

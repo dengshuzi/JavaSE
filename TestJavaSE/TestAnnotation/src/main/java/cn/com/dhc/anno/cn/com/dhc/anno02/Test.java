@@ -1,4 +1,4 @@
-package cn.com.dhc.anno.cn.com.dhc.anno2;
+package cn.com.dhc.anno.cn.com.dhc.anno02;
 
 import java.util.Date;
 

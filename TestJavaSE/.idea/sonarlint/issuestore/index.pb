@@ -97,15 +97,3 @@ k
 ;TestJunit/src/main/java/cn/com/dhc/test/CalculatorTest.java,b/2/b29082b0b7fae876529614326343ff74f354357d
 F
 TestAnnotation/pom.xml,d/7/d78694f45b8cc7669ecfa0e3625684d211983fed
-i
-9TestAnnotation/src/main/java/cn/com/dhc/anno/Student.java,6/6/663040c6b5b37536bd23f22b86709bcbe890fe42
-h
-8TestAnnotation/src/main/java/cn/com/dhc/anno/Person.java,1/5/1508da12bfbcb94ab4c5467467f75d24ea05a486
-x
-HTestAnnotation/src/main/java/cn/com/dhc/anno/cn/com/dhc/anno2/Test2.java,2/b/2bc68b84419ddaaed22fdc458d6931012a8e2d23
-y
-ITestAnnotation/src/main/java/cn/com/dhc/anno/cn/com/dhc/anno2/Person.java,4/c/4ceefa4ae2147769bf91e1515823cfe46a6e1593
-z
-JTestAnnotation/src/main/java/cn/com/dhc/anno/cn/com/dhc/anno2/Student.java,3/a/3a01d7a3b9430dac1b856ddcf1334af4ab3fa1c5
-w
-GTestAnnotation/src/main/java/cn/com/dhc/anno/cn/com/dhc/anno2/Test.java,5/1/51f3b8cb1ed0d4cc921ae02a4873f74db5de2ec7
