@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="TestNetWork" />
         <module name="untitled" />
+        <module name="TestEnum" />
         <module name="TestThread" />
         <module name="TestAnnotation" />
         <module name="TestJunit" />

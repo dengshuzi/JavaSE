@@ -15486,3 +15486,512 @@ public @interface MyAnnotation4 {
 <img src="images/16/1-2-22.png">
 
 ## 枚举
+
+### 引入
+
+1. 数学：枚举法：
+1 < x < 4
+2< y < 5
+求x + y = 6
+枚举法：一枚一枚的列举出来。前提：有限，确定
+2. 在java中，类的对象是有限个，确定的。这个类我们可以定义为枚举类。
+举例：
+星期：一二三四五六日  
+性别：男女
+季节：春夏秋冬
+3. 自定义枚举类：（JDK1.5之前自定义枚举类）
+```java
+package cn.com.dhc.enum01;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/8 - 下午7:34
+ * @Description: cn.com.dhc.enum01
+ * 定义枚举类: 季节
+ * @version: 1.0
+ */
+public class Season {
+    // 属性：
+    private final String seasonName; // 季节名字
+    private final String seasonDes; // 季节描述
+    // 利用构造器对属性进行赋值操作:
+    // 构造器私有化, 外界不能调用这个构造器, 只能Season内部自己调用
+    private Season(String seasonName, String seasonDes) {
+        this.seasonName = seasonName;
+        this.seasonDes = seasonDes;
+    }
+    // 提供枚举类的有限的确定的对象:
+    public static final Season SPRING = new Season("春天", "春暖花开");
+    public static final Season SUMMER = new Season("夏天", "烈日炎炎");
+    public static final Season AUTUMN = new Season("秋天", "硕果磊磊");
+    public static final Season WINTER = new Season("冬天", "冰天地寒");
+
+    // 额外因素:
+    public String getSeasonName() {
+        return seasonName;
+    }
+
+    public String getSeasonDes() {
+        return seasonDes;
+    }
+
+    @Override
+    public String toString() {
+        return "Season{" +
+                "seasonName='" + seasonName + '\'' +
+                ", seasonDes='" + seasonDes + '\'' +
+                '}';
+    }
+}
+```
+测试类：
+```java
+package cn.com.dhc.enum01;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/8 - 下午7:41
+ * @Description: cn.com.dhc.enum01
+ * @version: 1.0
+ */
+public class TestSeason {
+    public static void main(String[] args) {
+        Season summer = Season.SUMMER;
+        System.out.println(summer);
+    }
+}
+```
+
+### JDK1_5之后使用enum关键字来创建枚举类
+
+JDK1.5以后使用enum关键字创建枚举类：
+<img src="images/16/1-3-1.png">
+
+变为下面的枚举类：
+```java
+package cn.com.dhc.enum02;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/8 - 下午7:34
+ * @Description: cn.com.dhc.enum01
+ * 定义枚举类: 季节
+ * @version: 1.0
+ */
+public enum Season {
+    // 提供枚举类的有限的确定的对象: enum枚举类要求对象(常量)必须放在最开始位置
+    // 多个对象之间用 , 进行连接, 最后一个对象后面用 ; 结束
+    SPRING("春天", "春暖花开"),
+    SUMMER("夏天", "烈日炎炎"),
+    AUTUMN("秋天", "硕果磊磊"),
+    WINTER("冬天", "冰天地寒");
+
+    // 属性：
+    private final String seasonName; // 季节名字
+    private final String seasonDes; // 季节描述
+    // 利用构造器对属性进行赋值操作:
+    // 构造器私有化, 外界不能调用这个构造器, 只能Season内部自己调用
+    private Season(String seasonName, String seasonDes) {
+        this.seasonName = seasonName;
+        this.seasonDes = seasonDes;
+    }
+    // 额外因素:
+    public String getSeasonName() {
+        return seasonName;
+    }
+
+    public String getSeasonDes() {
+        return seasonDes;
+    }
+
+    @Override
+    public String toString() {
+        return "Season{" +
+                "seasonName='" + seasonName + '\'' +
+                ", seasonDes='" + seasonDes + '\'' +
+                '}';
+    }
+}
+```
+
+使用枚举类：
+```java
+package cn.com.dhc.enum02;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/8 - 下午7:47
+ * @Description: cn.com.dhc.enum02
+ * @version: 1.0
+ */
+public class TestSeason {
+    public static void main(String[] args) {
+        Season winter = Season.WINTER;
+        System.out.println(winter);
+        // enum关键字对应的枚举类的上层父类: java.lang.Enum
+        // 但是我们自定义的枚举类的上层父类: Object
+        System.out.println(Season.class.getSuperclass().getName()); // java.lang.Enum
+    }
+}
+```
+
+在源码中经常看到别人定义的枚举类形态：
+```java
+package cn.com.dhc.enum03;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/8 - 下午7:34
+ * @Description: cn.com.dhc.enum01
+ * 定义枚举类: 季节
+ * @version: 1.0
+ */
+public enum Season {
+    SPRING,
+    SUMMER,
+    AUTUMN,
+    WINTER;
+}
+```
+
+为什么这么简单：因为这个枚举类底层没有属性，属性，构造器，toString，get方法都删掉不写了，然后案例来说应该
+写为：SPRING()   现在连（）可以省略 就变成  SPRING
+看到的形态就剩：常量名（对象名）
+
+案例：
+Thread中的枚举类：State
+```java
+public enum State {
+    /**
+      * Thread state for a thread which has not yet started.
+      */
+    NEW,
+    /**
+      * Thread state for a runnable thread.  A thread in the runnable
+      * state is executing in the Java virtual machine but it may
+      * be waiting for other resources from the operating system
+      * such as processor.
+      */
+    RUNNABLE,
+    /**
+      * Thread state for a thread blocked waiting for a monitor lock.
+      * A thread in the blocked state is waiting for a monitor lock
+      * to enter a synchronized block/method or
+      * reenter a synchronized block/method after calling
+      * {@link Object#wait() Object.wait}.
+      */
+    BLOCKED,
+    /**
+      * Thread state for a waiting thread.
+      * A thread is in the waiting state due to calling one of the
+      * following methods:
+      * <ul>
+      *   <li>{@link Object#wait() Object.wait} with no timeout</li>
+      *   <li>{@link #join() Thread.join} with no timeout</li>
+      *   <li>{@link LockSupport#park() LockSupport.park}</li>
+      * </ul>
+      *
+      * <p>A thread in the waiting state is waiting for another thread to
+      * perform a particular action.
+      *
+      * For example, a thread that has called <tt>Object.wait()</tt>
+      * on an object is waiting for another thread to call
+      * <tt>Object.notify()</tt> or <tt>Object.notifyAll()</tt> on
+      * that object. A thread that has called <tt>Thread.join()</tt>
+      * is waiting for a specified thread to terminate.
+      */
+    WAITING,
+    /**
+      * Thread state for a waiting thread with a specified waiting time.
+      * A thread is in the timed waiting state due to calling one of
+      * the following methods with a specified positive waiting time:
+      * <ul>
+      *   <li>{@link #sleep Thread.sleep}</li>
+      *   <li>{@link Object#wait(long) Object.wait} with timeout</li>
+      *   <li>{@link #join(long) Thread.join} with timeout</li>
+      *   <li>{@link LockSupport#parkNanos LockSupport.parkNanos}</li>
+      *   <li>{@link LockSupport#parkUntil LockSupport.parkUntil}</li>
+      * </ul>
+      */
+    TIMED_WAITING,
+    /**
+      * Thread state for a terminated thread.
+      * The thread has completed execution.
+      */
+    TERMINATED;
+}
+```
+
+### Enum类的常用方法
+
+```java
+package cn.com.dhc.enum03;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/8 - 下午7:59
+ * @Description: cn.com.dhc.enum03
+ * @version: 1.0
+ */
+public class TestSeason {
+    public static void main(String[] args) {
+        // 用enum关键字创建的Season枚举类上面的父类是: java.lang.Enum, 常用方法子类Season可以直接拿过来使用
+        // toString(); --> 获取对象的名字
+        Season autumn = Season.AUTUMN;
+        System.out.println(autumn);
+
+        System.out.println("===============");
+        // values: 返回枚举类对象的数组
+        Season[] values = Season.values();
+        for (Season value : values) {
+            System.out.println(value);
+        }
+
+        System.out.println("===============");
+        // valueOf: 通过对象名字获取这个枚举对象
+        // 注意: 对象的名字必须传正确, 否则抛出异常
+        Season autumn1 = Season.valueOf("AUTUMN444");
+        System.out.println(autumn1);
+    }
+}
+```
+
+### 枚举类实现接口
+
+定义一个接口：
+```java
+package cn.com.dhc.enum04;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/8 - 下午8:10
+ * @Description: cn.com.dhc.enum04
+ * @version: 1.0
+ */
+public interface TestInterface {
+    void show();
+}
+```
+
+枚举类实现接口，并且重写show方法：
+```java
+package cn.com.dhc.enum04;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/8 - 下午8:09
+ * @Description: cn.com.dhc.enum04
+ * @version: 1.0
+ */
+public enum Season implements TestInterface {
+    SPRING,
+    SUMMER,
+    AUTUMN,
+    WINTER;
+
+    @Override
+    public void show() {
+        System.out.println("这是Season");
+    }
+}
+```
+
+测试类：
+```java
+package cn.com.dhc.enum04;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/8 - 下午8:11
+ * @Description: cn.com.dhc.enum04
+ * @version: 1.0
+ */
+public class Test {
+    public static void main(String[] args) {
+        Season autumn = Season.AUTUMN;
+        autumn.show();
+        Season summer = Season.SUMMER;
+        summer.show();
+    }
+}
+```
+
+上面发现所有的枚举对象，调用这个show方法的时候走的都是同一个方法，结果都一样：
+<img src="images/16/1-3-2.png">
+
+但是现在我想要：不同的对象  调用的show方法也不同：
+```java
+package cn.com.dhc.enum04;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/8 - 下午8:09
+ * @Description: cn.com.dhc.enum04
+ * @version: 1.0
+ */
+public enum Season implements TestInterface {
+    SPRING {
+        @Override
+        public void show() {
+            System.out.println("这是春天");
+        }
+    },
+    SUMMER {
+        @Override
+        public void show() {
+            System.out.println("这是夏天");
+        }
+    },
+    AUTUMN {
+        @Override
+        public void show() {
+            System.out.println("这是秋天");
+        }
+    },
+    WINTER {
+        @Override
+        public void show() {
+            System.out.println("这是冬天");
+        }
+    };
+
+    /*@Override
+    public void show() {
+        System.out.println("这是Season");
+    }*/
+}
+```
+
+测试类：
+```java
+package cn.com.dhc.enum04;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/8 - 下午8:11
+ * @Description: cn.com.dhc.enum04
+ * @version: 1.0
+ */
+public class Test {
+    public static void main(String[] args) {
+        Season autumn = Season.AUTUMN;
+        autumn.show();
+        Season summer = Season.SUMMER;
+        summer.show();
+    }
+}
+```
+<img src="images/16/1-3-3.png">
+
+### 实际应用
+
+```java
+package cn.com.dhc.enum05;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/8 - 下午8:16
+ * @Description: cn.com.dhc.enum05
+ * @version: 1.0
+ */
+public class Person {
+    private int age;
+    private String name;
+    private Gender sex;
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Gender getSex() {
+        return sex;
+    }
+
+    public void setSex(Gender sex) {
+        this.sex = sex;
+    }
+    @Override
+    public String toString() {
+        return "Person{" +
+                "age=" + age +
+                ", name='" + name + '\'' +
+                ", sex='" + sex + '\'' +
+                '}';
+    }
+}
+```
+
+```java
+package cn.com.dhc.enum05;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/8 - 下午8:17
+ * @Description: cn.com.dhc.enum05
+ * @version: 1.0
+ */
+public enum Gender {
+    男,
+    女;
+}
+```
+
+```java
+package cn.com.dhc.enum05;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/8 - 下午8:16
+ * @Description: cn.com.dhc.enum05
+ * @version: 1.0
+ */
+public class Test {
+    public static void main(String[] args) {
+        Person person = new Person();
+        person.setAge(19);
+        person.setName("张三");
+        person.setSex(Gender.男); // 传入枚举类Gender的对象: ---> 在入口处对参数进行了限制
+        System.out.println(person);
+    }
+}
+```
+
+还可以通过枚举结合switch处理：
+```java
+package cn.com.dhc.enum05;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/8 - 下午8:20
+ * @Description: cn.com.dhc.enum05
+ * @version: 1.0
+ */
+public class Test02 {
+    public static void main(String[] args) {
+        Gender sex = Gender.男;
+        // switch后面的()中可以传入枚举类型
+        // switch后面的(): int, shot, byte, char, String, enum
+        switch (sex) {
+            case 女:
+                System.out.println("Girl");
+                break;
+            case 男:
+                System.out.println("Boy");
+                break;
+        }
+    }
+}
+```
+
