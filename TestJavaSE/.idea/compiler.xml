@@ -6,11 +6,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="TestNetWork" />
         <module name="untitled" />
-        <module name="TestEnum" />
         <module name="TestThread" />
         <module name="TestAnnotation" />
+        <module name="TestNetWork" />
+        <module name="TestReflect" />
+        <module name="TestEnum" />
         <module name="TestJunit" />
       </profile>
     </annotationProcessing>

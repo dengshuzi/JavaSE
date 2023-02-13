@@ -15995,3 +15995,350 @@ public class Test02 {
 }
 ```
 
+# 第十六章_反射
+
+## 通过案例体会反射的好处
+
+案例：美团外卖 --->付款  ---》要么用微信支付 要么用支付宝支付 
+```java
+package cn.com.dhc.test01;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/8 - 下午9:23
+ * @Description: cn.com.dhc.test01
+ * @version: 1.0
+ */
+// 接口的制定方向: 美团外卖
+public interface Mtwm {
+    // 在线支付功能:
+    void payOnline();
+}
+```
+```java
+package cn.com.dhc.test01;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/8 - 下午9:26
+ * @Description: cn.com.dhc.test01
+ * @version: 1.0
+ */
+public class Wechat implements Mtwm{
+    @Override
+    public void payOnline() {
+        // 具体实现微信支付的功能:
+        System.out.println("我已经点了外卖, 正在使用微信支付");
+    }
+}
+```
+```java
+package cn.com.dhc.test01;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/8 - 下午9:27
+ * @Description: cn.com.dhc.test01
+ * @version: 1.0
+ */
+public class AliPay implements Mtwm{
+    @Override
+    public void payOnline() {
+        // 具体实现支付宝支付的功能:
+        System.out.println("我已经点了外卖, 正在使用支付宝支付");
+    }
+}
+```
+```java
+package cn.com.dhc.test01;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/8 - 下午9:32
+ * @Description: cn.com.dhc.test01
+ * @version: 1.0
+ */
+public class CreditCard implements Mtwm{
+    @Override
+    public void payOnline() {
+        // 具体实现支付信用卡的功能:
+        System.out.println("我已经点了外卖, 正在使用信用卡支付");
+    }
+}
+```
+
+测试类：
+```java
+package cn.com.dhc.test01;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/8 - 下午9:27
+ * @Description: cn.com.dhc.test01
+ * @version: 1.0
+ */
+public class Test {
+    public static void main(String[] args) {
+        // 定义一个字符串, 用来模拟前台的支付方式:
+        String str = "微信";
+        if ("微信".equals(str)) {
+            // 微信支付:
+            pay(new Wechat());
+        } else if ("支付宝".equals(str)) {
+            // 支付宝支付:
+            pay(new AliPay());
+        } else if ("信用卡".equals(str)) {
+            // 信用卡支付:
+            pay(new CreditCard());
+        }
+    }
+    // 微信支付
+    public static void pay(Wechat wechat) {
+        wechat.payOnline();
+    }
+    // 支付宝支付
+    public static void pay(AliPay aliPay) {
+        aliPay.payOnline();
+    }
+    // 信用卡支付
+    public static void pay(CreditCard creditCard) {
+        creditCard.payOnline();
+    }
+}
+```
+
+为了提高代码的扩展性---》面向对象特性：多态：
+```java
+package cn.com.dhc.test01;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/8 - 下午9:27
+ * @Description: cn.com.dhc.test01
+ * @version: 1.0
+ */
+public class Test {
+    public static void main(String[] args) {
+        // 定义一个字符串, 用来模拟前台的支付方式:
+        String str = "微信";
+        if ("微信".equals(str)) {
+            // 微信支付:
+            pay(new Wechat());
+        } else if ("支付宝".equals(str)) {
+            // 支付宝支付:
+            pay(new AliPay());
+        } else if ("信用卡".equals(str)) {
+            // 信用卡支付:
+            pay(new CreditCard());
+        }
+    }
+    // 方法的形参是接口, 具体传入的是接口的实现类的对象 ---> 多态的一种形式
+    public static void pay(Mtwm mtwm) {
+        mtwm.payOnline();
+    }
+}
+```
+
+多态确实可以提高代码的扩展性，但是：扩展性没有达到最好。
+怎么没有达到最好：上面的分支，还是需要手动的删除或者添加。
+解决办法：反射机制
+利用反射实现上述功能：
+```java
+package cn.com.dhc.test01;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/9 - 下午8:00
+ * @Description: cn.com.dhc.test01
+ * @version: 1.0
+ */
+public class Demo {
+    public static void main(String[] args) throws Exception {
+        // 定义一个字符串, 用来模拟前台的支付方式
+        String str = "cn.com.dhc.test01.AliPay"; // 字符串: 实际上就是微信的权限路径
+
+        // 下面的代码就是利用反射:
+        Class cls = Class.forName(str);
+        Object o = cls.newInstance();
+        Method method = cls.getMethod("payOnline");
+        method.invoke(o);
+    }
+}
+```
+
+## 通过概念再体会反射
+
+JAVA反射机制是在运行状态中，对于任意一个类，都能够知道这个类的所有属性和方法；对于任意一个对象，
+都能够调用它的任意方法和属性；这种动态获取信息以及动态调用对象方法的功能称为java语言的反射机制。
+在编译后产生字节码文件的时候，类加载器子系统通过二进制字节流，负责从文件系统加载class文件。
+在执行程序（java.exe）时候，将字节码文件读入JVM中--->这个过程叫做类的加载。然后在内存中对应创建一个java.lang.Class对象-->这个对象会被放入字节码信息中,这个Class对象,就对应加载那个字节码信息,这个对象将被作为程序访问方法区中的这个类的各种数据的外部接口。
+所以：我们可以通过这个对象看到类的结构，这个对象就好像是一面镜子，透过镜子看到类的各种信息，我们形象的称之为反射
+这种“看透”class的能力（the ability of the program to examine itself）被称为introspection（内省、内观、反省）。Reflection和introspection是常被并提的两个术语。
+说明：在运行期间，如果我们要产生某个类的对象，Java虚拟机(JVM)会检查该类型的Class对象是否已被加载。
+如果没有被加载，JVM会根据类的名称找到.class文件并加载它。一旦某个类型的Class对象已被加载到内存，就可以用它来产生该类型的所有对象。
+补充:
+动态语言vs静态语言
+1. 动态语言
+是一类在运行时可以改变其结构的语言:例如新的函数、对象、甚至代码可以
+被引进，已有的函数可以被删除或是其他结构上的变化。通俗点说就是在运
+行时代码可以根据某些条件改变自身结构。
+主要动态语言: Object-C、 C#、JavaScript、 PHP、 Python、 Erlang 。
+2. 静态语言
+与动态语言相对应的，运行时结构不可变的语言就是静态语言。如Java、C、
+C++。
+所以Java不是动态语言，但Java可以称之为“准动态语言”。即Java有一定的动
+态性，我们可以利用反射机制、字节码操作获得类似动态语言的特性。
+Java的动态性让编程的时候更加灵活! 
+
+## Class类的理解
+
+<img src="images/17/1-1-1.png">
+
+## 提供丰富的类
+
+```java
+package cn.com.dhc.test02;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/13 - 下午9:23
+ * @Description: cn.com.dhc.test02
+ * @version: 1.0
+ */
+public class Person {
+    private int age;
+    public String name;
+    private void eat() {
+        System.out.println("Person eat");
+    }
+    public void sleep() {
+        System.out.println("Person sleep");
+    }
+}
+```
+
+```java
+package cn.com.dhc.test02;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/13 - 下午9:24
+ * @Description: cn.com.dhc.test02
+ * @version: 1.0
+ */
+public class Student extends Person{
+    private int sno;
+    double height;
+    protected double weight;
+    public double score;
+    public String showInfo() {
+        return "我是一名三好学生";
+    }
+    private void work() {
+        System.out.println("找工作");
+    }
+    public Student() {
+        System.out.println("空参构造器");
+    }
+    private Student(int sno) {
+        this.sno = sno;
+    }
+    Student(int sno, double weight) {
+        this.sno = sno;
+        this.weight = weight;
+    }
+}
+```
+
+## 获取字节码信息的四种形式
+
+```java
+package cn.com.dhc.test02;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/13 - 下午9:31
+ * @Description: cn.com.dhc.test02
+ * @version: 1.0
+ */
+public class Test {
+    public static void main(String[] args) throws ClassNotFoundException {
+        // 案例: 以Person的字节码信息为案例
+        // 方式1: 通过getClass方法获取
+        Person person = new Person();
+        Class<? extends Person> class1 = person.getClass();
+        System.out.println(class1);
+
+        // 方式2: 通过内置class属性
+        Class<Person> class2 = Person.class;
+        System.out.println(class2);
+
+        System.out.println(class1 == class2);
+
+        // 注意: 方式1和方式2(不常用)
+
+        // 方式3: 用的最多: 调用Class类提供的静态方法forName
+        Class<?> class3 = Class.forName("cn.com.dhc.test02.Person");
+        System.out.println(class3);
+
+        // 方式4: 利用类的加载器(了解技能点)
+        ClassLoader classLoader = Test.class.getClassLoader();
+        Class<?> class4 = classLoader.loadClass("cn.com.dhc.test02.Person");
+        System.out.println(class4);
+    }
+}
+```
+
+## 可以作为Class类的实例的种类
+
+Class类的具体的实例：
+1. 类：外部类，内部类
+2. 接口
+3. 注解
+4. 数组
+5. 基本数据类型
+6. void
+验证：
+```java
+```
+
+## 获取运行时类的完整结构
+
+### 补充完善上面提供的丰富的类
+
+```java
+```
+```java
+```
+```java
+```
+```java
+```
+
+### 获取构造器和创建对象
+
+```java
+```
+
+### 获取属性和对属性进行赋值
+
+```java
+```
+
+### 获取方法和调用方法
+
+```java
+```
+
+### 获取类的接口，所在包，注解
+
+```java
+```
+
+### 关于反射的面试题
+
+- 问题1：创建Person的对象，以后用new Person()创建,还是用反射创建？
+- 问题2：反射是否破坏了面向对象的封装性？
