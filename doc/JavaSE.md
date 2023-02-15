@@ -16303,6 +16303,37 @@ Class类的具体的实例：
 6. void
 验证：
 ```java
+package cn.com.dhc.test02;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/15 - 下午7:21
+ * @Description: cn.com.dhc.test02
+ * @version: 1.0
+ */
+public class Demo {
+    public static void main(String[] args) {
+        /*
+            Class类的具体的实例：
+            1. 类：外部类，内部类
+            2. 接口
+            3. 注解
+            4. 数组
+            5. 基本数据类型
+            6. void
+         */
+        Class c1 = Person.class;
+        Class c2 = Comparable.class;
+        Class c3 = Override.class;
+        int[] arr1 = {1, 2, 3};
+        Class c4 = arr1.getClass();
+        int[] arr2 = {4, 6, 7};
+        Class c5 = arr2.getClass();
+        System.out.println(c4 == c5); // 结果为true 同一个维度, 同一个元素类型, 得到的字节码就是同一个
+        Class c6 = int.class;
+        Class c7 = void.class;
+    }
+}
 ```
 
 ## 获取运行时类的完整结构
@@ -16310,32 +16341,359 @@ Class类的具体的实例：
 ### 补充完善上面提供的丰富的类
 
 ```java
+package cn.com.dhc.test03;
+
+import java.io.Serializable;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/15 - 下午7:26
+ * @Description: cn.com.dhc.test03
+ * @version: 1.0
+ */
+public class Person implements Serializable {
+    private int age;
+    private String name;
+    private void eat() {
+        System.out.println("Person eat");
+    }
+    private void sleep() {
+        System.out.println("Person sleep");
+    }
+}
 ```
 ```java
+package cn.com.dhc.test03;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/13 - 下午9:24
+ * @Description: cn.com.dhc.test02
+ * @version: 1.0
+ */
+@MyAnnotation(value = "hello")
+public class Student extends Person implements MyInterface {
+    private int sno;
+    double height;
+    protected double weight;
+    public double score;
+    @MyAnnotation(value = "hiMethod")
+    public String showInfo() {
+        return "我是一名三好学生";
+    }
+    public String showInfo(int a, int b) {
+        return  "重载";
+    }
+    private void work() {
+        System.out.println("找工作");
+    }
+    void happy() {
+        System.out.println("开心");
+    }
+    protected int getSon() {
+        return sno;
+    }
+    public Student() {
+        System.out.println("空参构造器");
+    }
+    public Student (double weight, double height) {
+        this.weight = weight;
+        this.height = height;
+    }
+    private Student(int sno) {
+        this.sno = sno;
+    }
+    Student(int sno, double weight) {
+        this.sno = sno;
+        this.weight = weight;
+    }
+    protected Student(int sno, double height, double weight) {
+        this.sno = sno;
+    }
+    @Override
+    @MyAnnotation("helloMyMethod")
+    public void myMethod() {
+        System.out.println("重写");
+    }
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "sno=" + sno +
+                ", height=" + height +
+                ", weight=" + weight +
+                ", score=" + score +
+                '}';
+    }
+}
+}
 ```
 ```java
+package cn.com.dhc.test03;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.ElementType.LOCAL_VARIABLE;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/15 - 下午7:32
+ * @Description: cn.com.dhc.test03
+ * @version: 1.0
+ */
+/*
+@Target: 定义当前注解能够修饰程序中的哪些元素
+@Retention: 定义注解的生命周期
+ */
+@Target({TYPE, FIELD, METHOD, PARAMETER, CONSTRUCTOR, LOCAL_VARIABLE})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface MyAnnotation {
+    String value(); // 属性
+}
 ```
 ```java
+package cn.com.dhc.test03;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/15 - 下午7:28
+ * @Description: cn.com.dhc.test03
+ * @version: 1.0
+ */
+public interface MyInterface {
+    void myMethod();
+}
 ```
 
 ### 获取构造器和创建对象
 
 ```java
+package cn.com.dhc.test03;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/15 - 下午7:37
+ * @Description: cn.com.dhc.test03
+ * @version: 1.0
+ */
+public class Test01 {
+    public static void main(String[] args) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        // 获取字节码信息:
+        Class cls = Student.class;
+        // 通过字节码信息可以获取构造器:
+        // getConstructors只能获取当前运行时类的被public修饰的构造器
+        Constructor[] c1 = cls.getConstructors();
+        for (Constructor c : c1) {
+            System.out.println(c);
+        }
+        System.out.println("==============");
+        // getDeclaredConstructors获取运行时类的全部修饰符的构造器
+        Constructor[] c2 = cls.getDeclaredConstructors();
+        for (Constructor c : c2) {
+            System.out.println(c);
+        }
+        System.out.println("==============");
+        // 获取制定的构造器:
+        // 得到空构造器
+        Constructor con1 = cls.getConstructor();
+        System.out.println(con1);
+        // 得到两个参数的有参构造器
+        Constructor con2 = cls.getConstructor(double.class, double.class);
+        System.out.println(con2);
+        // 得到一个参数的有参构造器: 并且是private修饰的
+        Constructor con3 = cls.getDeclaredConstructor(int.class);
+        System.out.println(con3);
+        // 有了构造器以后我就可以创建对象:
+        Object o1 = con1.newInstance();
+        System.out.println(o1);
+        Object o2 = con2.newInstance(180.5, 170.6);
+        System.out.println(o2);
+    }
+}
 ```
 
 ### 获取属性和对属性进行赋值
 
 ```java
+package cn.com.dhc.test03;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/15 - 下午8:08
+ * @Description: cn.com.dhc.test03
+ * @version: 1.0
+ */
+public class Test02 {
+    public static void main(String[] args) throws NoSuchFieldException, IllegalAccessException, InstantiationException {
+        // 获取字节码信息:
+        Class cls = Student.class;
+        // 获取属性:
+        // getFields: 获取与进行时类和父类中被public修饰的属性
+        Field[] f1 = cls.getFields();
+        for (Field f : f1) {
+            System.out.println(f);
+        }
+        System.out.println("==============");
+        // getDeclaredFields: 获取运行时类中的所有属性
+        Field[] f2 = cls.getDeclaredFields();
+        for (Field f: f2) {
+            System.out.println(f);
+        }
+        System.out.println("==============");
+        // 获取指定属性:
+        Field score = cls.getField("score");
+        System.out.println(score);
+        Field sno = cls.getDeclaredField("sno");
+        System.out.println(sno);
+        System.out.println("==============");
+        // 属性的具体结构:
+        // 获取修饰符:
+        /*int modifiers = sno.getModifiers();
+        System.out.println(modifiers);
+        System.out.println(Modifier.toString(modifiers));*/
+        System.out.println(Modifier.toString(sno.getModifiers()));
+        // 获取属性的数据类型:
+        Class type = sno.getType();
+        System.out.println(type.getName());
+        // 获取属性的名字:
+        String name = sno.getName();
+        System.out.println(name);
+        System.out.println("==============");
+        // 给属性赋值:
+        Field sco = cls.getField("score");
+        Object obj = cls.newInstance();
+        sco.set(obj, 98); // 给obj这个对象的score属性设置具体的值, 这个值为98
+        System.out.println(obj);
+    }
+}
 ```
 
 ### 获取方法和调用方法
 
 ```java
+package cn.com.dhc.test03;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/15 - 下午8:40
+ * @Description: cn.com.dhc.test03
+ * @version: 1.0
+ */
+public class Test03 {
+    public static void main(String[] args) throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+        // 获取字节码信息:
+        Class cls = Student.class;
+        // 获取方法:
+        // getMethods: 获取运行时类的方法还有所有父类中的方法(被public修饰)
+        Method[] methods = cls.getMethods();
+        for (Method method : methods) {
+            System.out.println(method);
+        }
+        System.out.println("============");
+        // getDeclaredMethods: 获取运行时类的所有方法
+        Method[] declaredMethods = cls.getDeclaredMethods();
+        for (Method declaredMethod : declaredMethods) {
+            System.out.println(declaredMethod);
+        }
+        System.out.println("============");
+        // 获取指定的方法
+        Method showInfo1 = cls.getMethod("showInfo");
+        Method showInfo2 = cls.getMethod("showInfo", int.class, int.class);
+        System.out.println(showInfo1);
+        System.out.println(showInfo2);
+        Method work = cls.getDeclaredMethod("work", int.class);
+        System.out.println(work);
+        System.out.println("============");
+        // 获取方法的具体结构:
+        /*
+        @注解
+        修饰符 返回值类型 方法名(参数列表) throws XXXX{}
+         */
+        // 名字
+        System.out.println(work.getName());
+        // 修饰符
+        System.out.println(Modifier.toString(work.getModifiers()));
+        // 返回值
+        System.out.println(work.getReturnType());
+        // 参数列表
+        Class[] parameterTypes = work.getParameterTypes();
+        for (Class parameterType : parameterTypes) {
+            System.out.println(parameterType);
+        }
+        // 获取注解
+        Method myMethod = cls.getMethod("myMethod");
+        Annotation[] annotations = myMethod.getAnnotations();
+        for (Annotation annotation : annotations) {
+            System.out.println(annotation);
+        }
+        // 获取异常
+        Class[] exceptionTypes = myMethod.getExceptionTypes();
+        for (Class exceptionType : exceptionTypes) {
+            System.out.println(exceptionType);
+        }
+        // 调用方法:
+        Object o = cls.newInstance();
+        myMethod.invoke(o); // 调用o对象的myMethod方法
+        System.out.println(showInfo2.invoke(o, 12, 45));
+    }
+}
 ```
 
 ### 获取类的接口，所在包，注解
 
 ```java
+package cn.com.dhc.test03;
+
+import java.lang.annotation.Annotation;
+
+/**
+ * @Auther: Evin_D
+ * @Date: 2023/2/15 - 下午9:16
+ * @Description: cn.com.dhc.test03
+ * @version: 1.0
+ */
+public class Test04 {
+    public static void main(String[] args) {
+        // 获取字节码信息
+        Class<Student> cls = Student.class;
+        // 获取运行时类的接口
+        Class<?>[] interfaces = cls.getInterfaces();
+        for (Class<?> anInterface : interfaces) {
+            System.out.println(anInterface);
+        }
+        // 得到父类的接口
+        // 得到父类的字节码信息
+        Class<? super Student> superclass = cls.getSuperclass();
+        Class<?>[] interfaces1 = superclass.getInterfaces();
+        for (Class<?> aClass : interfaces1) {
+            System.out.println(aClass);
+        }
+        // 获取运行时类所在的包
+        Package aPackage = cls.getPackage();
+        System.out.println(aPackage);
+        System.out.println(aPackage.getName());
+        // 获取运行时类的注解
+        Annotation[] annotations = cls.getAnnotations();
+        for (Annotation annotation : annotations) {
+            System.out.println(annotation);
+        }
+    }
+}
 ```
 
 ### 关于反射的面试题
